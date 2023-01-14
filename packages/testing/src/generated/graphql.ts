@@ -56,7 +56,7 @@ export type Action = {
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Related KCs */
-  kcs: Array<Kc>;
+  kcs: Array<KC>;
   /** Arbitrary numeric result */
   result?: Maybe<Scalars["Float"]>;
   /** Arbitrary step identifier */
@@ -170,14 +170,14 @@ export type AdminActionQueries = {
 };
 
 /** Admin Action-Related Queries */
-export type AdminActionQueriesAllActionsArgs = {
+export type AdminActionQueriesallActionsArgs = {
   filters?: InputMaybe<AdminActionsFilter>;
   orderBy?: InputMaybe<AdminActionsOrderBy>;
   pagination: CursorConnectionArgs;
 };
 
 /** Admin Action-Related Queries */
-export type AdminActionQueriesAllActionsVerbsArgs = {
+export type AdminActionQueriesallActionsVerbsArgs = {
   pagination: CursorConnectionArgs;
 };
 
@@ -242,7 +242,7 @@ export type AdminActionsOrderBy = {
    *
    * By default the actions are ordered descendingly, showing the newer actions first
    */
-  id?: InputMaybe<Order_By>;
+  id?: InputMaybe<ORDER_BY>;
 };
 
 /** Filter all content of admin query */
@@ -279,12 +279,12 @@ export type AdminContentMutations = {
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
-export type AdminContentMutationsCreateContentArgs = {
+export type AdminContentMutationscreateContentArgs = {
   data: CreateContent;
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
-export type AdminContentMutationsUpdateContentArgs = {
+export type AdminContentMutationsupdateContentArgs = {
   data: UpdateContent;
 };
 
@@ -300,7 +300,7 @@ export type AdminContentQueries = {
 };
 
 /** Admin Content-Related Queries */
-export type AdminContentQueriesAllContentArgs = {
+export type AdminContentQueriesallContentArgs = {
   filters?: InputMaybe<AdminContentFilter>;
   pagination: CursorConnectionArgs;
 };
@@ -311,58 +311,58 @@ export type AdminDomainMutations = {
   /** Create a new domain entity */
   createDomain: Domain;
   /** Create a new KC entity */
-  createKC: Kc;
+  createKC: KC;
   /** Create a new topic entity */
   createTopic: Topic;
   /** Set KC Relation */
-  setKCRelation: KcRelation;
+  setKCRelation: KCRelation;
   /** Unset KC Relation */
   unsetKCRelation?: Maybe<Scalars["Void"]>;
   /** Update an existent domain entity */
   updateDomain: Domain;
   /** Update an existent KC entity */
-  updateKC: Kc;
+  updateKC: KC;
   /** Update an existent topic entity */
   updateTopic: Topic;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsCreateDomainArgs = {
+export type AdminDomainMutationscreateDomainArgs = {
   input: CreateDomain;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsCreateKcArgs = {
-  data: CreateKcInput;
+export type AdminDomainMutationscreateKCArgs = {
+  data: CreateKCInput;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsCreateTopicArgs = {
+export type AdminDomainMutationscreateTopicArgs = {
   input: CreateTopic;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsSetKcRelationArgs = {
-  data: KcRelationInput;
+export type AdminDomainMutationssetKCRelationArgs = {
+  data: KCRelationInput;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsUnsetKcRelationArgs = {
-  data: KcRelationInput;
+export type AdminDomainMutationsunsetKCRelationArgs = {
+  data: KCRelationInput;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsUpdateDomainArgs = {
+export type AdminDomainMutationsupdateDomainArgs = {
   input: UpdateDomain;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsUpdateKcArgs = {
-  data: UpdateKcInput;
+export type AdminDomainMutationsupdateKCArgs = {
+  data: UpdateKCInput;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainMutationsUpdateTopicArgs = {
+export type AdminDomainMutationsupdateTopicArgs = {
   input: UpdateTopic;
 };
 
@@ -390,19 +390,19 @@ export type AdminDomainQueries = {
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainQueriesAllDomainsArgs = {
+export type AdminDomainQueriesallDomainsArgs = {
   filters?: InputMaybe<AdminDomainsFilter>;
   pagination: CursorConnectionArgs;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainQueriesAllKCsArgs = {
+export type AdminDomainQueriesallKCsArgs = {
   filters?: InputMaybe<AdminKCsFilter>;
   pagination: CursorConnectionArgs;
 };
 
 /** Admin Domain-Related Queries */
-export type AdminDomainQueriesAllTopicsArgs = {
+export type AdminDomainQueriesallTopicsArgs = {
   filters?: InputMaybe<AdminTopicsFilter>;
   pagination: CursorConnectionArgs;
 };
@@ -463,12 +463,12 @@ export type AdminProjectsMutations = {
 };
 
 /** Admin Project-Related Mutations */
-export type AdminProjectsMutationsCreateProjectArgs = {
+export type AdminProjectsMutationscreateProjectArgs = {
   data: CreateProject;
 };
 
 /** Admin Project-Related Mutations */
-export type AdminProjectsMutationsUpdateProjectArgs = {
+export type AdminProjectsMutationsupdateProjectArgs = {
   data: UpdateProject;
 };
 
@@ -480,7 +480,7 @@ export type AdminProjectsQueries = {
 };
 
 /** Admin Project-Related Queries */
-export type AdminProjectsQueriesAllProjectsArgs = {
+export type AdminProjectsQueriesallProjectsArgs = {
   pagination: CursorConnectionArgs;
 };
 
@@ -500,17 +500,17 @@ export type AdminStateQueries = {
 };
 
 /** Admin State-Related Queries */
-export type AdminStateQueriesAllModelStateCreatorsArgs = {
+export type AdminStateQueriesallModelStateCreatorsArgs = {
   pagination: CursorConnectionArgs;
 };
 
 /** Admin State-Related Queries */
-export type AdminStateQueriesAllModelStateTypesArgs = {
+export type AdminStateQueriesallModelStateTypesArgs = {
   pagination: CursorConnectionArgs;
 };
 
 /** Admin State-Related Queries */
-export type AdminStateQueriesAllModelStatesArgs = {
+export type AdminStateQueriesallModelStatesArgs = {
   input: ModelStateConnectionInput;
 };
 
@@ -544,34 +544,34 @@ export type AdminUserMutations = {
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsCreateGroupArgs = {
+export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsSetProjectsToUsersArgs = {
+export type AdminUserMutationssetProjectsToUsersArgs = {
   projectIds: Array<Scalars["IntID"]>;
   userIds: Array<Scalars["IntID"]>;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsSetUserGroupsArgs = {
+export type AdminUserMutationssetUserGroupsArgs = {
   groupIds: Array<Scalars["IntID"]>;
   usersEmails: Array<Scalars["EmailAddress"]>;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsUpdateGroupArgs = {
+export type AdminUserMutationsupdateGroupArgs = {
   data: UpdateGroupInput;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsUpdateUserArgs = {
+export type AdminUserMutationsupdateUserArgs = {
   data: UpdateUserInput;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserMutationsUpsertUsersWithProjectsArgs = {
+export type AdminUserMutationsupsertUsersWithProjectsArgs = {
   emails: Array<Scalars["EmailAddress"]>;
   projectsIds: Array<Scalars["IntID"]>;
 };
@@ -594,13 +594,13 @@ export type AdminUserQueries = {
 };
 
 /** Admin User-Related Queries */
-export type AdminUserQueriesAllGroupsArgs = {
+export type AdminUserQueriesallGroupsArgs = {
   filters?: InputMaybe<AdminGroupsFilter>;
   pagination: CursorConnectionArgs;
 };
 
 /** Admin User-Related Queries */
-export type AdminUserQueriesAllUsersArgs = {
+export type AdminUserQueriesallUsersArgs = {
   filters?: InputMaybe<AdminUsersFilter>;
   pagination: CursorConnectionArgs;
 };
@@ -646,11 +646,12 @@ export type Content = {
   createdAt: Scalars["DateTime"];
   /** Arbitrary content description */
   description: Scalars["String"];
+  /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Arbitrary JSON object data */
   json?: Maybe<Scalars["JSONObject"]>;
   /** KCs associated with the content */
-  kcs: Array<Kc>;
+  kcs: Array<KC>;
   /** Human readable identifier */
   label: Scalars["String"];
   /** Project associated with the content */
@@ -680,26 +681,74 @@ export type ContentConnection = Connection & {
   pageInfo: PageInfo;
 };
 
-export type ContentSelectionInput = {
-  projectId: Scalars["IntID"];
-  topicId: Scalars["IntID"];
-  userId: Scalars["IntID"];
+/** Return selected content and properties for further analysis (model, codes of content, probabilities and tables) */
+export type ContentSelectedPropsReturn = {
+  __typename?: "ContentSelectedPropsReturn";
+  /** All code of contents of last N contents done */
+  PU: Array<Scalars["String"]>;
+  /** Content selected for learner */
+  contentResult: Array<ContentsSelectedReturn>;
+  /** Model structure of learner composed for KC level and KC threshold */
+  model: Scalars["JSON"];
+  /** All codes of contents without last N contents and content dominated */
+  newP: Array<Scalars["String"]>;
+  /** All codes of contents of topic chapters */
+  oldP: Array<Scalars["String"]>;
+  /** Probability of success by average PK of exercise most difficult */
+  pAVGdif: Scalars["Float"];
+  /** Probability of success by average PK of exercise most similar */
+  pAVGsim: Scalars["Float"];
+  /** table of newP with TableReturn attributes */
+  table: Array<TableReturn>;
+  /** table filter with similarity less than 1 and difficulty less than difficulty of last content done (PU[0]) */
+  tableDifEasy: Array<TableReturn>;
+  /** table filter with similarity less than 1 and difficulty greater than difficulty of last content done (PU[0]) */
+  tableDifHarder: Array<TableReturn>;
+  /** table filter with similarity equals to 1 */
+  tableSim: Array<TableReturn>;
+  /** Return message of service */
+  topicCompletedMsg: Message;
 };
 
+/** ContentSelection input data */
+export type ContentSelectionInput = {
+  /** Discard last N contents done (optional in query), default N= 10 */
+  discardLast?: Scalars["Int"];
+  /** Domain identifier */
+  domainId: Scalars["IntID"];
+  /** Project identifier */
+  projectId: Scalars["IntID"];
+  /** Topic identifier */
+  topicId: Array<Scalars["IntID"]>;
+  /** User identifier */
+  userId: Scalars["IntID"];
+  /** Range Zone proximal development(ZPD) (optional in query), default [0.4,0.6] */
+  zpdRange?: InputMaybe<Array<Scalars["Float"]>>;
+};
+
+/** ContentSelection Queries */
 export type ContentSelectionQueries = {
   __typename?: "ContentSelectionQueries";
-  contentSelected: Array<ContentsReturn>;
+  /** Get all contentSelected properties associated with the specified ContentSelectionInput */
+  contentSelected: ContentSelectedPropsReturn;
 };
 
-export type ContentSelectionQueriesContentSelectedArgs = {
+/** ContentSelection Queries */
+export type ContentSelectionQueriescontentSelectedArgs = {
   input: ContentSelectionInput;
 };
 
-export type ContentsReturn = {
-  __typename?: "ContentsReturn";
+/** Main structure of content selected return */
+export type ContentsSelectedReturn = {
+  __typename?: "ContentsSelectedReturn";
+  /** Message associated to Content */
+  Msg: Message;
+  /** Order is 1 when Content is selected for easy criterion, 2 when Content is selected for similar criterion and 3 when Content is selected for hard criterion */
+  Order: Scalars["IntID"];
+  /** Content P */
   P: Content;
+  /** Preferred is true when Content is the best option for learner, else false */
   Preferred: Scalars["Boolean"];
-  msg: Scalars["String"];
 };
 
 /** Content creation input data */
@@ -769,7 +818,7 @@ export type CreateGroupInput = {
 };
 
 /** KC creation input data */
-export type CreateKcInput = {
+export type CreateKCInput = {
   /** Unique string identifier */
   code: Scalars["String"];
   /** Domain associated with KC */
@@ -860,7 +909,7 @@ export type Domain = {
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** KCs associated with the domain */
-  kcs: Array<Kc>;
+  kcs: Array<KC>;
   /** Human readable identifier */
   label: Scalars["String"];
   /** Model States associated with domain */
@@ -872,7 +921,7 @@ export type Domain = {
 };
 
 /** Domain entity */
-export type DomainModelStatesArgs = {
+export type DomainmodelStatesArgs = {
   input: ModelStateConnectionInput;
 };
 
@@ -953,7 +1002,7 @@ export type GroupsConnection = Connection & {
 };
 
 /** KC / Knowledge Component Entity */
-export type Kc = {
+export type KC = {
   __typename?: "KC";
   /** Unique string identifier */
   code: Scalars["String"];
@@ -966,7 +1015,7 @@ export type Kc = {
   /** Human readable identifier */
   label: Scalars["String"];
   /** All relations of KC */
-  relations: Array<KcRelation>;
+  relations: Array<KCRelation>;
   /** Topics associated with the KC */
   topics: Array<Topic>;
   /** Date of last update */
@@ -974,7 +1023,7 @@ export type Kc = {
 };
 
 /** Relations between KCs */
-export type KcRelation = {
+export type KCRelation = {
   __typename?: "KCRelation";
   /** Custom Comment of KC Relation */
   comment?: Maybe<Scalars["String"]>;
@@ -985,20 +1034,20 @@ export type KcRelation = {
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** KC A */
-  kcA: Kc;
+  kcA: KC;
   /** KC A id */
   kcAId: Scalars["IntID"];
   /** KC B */
-  kcB: Kc;
+  kcB: KC;
   /** KC B id */
   kcBId: Scalars["IntID"];
   /** Custom Label of KC Relation */
   label?: Maybe<Scalars["String"]>;
   /** Type of relation */
-  type: KcRelationType;
+  type: KCRelationType;
 };
 
-export type KcRelationInput = {
+export type KCRelationInput = {
   /** Custom comment text */
   comment?: InputMaybe<Scalars["String"]>;
   /** KC A */
@@ -1008,24 +1057,33 @@ export type KcRelationInput = {
   /** Relation readable label */
   label?: InputMaybe<Scalars["String"]>;
   /** Type of KC Relation */
-  type: KcRelationType;
+  type: KCRelationType;
 };
 
 /** Type of KC Relationship */
-export const KcRelationType = {
-  Interact: "INTERACT",
-  Partof: "PARTOF",
-  Prerequisite: "PREREQUISITE",
+export const KCRelationType = {
+  INTERACT: "INTERACT",
+  PARTOF: "PARTOF",
+  PREREQUISITE: "PREREQUISITE",
 } as const;
 
-export type KcRelationType = typeof KcRelationType[keyof typeof KcRelationType];
+export type KCRelationType = typeof KCRelationType[keyof typeof KCRelationType];
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
   /** Nodes of the current page */
-  nodes: Array<Kc>;
+  nodes: Array<KC>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+/** Structure of message return in content selected */
+export type Message = {
+  __typename?: "Message";
+  /** Label of message of content selected */
+  label: Scalars["String"];
+  /** Text of message of content selected */
+  text: Scalars["String"];
 };
 
 /** Model State Entity */
@@ -1050,7 +1108,7 @@ export type ModelState = {
 
 /** Different types of Model State */
 export const ModelStateAlgorithm = {
-  Bkt: "BKT",
+  BKT: "BKT",
 } as const;
 
 export type ModelStateAlgorithm =
@@ -1120,7 +1178,7 @@ export type ModelStateOrderBy = {
    *
    * By default the states are ordered descendingly, showing the newer states first
    */
-  id?: InputMaybe<Order_By>;
+  id?: InputMaybe<ORDER_BY>;
 };
 
 /** Types/Categories of Model States */
@@ -1168,11 +1226,11 @@ export type Mutation = {
   updateModelState?: Maybe<Scalars["Void"]>;
 };
 
-export type MutationActionArgs = {
+export type MutationactionArgs = {
   data: ActionInput;
 };
 
-export type MutationUpdateModelStateArgs = {
+export type MutationupdateModelStateArgs = {
   input: UpdateModelStateInput;
 };
 
@@ -1183,12 +1241,12 @@ export type Node = {
 };
 
 /** Order ascendingly or descendingly */
-export const Order_By = {
-  Asc: "ASC",
-  Desc: "DESC",
+export const ORDER_BY = {
+  ASC: "ASC",
+  DESC: "DESC",
 } as const;
 
-export type Order_By = typeof Order_By[keyof typeof Order_By];
+export type ORDER_BY = typeof ORDER_BY[keyof typeof ORDER_BY];
 /** Paginated related information */
 export type PageInfo = {
   __typename?: "PageInfo";
@@ -1230,13 +1288,13 @@ export type Project = {
 };
 
 /** Project entity */
-export type ProjectActionsArgs = {
+export type ProjectactionsArgs = {
   filters?: InputMaybe<ProjectActionsFilter>;
   pagination: CursorConnectionArgs;
 };
 
 /** Project entity */
-export type ProjectContentArgs = {
+export type ProjectcontentArgs = {
   filters?: InputMaybe<ProjectContentFilter>;
   pagination: CursorConnectionArgs;
 };
@@ -1371,6 +1429,7 @@ export type Query = {
    * - If authenticated user has no permissions on the corresponding project it returns NULL.
    */
   contentByCode?: Maybe<Content>;
+  /** ContentSelection Query */
   contentSelection: ContentSelectionQueries;
   /** Authenticated user information */
   currentUser?: Maybe<User>;
@@ -1399,7 +1458,7 @@ export type Query = {
    *
    * If any of the specified identifiers is not found or forbidden, query fails
    */
-  kcs: Array<Kc>;
+  kcs: Array<KC>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1440,44 +1499,44 @@ export type Query = {
   users: Array<User>;
 };
 
-export type QueryContentArgs = {
+export type QuerycontentArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryContentByCodeArgs = {
+export type QuerycontentByCodeArgs = {
   code: Scalars["String"];
 };
 
-export type QueryDomainsArgs = {
+export type QuerydomainsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryGroupsArgs = {
+export type QuerygroupsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryKcsArgs = {
+export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryProjectArgs = {
+export type QueryprojectArgs = {
   code?: InputMaybe<Scalars["String"]>;
   id?: InputMaybe<Scalars["IntID"]>;
 };
 
-export type QueryProjectsArgs = {
+export type QueryprojectsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryTopicByCodeArgs = {
+export type QuerytopicByCodeArgs = {
   code: Scalars["String"];
 };
 
-export type QueryTopicsArgs = {
+export type QuerytopicsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryUsersArgs = {
+export type QueryusersArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
@@ -1485,6 +1544,21 @@ export type Subscription = {
   __typename?: "Subscription";
   /** Emits 'Hello World1', 'Hello World2', 'Hello World3', 'Hello World4' and 'Hello World5' */
   hello: Scalars["String"];
+};
+
+/** Structure of TableReturn for check result of criterion and further analysis */
+export type TableReturn = {
+  __typename?: "TableReturn";
+  /** Code of content */
+  contentCode?: Maybe<Scalars["String"]>;
+  /** Value of difficulty of content */
+  diff?: Maybe<Scalars["Float"]>;
+  /** Probability of success by average of KCs levels of the Content */
+  probSuccessAvg?: Maybe<Scalars["Float"]>;
+  /** Probability of success by multiplication of KCs levels of the Content */
+  probSuccessMult?: Maybe<Scalars["Float"]>;
+  /** Value of similarity of content */
+  sim?: Maybe<Scalars["Float"]>;
 };
 
 /** Topic entity */
@@ -1507,7 +1581,7 @@ export type Topic = {
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** KCs associated with the topic */
-  kcs: Array<Kc>;
+  kcs: Array<KC>;
   /** Human readable identifier */
   label: Scalars["String"];
   /**
@@ -1609,7 +1683,7 @@ export type UpdateGroupInput = {
   tags: Array<Scalars["String"]>;
 };
 
-export type UpdateKcInput = {
+export type UpdateKCInput = {
   /** Unique string identifier */
   code: Scalars["String"];
   /** Unique numeric identifier of the current KC */
@@ -1731,7 +1805,7 @@ export type User = {
 };
 
 /** User entity */
-export type UserModelStatesArgs = {
+export type UsermodelStatesArgs = {
   input: ModelStateConnectionInput;
 };
 
@@ -1742,9 +1816,9 @@ export const UserRole = {
    *
    * Most of the authorization logic is enabled
    */
-  Admin: "ADMIN",
+  ADMIN: "ADMIN",
   /** Default user role */
-  User: "USER",
+  USER: "USER",
 } as const;
 
 export type UserRole = typeof UserRole[keyof typeof UserRole];
@@ -1757,9 +1831,9 @@ export type UsersConnection = Connection & {
   pageInfo: PageInfo;
 };
 
-export type HelloQueryVariables = Exact<{ [key: string]: never }>;
+export type helloQueryVariables = Exact<{ [key: string]: never }>;
 
-export type HelloQuery = { __typename?: "Query"; hello: string };
+export type helloQuery = { __typename?: "Query"; hello: string };
 
 export type CreateActionMutationVariables = Exact<{
   data: ActionInput;
@@ -2039,11 +2113,11 @@ export type AllKcsFirst10Query = {
   };
 };
 
-export type CreateKcMutationVariables = Exact<{
-  data: CreateKcInput;
+export type CreateKCMutationVariables = Exact<{
+  data: CreateKCInput;
 }>;
 
-export type CreateKcMutation = {
+export type CreateKCMutation = {
   __typename?: "Mutation";
   adminDomain: {
     __typename?: "AdminDomainMutations";
@@ -2057,11 +2131,11 @@ export type CreateKcMutation = {
   };
 };
 
-export type UpdateKcMutationVariables = Exact<{
-  data: UpdateKcInput;
+export type UpdateKCMutationVariables = Exact<{
+  data: UpdateKCInput;
 }>;
 
-export type UpdateKcMutation = {
+export type UpdateKCMutation = {
   __typename?: "Mutation";
   adminDomain: {
     __typename?: "AdminDomainMutations";
@@ -2088,18 +2162,18 @@ export type ChecksKcsWithoutRelationsQuery = {
   }>;
 };
 
-export type SetKcRelationsMutationVariables = Exact<{
-  data: KcRelationInput;
+export type SetKCRelationsMutationVariables = Exact<{
+  data: KCRelationInput;
 }>;
 
-export type SetKcRelationsMutation = {
+export type SetKCRelationsMutation = {
   __typename?: "Mutation";
   adminDomain: {
     __typename?: "AdminDomainMutations";
     setKCRelation: {
       __typename?: "KCRelation";
       id: string;
-      type: KcRelationType;
+      type: KCRelationType;
       label?: string | null;
       comment?: string | null;
       kcA: { __typename?: "KC"; id: string };
@@ -2120,18 +2194,18 @@ export type ChecksKcsWithRelationsQuery = {
     relations: Array<{
       __typename?: "KCRelation";
       id: string;
-      type: KcRelationType;
+      type: KCRelationType;
       kcA: { __typename?: "KC"; id: string };
       kcB: { __typename?: "KC"; id: string };
     }>;
   }>;
 };
 
-export type UnsetKcRelationsMutationVariables = Exact<{
-  data: KcRelationInput;
+export type UnsetKCRelationsMutationVariables = Exact<{
+  data: KCRelationInput;
 }>;
 
-export type UnsetKcRelationsMutation = {
+export type UnsetKCRelationsMutation = {
   __typename?: "Mutation";
   adminDomain: {
     __typename?: "AdminDomainMutations";
@@ -2764,7 +2838,7 @@ export const UserGroupsInfoFragmentDoc = {
     ...GroupInfoFragmentDoc.definitions,
   ],
 } as unknown as DocumentNode<UserGroupsInfoFragment, unknown>;
-export const HelloDocument = {
+export const helloDocument = {
   kind: "Document",
   definitions: [
     {
@@ -2777,7 +2851,7 @@ export const HelloDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<HelloQuery, HelloQueryVariables>;
+} as unknown as DocumentNode<helloQuery, helloQueryVariables>;
 export const CreateActionDocument = {
   kind: "Document",
   definitions: [
@@ -3912,7 +3986,7 @@ export const AllKcsFirst10Document = {
     },
   ],
 } as unknown as DocumentNode<AllKcsFirst10Query, AllKcsFirst10QueryVariables>;
-export const CreateKcDocument = {
+export const CreateKCDocument = {
   kind: "Document",
   definitions: [
     {
@@ -3983,8 +4057,8 @@ export const CreateKcDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<CreateKcMutation, CreateKcMutationVariables>;
-export const UpdateKcDocument = {
+} as unknown as DocumentNode<CreateKCMutation, CreateKCMutationVariables>;
+export const UpdateKCDocument = {
   kind: "Document",
   definitions: [
     {
@@ -4055,7 +4129,7 @@ export const UpdateKcDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<UpdateKcMutation, UpdateKcMutationVariables>;
+} as unknown as DocumentNode<UpdateKCMutation, UpdateKCMutationVariables>;
 export const ChecksKcsWithoutRelationsDocument = {
   kind: "Document",
   definitions: [
@@ -4123,7 +4197,7 @@ export const ChecksKcsWithoutRelationsDocument = {
   ChecksKcsWithoutRelationsQuery,
   ChecksKcsWithoutRelationsQueryVariables
 >;
-export const SetKcRelationsDocument = {
+export const SetKCRelationsDocument = {
   kind: "Document",
   definitions: [
     {
@@ -4212,8 +4286,8 @@ export const SetKcRelationsDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  SetKcRelationsMutation,
-  SetKcRelationsMutationVariables
+  SetKCRelationsMutation,
+  SetKCRelationsMutationVariables
 >;
 export const ChecksKcsWithRelationsDocument = {
   kind: "Document",
@@ -4309,7 +4383,7 @@ export const ChecksKcsWithRelationsDocument = {
   ChecksKcsWithRelationsQuery,
   ChecksKcsWithRelationsQueryVariables
 >;
-export const UnsetKcRelationsDocument = {
+export const UnsetKCRelationsDocument = {
   kind: "Document",
   definitions: [
     {
@@ -4360,8 +4434,8 @@ export const UnsetKcRelationsDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  UnsetKcRelationsMutation,
-  UnsetKcRelationsMutationVariables
+  UnsetKCRelationsMutation,
+  UnsetKCRelationsMutationVariables
 >;
 export const AdminCreateProjectDocument = {
   kind: "Document",

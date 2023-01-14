@@ -119,7 +119,7 @@ export type ContentSelectionQueries = {
 };
 
 /** ContentSelection Queries */
-export type ContentSelectionQueriesContentSelectedArgs = {
+export type ContentSelectionQueriescontentSelectedArgs = {
   input: ContentSelectionInput;
 };
 
@@ -194,8 +194,12 @@ export type Node = {
 };
 
 /** Order ascendingly or descendingly */
-export type Order_By = "ASC" | "DESC";
+export const ORDER_BY = {
+  ASC: "ASC",
+  DESC: "DESC",
+} as const;
 
+export type ORDER_BY = typeof ORDER_BY[keyof typeof ORDER_BY];
 /** Paginated related information */
 export type PageInfo = {
   __typename?: "PageInfo";
@@ -358,7 +362,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Node: never;
   NonNegativeInt: ResolverTypeWrapper<Scalars["NonNegativeInt"]>;
-  ORDER_BY: Order_By;
+  ORDER_BY: ORDER_BY;
   PageInfo: ResolverTypeWrapper<PageInfo>;
   Query: ResolverTypeWrapper<{}>;
   Subscription: ResolverTypeWrapper<{}>;
@@ -466,7 +470,7 @@ export type ContentSelectionQueriesResolvers<
     ResolversTypes["ContentSelectedPropsReturn"],
     ParentType,
     ContextType,
-    RequireFields<ContentSelectionQueriesContentSelectedArgs, "input">
+    RequireFields<ContentSelectionQueriescontentSelectedArgs, "input">
   >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -492,17 +496,17 @@ export interface EmailAddressScalarConfig
   name: "EmailAddress";
 }
 
-export interface IntIdScalarConfig
+export interface IntIDScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["IntID"], any> {
   name: "IntID";
 }
 
-export interface JsonScalarConfig
+export interface JSONScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["JSON"], any> {
   name: "JSON";
 }
 
-export interface JsonObjectScalarConfig
+export interface JSONObjectScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["JSONObject"], any> {
   name: "JSONObject";
 }
@@ -612,7 +616,7 @@ export interface TimestampScalarConfig
   name: "Timestamp";
 }
 
-export interface UrlScalarConfig
+export interface URLScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["URL"], any> {
   name: "URL";
 }
