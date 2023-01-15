@@ -38,6 +38,11 @@ export const subSchemas = [
   ["projects", GetSchema(import("../../services/projects/src/app"))],
   ["state", GetSchema(import("../../services/state/src/app"))],
   ["users", GetSchema(import("../../services/users/src/app"))],
+  ["model", GetSchema(import("../../services/model/src/app"))],
+  [
+    "contentSelection",
+    GetSchema(import("../../services/contentSelection/src/app")),
+  ],
 ] as const;
 
 export const schema = lexicographicSortSchema(

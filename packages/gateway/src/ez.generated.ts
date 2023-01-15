@@ -696,6 +696,76 @@ export type ContentConnection = Connection & {
   pageInfo: PageInfo;
 };
 
+/** Return selected content and properties for further analysis (model, codes of content, probabilities and tables) */
+export type ContentSelectedPropsReturn = {
+  __typename?: "ContentSelectedPropsReturn";
+  /** All code of contents of last N contents done */
+  PU: Array<Scalars["String"]>;
+  /** Content selected for learner */
+  contentResult: Array<ContentsSelectedReturn>;
+  /** Model structure of learner composed for KC level and KC threshold */
+  model: Scalars["JSON"];
+  /** All codes of contents without last N contents and content dominated */
+  newP: Array<Scalars["String"]>;
+  /** All codes of contents of topic chapters */
+  oldP: Array<Scalars["String"]>;
+  /** Probability of success by average PK of exercise most difficult */
+  pAVGdif: Scalars["Float"];
+  /** Probability of success by average PK of exercise most similar */
+  pAVGsim: Scalars["Float"];
+  /** table of newP with TableReturn attributes */
+  table: Array<TableReturn>;
+  /** table filter with similarity less than 1 and difficulty less than difficulty of last content done (PU[0]) */
+  tableDifEasy: Array<TableReturn>;
+  /** table filter with similarity less than 1 and difficulty greater than difficulty of last content done (PU[0]) */
+  tableDifHarder: Array<TableReturn>;
+  /** table filter with similarity equals to 1 */
+  tableSim: Array<TableReturn>;
+  /** Return message of service */
+  topicCompletedMsg: Message;
+};
+
+/** ContentSelection input data */
+export type ContentSelectionInput = {
+  /** Discard last N contents done (optional in query), default N= 10 */
+  discardLast?: Scalars["Int"];
+  /** Domain identifier */
+  domainId: Scalars["IntID"];
+  /** Project identifier */
+  projectId: Scalars["IntID"];
+  /** Topic identifier */
+  topicId: Array<Scalars["IntID"]>;
+  /** User identifier */
+  userId: Scalars["IntID"];
+  /** Range Zone proximal development(ZPD) (optional in query), default [0.4,0.6] */
+  zpdRange?: InputMaybe<Array<Scalars["Float"]>>;
+};
+
+/** ContentSelection Queries */
+export type ContentSelectionQueries = {
+  __typename?: "ContentSelectionQueries";
+  /** Get all contentSelected properties associated with the specified ContentSelectionInput */
+  contentSelected: ContentSelectedPropsReturn;
+};
+
+/** ContentSelection Queries */
+export type ContentSelectionQueriescontentSelectedArgs = {
+  input: ContentSelectionInput;
+};
+
+/** Main structure of content selected return */
+export type ContentsSelectedReturn = {
+  __typename?: "ContentsSelectedReturn";
+  /** Message associated to Content */
+  Msg: Message;
+  /** Order is 1 when Content is selected for easy criterion, 2 when Content is selected for similar criterion and 3 when Content is selected for hard criterion */
+  Order: Scalars["IntID"];
+  /** Content P */
+  P: Content;
+  /** Preferred is true when Content is the best option for learner, else false */
+  Preferred: Scalars["Boolean"];
+};
+
 /** Content creation input data */
 export type CreateContent = {
   /**
@@ -1022,6 +1092,15 @@ export type KCsConnection = Connection & {
   pageInfo: PageInfo;
 };
 
+/** Structure of message return in content selected */
+export type Message = {
+  __typename?: "Message";
+  /** Label of message of content selected */
+  label: Scalars["String"];
+  /** Text of message of content selected */
+  text: Scalars["String"];
+};
+
 /** Model State Entity */
 export type ModelState = {
   __typename?: "ModelState";
@@ -1031,7 +1110,6 @@ export type ModelState = {
   creator: Scalars["String"];
   /** Domain associated with Model State */
   domain: Domain;
-  /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Arbitrary JSON Data */
   json: Scalars["JSON"];
@@ -1043,6 +1121,13 @@ export type ModelState = {
   user: User;
 };
 
+/** Different types of Model State */
+export const ModelStateAlgorithm = {
+  BKT: "BKT",
+} as const;
+
+export type ModelStateAlgorithm =
+  typeof ModelStateAlgorithm[keyof typeof ModelStateAlgorithm];
 /** Paginated Model States */
 export type ModelStateConnection = Connection & {
   __typename?: "ModelStateConnection";
@@ -1152,10 +1237,16 @@ export type Mutation = {
   adminUsers: AdminUserMutations;
   /** Returns 'Hello World!' */
   hello: Scalars["String"];
+  /** Update model state with new state */
+  updateModelState?: Maybe<Scalars["Void"]>;
 };
 
 export type MutationactionArgs = {
   data: ActionInput;
+};
+
+export type MutationupdateModelStateArgs = {
+  input: UpdateModelStateInput;
 };
 
 /** Minimum Entity Information */
@@ -1353,6 +1444,8 @@ export type Query = {
    * - If authenticated user has no permissions on the corresponding project it returns NULL.
    */
   contentByCode?: Maybe<Content>;
+  /** ContentSelection Query */
+  contentSelection: ContentSelectionQueries;
   /** Authenticated user information */
   currentUser?: Maybe<User>;
   /**
@@ -1466,6 +1559,21 @@ export type Subscription = {
   __typename?: "Subscription";
   /** Emits 'Hello World1', 'Hello World2', 'Hello World3', 'Hello World4' and 'Hello World5' */
   hello: Scalars["String"];
+};
+
+/** Structure of TableReturn for check result of criterion and further analysis */
+export type TableReturn = {
+  __typename?: "TableReturn";
+  /** Code of content */
+  contentCode?: Maybe<Scalars["String"]>;
+  /** Value of difficulty of content */
+  diff?: Maybe<Scalars["Float"]>;
+  /** Probability of success by average of KCs levels of the Content */
+  probSuccessAvg?: Maybe<Scalars["Float"]>;
+  /** Probability of success by multiplication of KCs levels of the Content */
+  probSuccessMult?: Maybe<Scalars["Float"]>;
+  /** Value of similarity of content */
+  sim?: Maybe<Scalars["Float"]>;
 };
 
 /** Topic entity */
@@ -1597,6 +1705,13 @@ export type UpdateKCInput = {
   id: Scalars["IntID"];
   /** Human readable identifier */
   label: Scalars["String"];
+};
+
+/** Input to update model state */
+export type UpdateModelStateInput = {
+  domainID: Scalars["IntID"];
+  typeModel: ModelStateAlgorithm;
+  userID: Scalars["IntID"];
 };
 
 /** Project update input data */
@@ -1873,6 +1988,11 @@ export type ResolversTypes = {
   Content: ResolverTypeWrapper<Content>;
   Int: ResolverTypeWrapper<Scalars["Int"]>;
   ContentConnection: ResolverTypeWrapper<ContentConnection>;
+  ContentSelectedPropsReturn: ResolverTypeWrapper<ContentSelectedPropsReturn>;
+  ContentSelectionInput: ContentSelectionInput;
+  ContentSelectionQueries: ResolverTypeWrapper<ContentSelectionQueries>;
+  ContentsSelectedReturn: ResolverTypeWrapper<ContentsSelectedReturn>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -1886,7 +2006,6 @@ export type ResolversTypes = {
   EmailAddress: ResolverTypeWrapper<Scalars["EmailAddress"]>;
   Group: ResolverTypeWrapper<Group>;
   GroupFlags: ResolverTypeWrapper<GroupFlags>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   GroupFlagsInput: GroupFlagsInput;
   GroupsConnection: ResolverTypeWrapper<GroupsConnection>;
   IntID: ResolverTypeWrapper<Scalars["IntID"]>;
@@ -1897,7 +2016,9 @@ export type ResolversTypes = {
   KCRelationInput: KCRelationInput;
   KCRelationType: KCRelationType;
   KCsConnection: ResolverTypeWrapper<KCsConnection>;
+  Message: ResolverTypeWrapper<Message>;
   ModelState: ResolverTypeWrapper<ModelState>;
+  ModelStateAlgorithm: ModelStateAlgorithm;
   ModelStateConnection: ResolverTypeWrapper<ModelStateConnection>;
   ModelStateConnectionInput: ModelStateConnectionInput;
   ModelStateCreator: ResolverTypeWrapper<ModelStateCreator>;
@@ -1917,6 +2038,7 @@ export type ResolversTypes = {
   ProjectsConnection: ResolverTypeWrapper<ProjectsConnection>;
   Query: ResolverTypeWrapper<{}>;
   Subscription: ResolverTypeWrapper<{}>;
+  TableReturn: ResolverTypeWrapper<TableReturn>;
   Timestamp: ResolverTypeWrapper<Scalars["Timestamp"]>;
   Topic: ResolverTypeWrapper<Topic>;
   TopicsConnection: ResolverTypeWrapper<TopicsConnection>;
@@ -1925,6 +2047,7 @@ export type ResolversTypes = {
   UpdateDomain: UpdateDomain;
   UpdateGroupInput: UpdateGroupInput;
   UpdateKCInput: UpdateKCInput;
+  UpdateModelStateInput: UpdateModelStateInput;
   UpdateProject: UpdateProject;
   UpdateTopic: UpdateTopic;
   UpdateUserInput: UpdateUserInput;
@@ -1978,6 +2101,11 @@ export type ResolversParentTypes = {
   Content: Content;
   Int: Scalars["Int"];
   ContentConnection: ContentConnection;
+  ContentSelectedPropsReturn: ContentSelectedPropsReturn;
+  ContentSelectionInput: ContentSelectionInput;
+  ContentSelectionQueries: ContentSelectionQueries;
+  ContentsSelectedReturn: ContentsSelectedReturn;
+  Boolean: Scalars["Boolean"];
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -1991,7 +2119,6 @@ export type ResolversParentTypes = {
   EmailAddress: Scalars["EmailAddress"];
   Group: Group;
   GroupFlags: GroupFlags;
-  Boolean: Scalars["Boolean"];
   GroupFlagsInput: GroupFlagsInput;
   GroupsConnection: GroupsConnection;
   IntID: Scalars["IntID"];
@@ -2001,6 +2128,7 @@ export type ResolversParentTypes = {
   KCRelation: KCRelation;
   KCRelationInput: KCRelationInput;
   KCsConnection: KCsConnection;
+  Message: Message;
   ModelState: ModelState;
   ModelStateConnection: ModelStateConnection;
   ModelStateConnectionInput: ModelStateConnectionInput;
@@ -2020,6 +2148,7 @@ export type ResolversParentTypes = {
   ProjectsConnection: ProjectsConnection;
   Query: {};
   Subscription: {};
+  TableReturn: TableReturn;
   Timestamp: Scalars["Timestamp"];
   Topic: Topic;
   TopicsConnection: TopicsConnection;
@@ -2028,6 +2157,7 @@ export type ResolversParentTypes = {
   UpdateDomain: UpdateDomain;
   UpdateGroupInput: UpdateGroupInput;
   UpdateKCInput: UpdateKCInput;
+  UpdateModelStateInput: UpdateModelStateInput;
   UpdateProject: UpdateProject;
   UpdateTopic: UpdateTopic;
   UpdateUserInput: UpdateUserInput;
@@ -2413,6 +2543,73 @@ export type ContentConnectionResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ContentSelectedPropsReturnResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ContentSelectedPropsReturn"] = ResolversParentTypes["ContentSelectedPropsReturn"]
+> = {
+  PU?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  contentResult?: Resolver<
+    Array<ResolversTypes["ContentsSelectedReturn"]>,
+    ParentType,
+    ContextType
+  >;
+  model?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  newP?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  oldP?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  pAVGdif?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  pAVGsim?: Resolver<ResolversTypes["Float"], ParentType, ContextType>;
+  table?: Resolver<
+    Array<ResolversTypes["TableReturn"]>,
+    ParentType,
+    ContextType
+  >;
+  tableDifEasy?: Resolver<
+    Array<ResolversTypes["TableReturn"]>,
+    ParentType,
+    ContextType
+  >;
+  tableDifHarder?: Resolver<
+    Array<ResolversTypes["TableReturn"]>,
+    ParentType,
+    ContextType
+  >;
+  tableSim?: Resolver<
+    Array<ResolversTypes["TableReturn"]>,
+    ParentType,
+    ContextType
+  >;
+  topicCompletedMsg?: Resolver<
+    ResolversTypes["Message"],
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContentSelectionQueriesResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ContentSelectionQueries"] = ResolversParentTypes["ContentSelectionQueries"]
+> = {
+  contentSelected?: Resolver<
+    ResolversTypes["ContentSelectedPropsReturn"],
+    ParentType,
+    ContextType,
+    RequireFields<ContentSelectionQueriescontentSelectedArgs, "input">
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ContentsSelectedReturnResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ContentsSelectedReturn"] = ResolversParentTypes["ContentsSelectedReturn"]
+> = {
+  Msg?: Resolver<ResolversTypes["Message"], ParentType, ContextType>;
+  Order?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  P?: Resolver<ResolversTypes["Content"], ParentType, ContextType>;
+  Preferred?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["DateTime"], any> {
   name: "DateTime";
@@ -2570,6 +2767,15 @@ export type KCsConnectionResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MessageResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Message"] = ResolversParentTypes["Message"]
+> = {
+  label?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  text?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ModelStateResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["ModelState"] = ResolversParentTypes["ModelState"]
@@ -2677,6 +2883,12 @@ export type MutationResolvers<
     ContextType
   >;
   hello?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  updateModelState?: Resolver<
+    Maybe<ResolversTypes["Void"]>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationupdateModelStateArgs, "input">
+  >;
 };
 
 export type NodeResolvers<
@@ -2796,6 +3008,11 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerycontentByCodeArgs, "code">
   >;
+  contentSelection?: Resolver<
+    ResolversTypes["ContentSelectionQueries"],
+    ParentType,
+    ContextType
+  >;
   currentUser?: Resolver<
     Maybe<ResolversTypes["User"]>,
     ParentType,
@@ -2862,6 +3079,30 @@ export type SubscriptionResolvers<
     ParentType,
     ContextType
   >;
+};
+
+export type TableReturnResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["TableReturn"] = ResolversParentTypes["TableReturn"]
+> = {
+  contentCode?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  diff?: Resolver<Maybe<ResolversTypes["Float"]>, ParentType, ContextType>;
+  probSuccessAvg?: Resolver<
+    Maybe<ResolversTypes["Float"]>,
+    ParentType,
+    ContextType
+  >;
+  probSuccessMult?: Resolver<
+    Maybe<ResolversTypes["Float"]>,
+    ParentType,
+    ContextType
+  >;
+  sim?: Resolver<Maybe<ResolversTypes["Float"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export interface TimestampScalarConfig
@@ -2973,6 +3214,9 @@ export type Resolvers<ContextType = EZContext> = {
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;
+  ContentSelectedPropsReturn?: ContentSelectedPropsReturnResolvers<ContextType>;
+  ContentSelectionQueries?: ContentSelectionQueriesResolvers<ContextType>;
+  ContentsSelectedReturn?: ContentsSelectedReturnResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Domain?: DomainResolvers<ContextType>;
   DomainsConnection?: DomainsConnectionResolvers<ContextType>;
@@ -2986,6 +3230,7 @@ export type Resolvers<ContextType = EZContext> = {
   KC?: KCResolvers<ContextType>;
   KCRelation?: KCRelationResolvers<ContextType>;
   KCsConnection?: KCsConnectionResolvers<ContextType>;
+  Message?: MessageResolvers<ContextType>;
   ModelState?: ModelStateResolvers<ContextType>;
   ModelStateConnection?: ModelStateConnectionResolvers<ContextType>;
   ModelStateCreator?: ModelStateCreatorResolvers<ContextType>;
@@ -3000,6 +3245,7 @@ export type Resolvers<ContextType = EZContext> = {
   ProjectsConnection?: ProjectsConnectionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
+  TableReturn?: TableReturnResolvers<ContextType>;
   Timestamp?: GraphQLScalarType;
   Topic?: TopicResolvers<ContextType>;
   TopicsConnection?: TopicsConnectionResolvers<ContextType>;
