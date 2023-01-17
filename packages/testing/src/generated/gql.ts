@@ -91,7 +91,7 @@ const documents = {
     types.AdminProjectFromGroupDocument,
   "\n      query AllStatesTest {\n        adminState {\n          allModelStates(input: { pagination: { first: 10 } }) {\n            pageInfo {\n              hasNextPage\n            }\n            nodes {\n              id\n              json\n              creator\n              type\n              user {\n                id\n              }\n              domain {\n                id\n              }\n            }\n          }\n        }\n      }\n    ":
     types.AllStatesTestDocument,
-  "\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n      }\n    }\n  }\n":
+  "\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n        emailAliases\n      }\n    }\n  }\n":
     types.SetEmailAliasesDocument,
   "\n  fragment UserInfo on User {\n    id\n    email\n    name\n    locked\n    active\n    lastOnline\n    role\n    createdAt\n    updatedAt\n  }\n":
     types.UserInfoFragmentDoc,
@@ -383,8 +383,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n      }\n    }\n  }\n"
-): (typeof documents)["\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n      }\n    }\n  }\n"];
+  source: "\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n        emailAliases\n      }\n    }\n  }\n"
+): (typeof documents)["\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n        emailAliases\n      }\n    }\n  }\n"];
 export function gql(
   source: "\n  fragment UserInfo on User {\n    id\n    email\n    name\n    locked\n    active\n    lastOnline\n    role\n    createdAt\n    updatedAt\n  }\n"
 ): (typeof documents)["\n  fragment UserInfo on User {\n    id\n    email\n    name\n    locked\n    active\n    lastOnline\n    role\n    createdAt\n    updatedAt\n  }\n"];

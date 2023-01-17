@@ -368,6 +368,8 @@ type User {
   createdAt: DateTime!
   "Email Address"
   email: String!
+  "List of email aliases"
+  emailAliases: [String!]
   "Groups associated with the user"
   groups: [Group!]!
   "Unique numeric identifier"

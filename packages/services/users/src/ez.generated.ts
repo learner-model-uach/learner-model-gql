@@ -421,6 +421,8 @@ export type User = {
   createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
+  /** List of email aliases */
+  emailAliases?: Maybe<Array<Scalars["String"]>>;
   /** Groups associated with the user */
   groups: Array<Group>;
   /** Unique numeric identifier */
@@ -918,6 +920,11 @@ export type UserResolvers<
   active?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  emailAliases?: Resolver<
+    Maybe<Array<ResolversTypes["String"]>>,
+    ParentType,
+    ContextType
+  >;
   groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   lastOnline?: Resolver<

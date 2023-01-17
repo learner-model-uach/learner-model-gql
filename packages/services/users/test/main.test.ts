@@ -31,6 +31,7 @@ gql(/* GraphQL */ `
     adminUsers {
       setEmailAliases(list: $list) {
         email
+        emailAliases
       }
     }
   }
@@ -97,9 +98,11 @@ describe("Users service", () => {
       expectDeepEqual(setEmailAliases, [
         {
           email: "test@gmail.com",
+          emailAliases: ["alias1@gmail.com", "alias2@gmail.com"],
         },
         {
           email: "test2@gmail.com",
+          emailAliases: ["foo@gmail.com"],
         },
       ]);
     }
@@ -125,9 +128,11 @@ describe("Users service", () => {
       expectDeepEqual(setEmailAliases, [
         {
           email: "test@gmail.com",
+          emailAliases: ["alias1@gmail.com"],
         },
         {
           email: "test2@gmail.com",
+          emailAliases: ["foo@gmail.com"],
         },
       ]);
     }

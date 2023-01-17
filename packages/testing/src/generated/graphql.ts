@@ -1786,6 +1786,8 @@ export type User = {
   createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
+  /** List of email aliases */
+  emailAliases?: Maybe<Array<Scalars["String"]>>;
   /** Groups associated with the user */
   groups: Array<Group>;
   /** Unique numeric identifier */
@@ -2399,7 +2401,11 @@ export type SetEmailAliasesMutation = {
   __typename?: "Mutation";
   adminUsers: {
     __typename?: "AdminUserMutations";
-    setEmailAliases: Array<{ __typename?: "User"; email: string }>;
+    setEmailAliases: Array<{
+      __typename?: "User";
+      email: string;
+      emailAliases?: Array<string> | null;
+    }>;
   };
 };
 
@@ -5202,6 +5208,10 @@ export const SetEmailAliasesDocument = {
                     kind: "SelectionSet",
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "email" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "emailAliases" },
+                      },
                     ],
                   },
                 },

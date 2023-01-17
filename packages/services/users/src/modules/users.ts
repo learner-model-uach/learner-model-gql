@@ -55,6 +55,9 @@ export const usersModule = registerModule(
       """
       tags: [String!]!
 
+      "List of email aliases"
+      emailAliases: [String!]
+
       "User role, by default is USER"
       role: UserRole!
 
@@ -183,6 +186,11 @@ export const usersModule = registerModule(
       User: {
         active({ lastOnline }) {
           return lastOnline != null;
+        },
+        emailAliases({ id: userId }, _args, { dataloaders }) {
+          return dataloaders.userEmailAliases.load({
+            userId,
+          });
         },
       },
       Mutation: {
