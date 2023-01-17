@@ -60,6 +60,7 @@ gql(/* GraphQL */ `
       code
       label
     }
+    emailAliases
   }
 `);
 
@@ -201,7 +202,13 @@ function EmailAliases() {
 
           const [userEmail, ...aliases] = row.split(",").map((v) => v.trim());
 
-          if (userEmail) acum.push({ userEmail, aliases });
+          if (userEmail)
+            acum.push({
+              userEmail,
+              aliases: aliases
+                .map((alias) => alias.trim())
+                .filter((alias) => !!alias.length),
+            });
 
           return acum;
         }, [])
@@ -210,7 +217,7 @@ function EmailAliases() {
 
   return (
     <FormModal
-      title="Email aliases"
+      title="Set email aliases"
       onSubmit={async () => {
         if (!list.length) return;
 
@@ -225,6 +232,9 @@ function EmailAliases() {
       saveButton={{
         isDisabled: isLoading || !list.length,
       }}
+      modalProps={{
+        size: "6xl",
+      }}
     >
       <FormControl>
         <FormLabel>Aliases List</FormLabel>
@@ -235,8 +245,32 @@ function EmailAliases() {
           }}
         />
         <FormHelperText>
-          List of emails separated by a new line, each alias after the email
-          separatted by a comma in the same row
+          List of emails separated by a new line, first email is target user,
+          and each alias is separated by a comma after the first email. <br />
+          <br />
+          For example:
+          <br />
+          <br />{" "}
+          <code>
+            pablosaez1995@gmail.com, pablo.saez@hotmail.com, pablo.saez@uach.cl{" "}
+            <br />
+            mallium@gmail.com, jguerra@inf.uach.cl
+          </code>
+          <br />
+          <br />
+          The email <b>pablosaez1995@gmail.com</b> has the aliases
+          <b>
+            <i> pablo.saez@hotmail.com </i>
+          </b>
+          and{" "}
+          <b>
+            <i>pablo.saez@uach.cl</i>
+          </b>
+          , <br />
+          and <b>mallium@gmail.com</b> has the alias{" "}
+          <b>
+            <i>jguerra@inf.uach.cl</i>
+          </b>
         </FormHelperText>
       </FormControl>
     </FormModal>
@@ -463,6 +497,18 @@ export default withAdminAuth(function UsersPage() {
                 return tagsSelect;
               }
               return tags.join(" | ");
+            },
+          },
+          {
+            id: "Email aliases",
+            Header: "Email aliases",
+            accessor: "emailAliases",
+            Cell({
+              row: {
+                original: { emailAliases },
+              },
+            }) {
+              return emailAliases?.join(" | ") || "";
             },
           },
           getDateRow({ id: "lastOnline", label: "Last Online" }),

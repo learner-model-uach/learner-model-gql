@@ -2826,6 +2826,7 @@ export type UserInfoFragment = {
   updatedAt: string;
   locked: boolean;
   tags: Array<string>;
+  emailAliases?: Array<string> | null;
   projects: Array<{
     __typename?: "Project";
     id: string;
@@ -2857,6 +2858,7 @@ export type AdminUsersQuery = {
         updatedAt: string;
         locked: boolean;
         tags: Array<string>;
+        emailAliases?: Array<string> | null;
         projects: Array<{
           __typename?: "Project";
           id: string;
@@ -2896,6 +2898,7 @@ export type UpsertUsersWithProjectsMutation = {
       updatedAt: string;
       locked: boolean;
       tags: Array<string>;
+      emailAliases?: Array<string> | null;
       projects: Array<{
         __typename?: "Project";
         id: string;
@@ -3310,6 +3313,7 @@ export const UserInfoFragmentDoc = {
               ],
             },
           },
+          { kind: "Field", name: { kind: "Name", value: "emailAliases" } },
         ],
       },
     },
