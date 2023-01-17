@@ -44,6 +44,15 @@ model User {
   actions Action[]
 
   modelStates ModelState[]
+
+  aliases UserEmailAlias[]
+}
+
+model UserEmailAlias {
+  email String @id
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model UserUID {
