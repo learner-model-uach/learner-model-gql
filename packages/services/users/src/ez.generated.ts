@@ -68,6 +68,8 @@ export type AdminUserMutations = {
   __typename?: "AdminUserMutations";
   /** Create a new group entity */
   createGroup: Group;
+  /** Set email aliases */
+  setEmailAliases: Array<User>;
   /** Set the projects of the specified users */
   setProjectsToUsers: Array<User>;
   /** Set the users (by email) associated with the groups */
@@ -83,6 +85,11 @@ export type AdminUserMutations = {
 /** Admin User-Related Queries */
 export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationssetEmailAliasesArgs = {
+  list: Array<EmailAliasInput>;
 };
 
 /** Admin User-Related Queries */
@@ -212,6 +219,14 @@ export type CursorConnectionArgs = {
    * It can't be more than 50
    */
   last?: InputMaybe<Scalars["NonNegativeInt"]>;
+};
+
+/** Input for email aliases of a specific user email */
+export type EmailAliasInput = {
+  /** List of email aliases */
+  aliases: Array<Scalars["EmailAddress"]>;
+  /** Email of user to have extra aliases */
+  userEmail: Scalars["EmailAddress"];
 };
 
 /**
@@ -570,6 +585,7 @@ export type ResolversTypes = {
   CursorConnectionArgs: CursorConnectionArgs;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>;
   EmailAddress: ResolverTypeWrapper<Scalars["EmailAddress"]>;
+  EmailAliasInput: EmailAliasInput;
   Group: ResolverTypeWrapper<Group>;
   GroupFlags: ResolverTypeWrapper<GroupFlags>;
   Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
@@ -609,6 +625,7 @@ export type ResolversParentTypes = {
   CursorConnectionArgs: CursorConnectionArgs;
   DateTime: Scalars["DateTime"];
   EmailAddress: Scalars["EmailAddress"];
+  EmailAliasInput: EmailAliasInput;
   Group: Group;
   GroupFlags: GroupFlags;
   Boolean: Scalars["Boolean"];
@@ -641,6 +658,12 @@ export type AdminUserMutationsResolvers<
     ParentType,
     ContextType,
     RequireFields<AdminUserMutationscreateGroupArgs, "data">
+  >;
+  setEmailAliases?: Resolver<
+    Array<ResolversTypes["User"]>,
+    ParentType,
+    ContextType,
+    RequireFields<AdminUserMutationssetEmailAliasesArgs, "list">
   >;
   setProjectsToUsers?: Resolver<
     Array<ResolversTypes["User"]>,
