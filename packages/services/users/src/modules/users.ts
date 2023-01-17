@@ -279,7 +279,6 @@ export const usersModule = registerModule(
           return pMap(
             list,
             async ({ userEmail, aliases }) => {
-              console.log("here");
               return prisma.user.update({
                 where: {
                   email: userEmail,

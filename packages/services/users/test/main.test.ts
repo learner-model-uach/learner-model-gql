@@ -5,6 +5,8 @@ import {
   gql,
   MockAuthUser,
   SetEmailAliasesDocument,
+  CurrentUserDocument,
+  generate,
 } from "testing";
 
 import {
@@ -66,7 +68,7 @@ describe("Users service", () => {
     await CheckGroups(testClient);
   });
 
-  it.only("setEmailAliases", async () => {
+  it("setEmailAliases", async () => {
     const { assertedQuery } = await UsersClient();
 
     const { authUser } = await CreateUser({
@@ -128,6 +130,45 @@ describe("Users service", () => {
           email: "test2@gmail.com",
         },
       ]);
+    }
+
+    {
+      const { currentUser } = await assertedQuery(CurrentUserDocument);
+
+      expectDeepEqual(currentUser?.email, authUser.email);
+    }
+
+    MockAuthUser.user = {
+      email: "test@gmail.com",
+      sub: generate(),
+    };
+
+    {
+      const { currentUser } = await assertedQuery(CurrentUserDocument);
+
+      expectDeepEqual(currentUser?.email, "test@gmail.com");
+    }
+
+    MockAuthUser.user = {
+      email: "foo@gmail.com",
+      sub: generate(),
+    };
+
+    {
+      const { currentUser } = await assertedQuery(CurrentUserDocument);
+
+      expectDeepEqual(currentUser?.email, "test2@gmail.com");
+    }
+
+    MockAuthUser.user = {
+      email: "alias1@gmail.com",
+      sub: generate(),
+    };
+
+    {
+      const { currentUser } = await assertedQuery(CurrentUserDocument);
+
+      expectDeepEqual(currentUser?.email, "test@gmail.com");
     }
   });
 });
