@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import {
   AdminUsersQuery,
+  EmailAliasInput,
   gql,
   useGQLMutation,
   useGQLQuery,
@@ -170,6 +171,78 @@ function UpsertUsers() {
   );
 }
 
+function EmailAliases() {
+  const [text, setText] = useState("");
+
+  const { mutateAsync, isLoading } = useGQLMutation(
+    gql(/* GraphQL */ `
+      mutation SetEmailAliases($list: [EmailAliasInput!]!) {
+        adminUsers {
+          setEmailAliases(list: $list) {
+            email
+          }
+        }
+      }
+    `),
+    {
+      async onSuccess() {
+        await queryClient.invalidateQueries();
+      },
+    }
+  );
+
+  const list = useMemo<EmailAliasInput[]>(() => {
+    return Array.from(
+      text
+        .trim()
+        .split(/\r\n|\n/g)
+        .reduce<Array<EmailAliasInput>>((acum, value) => {
+          const row = value.trim();
+
+          const [userEmail, ...aliases] = row.split(",").map((v) => v.trim());
+
+          if (userEmail) acum.push({ userEmail, aliases });
+
+          return acum;
+        }, [])
+    );
+  }, [text]);
+
+  return (
+    <FormModal
+      title="Email aliases"
+      onSubmit={async () => {
+        if (!list.length) return;
+
+        await mutateAsync({
+          list,
+        });
+      }}
+      triggerButton={{
+        colorScheme: "facebook",
+        leftIcon: <FaUsers />,
+      }}
+      saveButton={{
+        isDisabled: isLoading || !list.length,
+      }}
+    >
+      <FormControl>
+        <FormLabel>Aliases List</FormLabel>
+        <Textarea
+          value={text}
+          onChange={(ev) => {
+            setText(ev.target.value);
+          }}
+        />
+        <FormHelperText>
+          List of emails separated by a new line, each alias after the email
+          separatted by a comma in the same row
+        </FormHelperText>
+      </FormControl>
+    </FormModal>
+  );
+}
+
 export default withAdminAuth(function UsersPage() {
   const { pagination, prevPage, nextPage, pageInfo, resetPagination } =
     useCursorPagination();
@@ -229,6 +302,7 @@ export default withAdminAuth(function UsersPage() {
   return (
     <VStack>
       <UpsertUsers />
+      <EmailAliases />
       <DataTable<AdminUsersQuery["adminUsers"]["allUsers"]["nodes"][number]>
         data={data?.adminUsers.allUsers.nodes || []}
         prevPage={prevPage}

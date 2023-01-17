@@ -531,6 +531,8 @@ export type AdminUserMutations = {
   __typename?: "AdminUserMutations";
   /** Create a new group entity */
   createGroup: Group;
+  /** Set email aliases */
+  setEmailAliases: Array<User>;
   /** Set the projects of the specified users */
   setProjectsToUsers: Array<User>;
   /** Set the users (by email) associated with the groups */
@@ -546,6 +548,11 @@ export type AdminUserMutations = {
 /** Admin User-Related Queries */
 export type AdminUserMutationsCreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsSetEmailAliasesArgs = {
+  list: Array<EmailAliasInput>;
 };
 
 /** Admin User-Related Queries */
@@ -932,6 +939,14 @@ export type DomainsConnection = Connection & {
   nodes: Array<Domain>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+/** Input for email aliases of a specific user email */
+export type EmailAliasInput = {
+  /** List of email aliases */
+  aliases: Array<Scalars["EmailAddress"]>;
+  /** Email of user to have extra aliases */
+  userEmail: Scalars["EmailAddress"];
 };
 
 /**
@@ -2886,6 +2901,18 @@ export type UpsertUsersWithProjectsMutation = {
         label: string;
       }>;
     }>;
+  };
+};
+
+export type SetEmailAliasesMutationVariables = Exact<{
+  list: Array<EmailAliasInput> | EmailAliasInput;
+}>;
+
+export type SetEmailAliasesMutation = {
+  __typename?: "Mutation";
+  adminUsers: {
+    __typename?: "AdminUserMutations";
+    setEmailAliases: Array<{ __typename?: "User"; email: string }>;
   };
 };
 
@@ -5772,6 +5799,72 @@ export const UpsertUsersWithProjectsDocument = {
 } as unknown as DocumentNode<
   UpsertUsersWithProjectsMutation,
   UpsertUsersWithProjectsMutationVariables
+>;
+export const SetEmailAliasesDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "SetEmailAliases" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "list" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "EmailAliasInput" },
+                },
+              },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminUsers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "setEmailAliases" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "list" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "list" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  SetEmailAliasesMutation,
+  SetEmailAliasesMutationVariables
 >;
 export const UpdateUserDocument = {
   kind: "Document",
