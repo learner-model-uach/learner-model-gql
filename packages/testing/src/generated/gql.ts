@@ -385,6 +385,9 @@ export function gql(
 export function gql(
   source: "\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n        emailAliases\n      }\n    }\n  }\n"
 ): (typeof documents)["\n  mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n    adminUsers {\n      setEmailAliases(list: $list) {\n        email\n        emailAliases\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(
   source: "\n  fragment UserInfo on User {\n    id\n    email\n    name\n    locked\n    active\n    lastOnline\n    role\n    createdAt\n    updatedAt\n  }\n"
 ): (typeof documents)["\n  fragment UserInfo on User {\n    id\n    email\n    name\n    locked\n    active\n    lastOnline\n    role\n    createdAt\n    updatedAt\n  }\n"];
