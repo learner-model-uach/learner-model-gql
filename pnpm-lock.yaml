@@ -27,7 +27,7 @@ importers:
       '@types/lodash-es': ^4.17.6
       '@types/mocha': ^10.0.0
       '@types/node': ^18.8.3
-      '@types/prettier': ^2.7.1
+      '@types/prettier': ^2.7.2
       '@types/randomstring': ^1.1.8
       '@types/react': ^17.0.50
       '@types/wait-on': ^5.3.1
@@ -51,20 +51,20 @@ importers:
       lodash: ^4.17.21
       lodash-es: ^4.17.21
       mocha: ^10.0.0
-      prettier: ^2.7.1
+      prettier: ^2.8.3
       pretty-quick: ^3.1.3
       randomstring: ^1.2.2
       react: ^17.0.2
       rimraf: ^3.0.2
       testing: workspace:0.0.1
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       undici: ^5.11.0
       valtio: 1.7.1
       wait-on: ^6.0.1
     dependencies:
       '@graphql-ez/fastify': 0.11.0_7y7jrcivtsetnsc3vptiam2ega
       api-base: link:packages/api-base
-      bob-tsm: 1.1.2_5q3fyz5bjtea3po22ds7wgriri
+      bob-tsm: 1.1.2_jealyotpj32sn3qpmwcjsmld4u
       common: link:packages/common
       common-api: link:packages/common-api
       dotenv: 16.0.3
@@ -84,7 +84,7 @@ importers:
       '@types/lodash-es': 4.17.6
       '@types/mocha': 10.0.0
       '@types/node': 18.8.3
-      '@types/prettier': 2.7.1
+      '@types/prettier': 2.7.2
       '@types/randomstring': 1.1.8
       '@types/react': 17.0.50
       '@types/wait-on': 5.3.1
@@ -96,13 +96,13 @@ importers:
       husky: 8.0.1
       json5: 2.2.1
       mocha: 10.0.0
-      prettier: 2.7.1
-      pretty-quick: 3.1.3_prettier@2.7.1
+      prettier: 2.8.3
+      pretty-quick: 3.1.3_prettier@2.8.3
       randomstring: 1.2.2
       react: 17.0.2
       rimraf: 3.0.2
       testing: link:packages/testing
-      typescript: 4.8.4
+      typescript: 4.9.4
       valtio: 1.7.1_react@17.0.2
       wait-on: 6.0.1
 
@@ -131,7 +131,7 @@ importers:
       pino-pretty: ^9.1.1
       react: ^17.0.2
       serialize-error: ^11.0.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       validator: ^13.7.0
       wait-on: ^6.0.1
     dependencies:
@@ -161,7 +161,7 @@ importers:
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
       react: 17.0.2
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/client-admin:
     specifiers:
@@ -200,7 +200,7 @@ importers:
       react-use: ^17.4.0
       rq-gql: ^0.5.0
       serialize-error: ^11.0.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       use-immer: ^0.7.0
       valtio: 1.7.1
     devDependencies:
@@ -239,7 +239,7 @@ importers:
       react-use: 17.4.0_sfoxds7t5ydpegc3knd667wn6m
       rq-gql: 0.5.0_6etfz7qhs2svjpm456jxtjojfq
       serialize-error: 11.0.0
-      typescript: 4.8.4
+      typescript: 4.9.4
       use-immer: 0.7.0_immer@9.0.15+react@17.0.2
       valtio: 1.7.1_react@17.0.2
 
@@ -249,14 +249,14 @@ importers:
       date-fns: ^2.29.3
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       date-fns: 2.29.3
     devDependencies:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/common-api:
     specifiers:
@@ -268,7 +268,7 @@ importers:
       pino-pretty: ^9.1.1
       require-env-variable: ^4.0.1
       serialize-error: ^11.0.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       zod: ^3.19.1
     dependencies:
       common: link:../common
@@ -281,7 +281,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/db:
     specifiers:
@@ -300,7 +300,7 @@ importers:
       pg-gql-pubsub: ^0.4.1
       prisma: ^4.7.1
       prisma-dbml-generator: 0.9.1
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       validator: ^13.7.0
     dependencies:
       '@graphql-ez/utils': 0.1.4_5stvgedl36bc3tcgqzqdj5yobu
@@ -320,7 +320,7 @@ importers:
       open: 8.4.0
       prisma: 4.7.1
       prisma-dbml-generator: 0.9.1
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/gateway:
     specifiers:
@@ -351,7 +351,7 @@ importers:
       lodash: ^4.17.21
       ms: ^3.0.0-canary.1
       pg-gql-pubsub: ^0.4.1
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       undici: ^5.11.0
       wait-on: ^6.0.1
       ws: ^8.9.0
@@ -387,7 +387,7 @@ importers:
       concurrently: 7.4.0
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/graph:
     specifiers:
@@ -403,17 +403,17 @@ importers:
       common: workspace:^0.0.1
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      prettier: ^2.7.1
+      prettier: ^2.8.3
       react: ^17.0.2
       react-query: ^3.39.2
       rq-gql: ^0.5.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
       valtio: 1.7.1
     dependencies:
       common: link:../common
       graphql: 16.6.0
     devDependencies:
-      '@graphql-codegen/cli': 2.13.5_tnaf74wmlgpupobavat5znxqjy
+      '@graphql-codegen/cli': 2.13.5_2vkk242rsu5oremxxhgyu6jwda
       '@graphql-codegen/core': 2.6.2_graphql@16.6.0
       '@graphql-codegen/typed-document-node': 2.3.3_graphql@16.6.0
       '@graphql-codegen/typescript': 2.7.3_graphql@16.6.0
@@ -423,11 +423,11 @@ importers:
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
       '@types/node': 18.8.3
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      prettier: 2.7.1
+      prettier: 2.8.3
       react: 17.0.2
       react-query: 3.39.2_react@17.0.2
       rq-gql: 0.5.0_6etfz7qhs2svjpm456jxtjojfq
-      typescript: 4.8.4
+      typescript: 4.9.4
       valtio: 1.7.1_react@17.0.2
 
   packages/mono:
@@ -445,7 +445,7 @@ importers:
       fastify: ^4.10.2
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       '@graphql-ez/plugin-altair': 0.9.12_r43wz5xfbpqwfv6oxadssnj7tq
       '@graphql-ez/plugin-modules': 0.11.1_r43wz5xfbpqwfv6oxadssnj7tq
@@ -454,14 +454,14 @@ importers:
       '@graphql-tools/stitch': 8.7.13_graphql@16.6.0
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       api-base: link:../api-base
-      bob-tsm: 1.1.2_5q3fyz5bjtea3po22ds7wgriri
+      bob-tsm: 1.1.2_jealyotpj32sn3qpmwcjsmld4u
       esbuild: 0.15.10
       fastify: 4.10.2
     devDependencies:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/actions:
     specifiers:
@@ -470,7 +470,7 @@ importers:
       db: workspace:^0.0.1
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -478,7 +478,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/content:
     specifiers:
@@ -489,7 +489,7 @@ importers:
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
       mime: ^3.0.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -499,7 +499,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/contentSelection:
     specifiers:
@@ -516,7 +516,7 @@ importers:
       db: workspace:^0.0.1
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -524,7 +524,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/model:
     specifiers:
@@ -541,7 +541,7 @@ importers:
       db: workspace:^0.0.1
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -549,7 +549,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/state:
     specifiers:
@@ -558,7 +558,7 @@ importers:
       db: workspace:^0.0.1
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -566,7 +566,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/services/users:
     specifiers:
@@ -576,7 +576,7 @@ importers:
       graphql: ^16.6.0
       graphql-ez: ^0.15.2
       p-map: ^5.5.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     dependencies:
       api-base: link:../../api-base
       db: link:../../db
@@ -585,7 +585,7 @@ importers:
       '@types/node': 18.8.3
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
-      typescript: 4.8.4
+      typescript: 4.9.4
 
   packages/testing:
     specifiers:
@@ -620,10 +620,10 @@ importers:
       p-map: ^5.5.0
       randomstring: ^1.2.2
       tinypool: ^0.3.0
-      typescript: ^4.8.4
+      typescript: ^4.9.4
     devDependencies:
       '@faker-js/faker': 7.5.0
-      '@graphql-codegen/cli': 2.13.5_tnaf74wmlgpupobavat5znxqjy
+      '@graphql-codegen/cli': 2.13.5_2vkk242rsu5oremxxhgyu6jwda
       '@graphql-codegen/core': 2.6.2_graphql@16.6.0
       '@graphql-codegen/gql-tag-operations-preset': 1.6.0_graphql@16.6.0
       '@graphql-codegen/typed-document-node': 2.3.3_graphql@16.6.0
@@ -639,7 +639,7 @@ importers:
       '@types/randomstring': 1.1.8
       api-base: link:../api-base
       autocannon: 7.10.0
-      bob-tsm: 1.1.2_5q3fyz5bjtea3po22ds7wgriri
+      bob-tsm: 1.1.2_jealyotpj32sn3qpmwcjsmld4u
       cross-port-killer: 1.4.0
       db: link:../db
       esbuild: 0.15.10
@@ -653,7 +653,7 @@ importers:
       p-map: 5.5.0
       randomstring: 1.2.2
       tinypool: 0.3.0
-      typescript: 4.8.4
+      typescript: 4.9.4
 
 packages:
 
@@ -2463,7 +2463,7 @@ packages:
       tslib: 2.4.0
     dev: true
 
-  /@graphql-codegen/cli/2.13.5_tnaf74wmlgpupobavat5znxqjy:
+  /@graphql-codegen/cli/2.13.5_2vkk242rsu5oremxxhgyu6jwda:
     resolution: {integrity: sha512-qqkQxd+9jBdZDjUSCsH3rTHKmFY9KNQwvwXXEMpRSz+oByYTxGZ0ZE5Lxt0hRXFkGOe8BaVkfPiwa2qSUfA5vw==}
     hasBin: true
     peerDependencies:
@@ -2489,11 +2489,11 @@ packages:
       chalk: 4.1.2
       chokidar: 3.5.3
       cosmiconfig: 7.0.1
-      cosmiconfig-typescript-loader: 4.1.1_kaeins24oicbylqloipvdrb5fe
+      cosmiconfig-typescript-loader: 4.1.1_rfry72bqssnwdwtfwnw7fkdgmi
       debounce: 1.2.1
       detect-indent: 6.1.0
       graphql: 16.6.0
-      graphql-config: 4.3.6_tnaf74wmlgpupobavat5znxqjy
+      graphql-config: 4.3.6_2vkk242rsu5oremxxhgyu6jwda
       inquirer: 8.2.4
       is-glob: 4.0.3
       json-to-pretty-yaml: 1.2.2
@@ -2829,7 +2829,7 @@ packages:
       graphql: 16.6.0
       graphql-ez: 0.15.2_5stvgedl36bc3tcgqzqdj5yobu
       mkdirp: 1.0.4
-      prettier: 2.7.1
+      prettier: 2.8.3
     transitivePeerDependencies:
       - '@types/node'
       - encoding
@@ -3931,8 +3931,8 @@ packages:
       pg-types: 2.2.0
     dev: false
 
-  /@types/prettier/2.7.1:
-    resolution: {integrity: sha512-ri0UmynRRvZiiUJdiz38MmIblKK+oH30MztdBVR95dv/Ubw6neWSb8u1XpRb72L4qsZOhz+L+z9JD40SJmfWow==}
+  /@types/prettier/2.7.2:
+    resolution: {integrity: sha512-KufADq8uQqo1pYKVIYzfKbJfBAc0sOeXqGbFaSpv8MRmC/zXgowNZmFcbngndGk922QDmOASEXUZCaY48gs4cg==}
     dev: true
 
   /@types/prop-types/15.7.5:
@@ -4443,7 +4443,7 @@ packages:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
     dev: false
 
-  /bob-tsm/1.1.2_5q3fyz5bjtea3po22ds7wgriri:
+  /bob-tsm/1.1.2_jealyotpj32sn3qpmwcjsmld4u:
     resolution: {integrity: sha512-5H6wIDpQTop5rt/5JRvtssmpiTkIqi1EBkpSy19GfReOed6QoeD+iJIRjNgyiI7ZsX1ogETxgN7KiW5Wx6pUEQ==}
     engines: {node: '>=14.13.1'}
     hasBin: true
@@ -4455,7 +4455,7 @@ packages:
         optional: true
     dependencies:
       esbuild: 0.15.10
-      typescript: 4.8.4
+      typescript: 4.9.4
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -4964,7 +4964,7 @@ packages:
       '@iarna/toml': 2.2.5
     dev: true
 
-  /cosmiconfig-typescript-loader/4.1.1_kaeins24oicbylqloipvdrb5fe:
+  /cosmiconfig-typescript-loader/4.1.1_rfry72bqssnwdwtfwnw7fkdgmi:
     resolution: {integrity: sha512-9DHpa379Gp0o0Zefii35fcmuuin6q92FnLDffzdZ0l9tVd3nEobG3O+MZ06+kuBvFTSVScvNb/oHA13Nd4iipg==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -4978,10 +4978,10 @@ packages:
     dependencies:
       '@types/node': 18.8.3
       cosmiconfig: 7.0.1
-      typescript: 4.8.4
+      typescript: 4.9.4
     dev: true
 
-  /cosmiconfig-typescript-loader/4.1.1_mwz2f5nk5qxm3a6zkoxfkps5ya:
+  /cosmiconfig-typescript-loader/4.1.1_rpnkaqtoxjskdb3a5pbyfwyas4:
     resolution: {integrity: sha512-9DHpa379Gp0o0Zefii35fcmuuin6q92FnLDffzdZ0l9tVd3nEobG3O+MZ06+kuBvFTSVScvNb/oHA13Nd4iipg==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -4995,8 +4995,8 @@ packages:
     dependencies:
       '@types/node': 18.8.3
       cosmiconfig: 7.0.1
-      ts-node: 10.9.1_xtdkmayvpbwqd3kc4kczaw2zvm
-      typescript: 4.8.4
+      ts-node: 10.9.1_t4t2xl5cbwbv3mmwukzoqpetvm
+      typescript: 4.9.4
     dev: true
 
   /cosmiconfig/7.0.1:
@@ -6047,7 +6047,7 @@ packages:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
     dev: true
 
-  /graphql-config/4.3.6_tnaf74wmlgpupobavat5znxqjy:
+  /graphql-config/4.3.6_2vkk242rsu5oremxxhgyu6jwda:
     resolution: {integrity: sha512-i7mAPwc0LAZPnYu2bI8B6yXU5820Wy/ArvmOseDLZIu0OU1UTULEuexHo6ZcHXeT9NvGGaUPQZm8NV3z79YydA==}
     engines: {node: '>= 10.0.0'}
     peerDependencies:
@@ -6061,11 +6061,11 @@ packages:
       '@graphql-tools/utils': 8.12.0_graphql@16.6.0
       cosmiconfig: 7.0.1
       cosmiconfig-toml-loader: 1.0.0
-      cosmiconfig-typescript-loader: 4.1.1_mwz2f5nk5qxm3a6zkoxfkps5ya
+      cosmiconfig-typescript-loader: 4.1.1_rpnkaqtoxjskdb3a5pbyfwyas4
       graphql: 16.6.0
       minimatch: 4.2.1
       string-env-interpolation: 1.0.1
-      ts-node: 10.9.1_xtdkmayvpbwqd3kc4kczaw2zvm
+      ts-node: 10.9.1_t4t2xl5cbwbv3mmwukzoqpetvm
       tslib: 2.4.0
     transitivePeerDependencies:
       - '@swc/core'
@@ -7754,8 +7754,8 @@ packages:
       xtend: 4.0.2
     dev: false
 
-  /prettier/2.7.1:
-    resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
+  /prettier/2.8.3:
+    resolution: {integrity: sha512-tJ/oJ4amDihPoufT5sM0Z1SKEuKay8LfVAMlbbhnnkvt6BUserZylqo2PN+p9KeljLr0OHa2rXHU1T8reeoTrw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
@@ -7765,7 +7765,7 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /pretty-quick/3.1.3_prettier@2.7.1:
+  /pretty-quick/3.1.3_prettier@2.8.3:
     resolution: {integrity: sha512-kOCi2FJabvuh1as9enxYmrnBC6tVMoVOenMaBqRfsvBHB0cbpYHjdQEpSglpASDFEXVwplpcGR4CLEaisYAFcA==}
     engines: {node: '>=10.13'}
     hasBin: true
@@ -7778,7 +7778,7 @@ packages:
       ignore: 5.2.0
       mri: 1.2.0
       multimatch: 4.0.0
-      prettier: 2.7.1
+      prettier: 2.8.3
     dev: true
 
   /prettysize/2.0.0:
@@ -8406,7 +8406,7 @@ packages:
       '@graphql-typed-document-node/core': 3.1.1_graphql@16.6.0
       commander: 9.4.1
       graphql: 16.6.0
-      react-query: 3.39.2_react@17.0.2
+      react-query: 3.39.2_sfoxds7t5ydpegc3knd667wn6m
       valtio: 1.7.1_react@17.0.2
     transitivePeerDependencies:
       - encoding
@@ -9021,7 +9021,7 @@ packages:
     resolution: {integrity: sha512-PGcnJoTBnVGy6yYNFxWVNkdcAuAMstvutN9MgDJIV6L0oG8fB+ZNNy1T+wJzah8RPGor1mZuPQkVfXNDpy9eHA==}
     dev: true
 
-  /ts-node/10.9.1_xtdkmayvpbwqd3kc4kczaw2zvm:
+  /ts-node/10.9.1_t4t2xl5cbwbv3mmwukzoqpetvm:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -9047,7 +9047,7 @@ packages:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 4.8.4
+      typescript: 4.9.4
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     dev: true
@@ -9088,8 +9088,8 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
 
-  /typescript/4.8.4:
-    resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
+  /typescript/4.9.4:
+    resolution: {integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==}
     engines: {node: '>=4.2.0'}
     hasBin: true
 
