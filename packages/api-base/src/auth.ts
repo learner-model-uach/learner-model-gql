@@ -2,7 +2,7 @@ import type { User as Auth0User } from "@auth0/auth0-react";
 import type { PromiseType } from "@graphql-ez/fastify";
 import assert from "assert";
 import { IS_TEST, logger } from "common-api";
-import { GroupFlags, prisma } from "db";
+import { GroupFlags, Prisma, prisma } from "db";
 import type { FastifyRequest } from "fastify";
 import FastifyAuth0 from "fastify-auth0-verify";
 import fp from "fastify-plugin";
@@ -266,6 +266,37 @@ export const Authorization = (userPromise: Promise<DBUser | null>) => {
 
 export type DBUser = PromiseType<ReturnType<typeof GetDBUser>>;
 
+const userInclude = {
+  projects: {
+    select: {
+      id: true,
+    },
+  },
+  groups: {
+    select: {
+      projects: {
+        select: {
+          id: true,
+        },
+      },
+      flags: {
+        select: {
+          readProjectActions: true,
+          readProjectModelStates: true,
+        },
+      },
+    },
+  },
+} satisfies Prisma.UserInclude;
+
+async function delayUpdate(update: () => Promise<unknown>) {
+  if (IS_TEST) {
+    await update();
+    return;
+  }
+  update().catch(console.error);
+}
+
 export function GetDBUser(auth0UserPromise: Promise<Auth0User | null>) {
   return LazyPromise(async () => {
     const user = await auth0UserPromise;
@@ -277,91 +308,99 @@ export function GetDBUser(auth0UserPromise: Promise<Auth0User | null>) {
     if (!uid || !email) return null;
 
     const lastOnline = new Date();
-    const userDb = await prisma.userUID
-      .upsert({
-        where: {
-          uid,
+    const userUid = await prisma.userUID.findUnique({
+      where: {
+        uid,
+      },
+      select: {
+        uid: true,
+        user: {
+          include: userInclude,
         },
-        create: {
-          uid,
-          user: {
-            connectOrCreate: {
-              where: {
-                email,
-              },
-              create: {
-                email,
-                name,
-                picture,
-                lastOnline,
-              },
-            },
-          },
-        },
-        update: {
-          user: {
-            connectOrCreate: {
-              where: {
-                email,
-              },
-              create: {
-                email,
-                name,
-                picture,
-                lastOnline,
-              },
-            },
-            update: {
-              lastOnline,
-            },
-          },
-        },
-        select: {
-          user: {
-            include: {
-              projects: {
-                select: {
-                  id: true,
-                },
-              },
-              groups: {
-                select: {
-                  projects: {
-                    select: {
-                      id: true,
-                    },
-                  },
-                  flags: {
-                    select: {
-                      readProjectActions: true,
-                      readProjectModelStates: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      })
-      .then((data) => (data.user?.locked ? null : data.user));
+      },
+    });
 
-    if (userDb && ((!userDb.name && name) || (!userDb.picture && picture))) {
-      const updatedUser = await prisma.user.update({
+    let userDb: NonNullable<NonNullable<typeof userUid>["user"]>;
+
+    if (userUid?.user) {
+      userDb = userUid.user;
+    } else {
+      await Promise.all([
+        prisma.user.createMany({
+          data: {
+            email,
+            name,
+            picture,
+            lastOnline,
+          },
+          skipDuplicates: true,
+        }),
+        prisma.userUID.createMany({
+          data: {
+            uid,
+          },
+          skipDuplicates: true,
+        }),
+      ]);
+
+      userDb = await prisma.user.findUniqueOrThrow({
+        where: {
+          email,
+        },
+        include: userInclude,
+      });
+
+      await delayUpdate(() =>
+        prisma.userUID.updateMany({
+          where: {
+            uid,
+          },
+          data: {
+            userId: userDb.id,
+          },
+        })
+      );
+
+      if (userDb.locked) return null;
+    }
+
+    if (userDb.locked) return null;
+
+    if ((!userDb.name && name) || (!userDb.picture && picture)) {
+      await delayUpdate(() =>
+        prisma.user.updateMany({
+          where: {
+            id: userDb.id,
+          },
+          data: {
+            name: name && !userDb.name ? name : undefined,
+            picture: picture && !userDb.picture ? picture : undefined,
+          },
+        })
+      );
+
+      Object.assign<typeof userDb, Partial<typeof userDb>>(userDb, {
+        name: userDb.name || name,
+        picture: userDb.picture || picture,
+      });
+    }
+
+    await delayUpdate(() =>
+      prisma.user.updateMany({
         where: {
           id: userDb.id,
         },
         data: {
-          name: userDb.name ? undefined : name || undefined,
-          picture: userDb.picture ? undefined : picture || undefined,
+          lastOnline,
+          updatedAt: lastOnline,
         },
-        select: {
-          name: true,
-          picture: true,
-        },
-      });
+      })
+    );
 
-      Object.assign(userDb, updatedUser);
-    }
+    Object.assign(userDb, {
+      lastOnline,
+      updatedAt: lastOnline,
+    });
 
     return userDb;
   });
