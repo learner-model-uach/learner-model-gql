@@ -394,7 +394,8 @@ export const KCRelationType = {
   PREREQUISITE: "PREREQUISITE",
 } as const;
 
-export type KCRelationType = typeof KCRelationType[keyof typeof KCRelationType];
+export type KCRelationType =
+  (typeof KCRelationType)[keyof typeof KCRelationType];
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -424,7 +425,7 @@ export const ORDER_BY = {
   DESC: "DESC",
 } as const;
 
-export type ORDER_BY = typeof ORDER_BY[keyof typeof ORDER_BY];
+export type ORDER_BY = (typeof ORDER_BY)[keyof typeof ORDER_BY];
 /** Paginated related information */
 export type PageInfo = {
   __typename?: "PageInfo";
