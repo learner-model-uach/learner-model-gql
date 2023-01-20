@@ -168,8 +168,7 @@ export const contentSelectionModule = registerModule(
                   orderBy: { createdAt: "desc" },
                 },
                 actions: {
-                  include: { kcs: true },
-                  where: { kcs: { some: { domainId: domainId } } },
+                  where: { projectId: projectId },
                 },
               },
             }),
@@ -179,7 +178,7 @@ export const contentSelectionModule = registerModule(
             .filter(
               (action) =>
                 action.verbName == "completeContent" &&
-                topicId.includes(action.topicId ?? 0)
+                topicId.includes(action.topicId ?? 0) //topic
             )
             .sort(function (x, y) {
               //sometimes array is desorder
@@ -189,7 +188,6 @@ export const contentSelectionModule = registerModule(
               return x.contentId;
             })
             .filter(
-              //preguntar si se mantiene !!!!!
               (value, index, self) => self.indexOf(value) == index
             ) /*unique values*/
             .slice(0, discardLast);
@@ -212,7 +210,7 @@ export const contentSelectionModule = registerModule(
               zpdRange[1]
             );
 
-            return contentSelection; //, contentSelection.zpdSim;
+            return contentSelection;
           }
 
           return {
