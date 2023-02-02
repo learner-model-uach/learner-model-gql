@@ -55,6 +55,9 @@ export const usersModule = registerModule(
       """
       tags: [String!]!
 
+      "List of email aliases"
+      emailAliases: [String!]
+
       "User role, by default is USER"
       role: UserRole!
 
@@ -126,6 +129,15 @@ export const usersModule = registerModule(
       tags: [String!]!
     }
 
+    "Input for email aliases of a specific user email"
+    input EmailAliasInput {
+      "Email of user to have extra aliases"
+      userEmail: EmailAddress!
+
+      "List of email aliases"
+      aliases: [EmailAddress!]!
+    }
+
     "Admin User-Related Queries"
     type AdminUserMutations {
       "Upsert specified users with specified projects"
@@ -136,6 +148,9 @@ export const usersModule = registerModule(
 
       "Update an existent user entity"
       updateUser(data: UpdateUserInput!): User!
+
+      "Set email aliases"
+      setEmailAliases(list: [EmailAliasInput!]!): [User!]!
     }
 
     extend type Query {
@@ -171,6 +186,11 @@ export const usersModule = registerModule(
       User: {
         active({ lastOnline }) {
           return lastOnline != null;
+        },
+        emailAliases({ id: userId }, _args, { dataloaders }) {
+          return dataloaders.userEmailAliases.load({
+            userId,
+          });
         },
       },
       Mutation: {
@@ -257,6 +277,47 @@ export const usersModule = registerModule(
               },
             },
           });
+        },
+        async setEmailAliases(_root, { list }, { prisma }) {
+          await prisma.user.createMany({
+            data: list.map((value) => ({ email: value.userEmail })),
+            skipDuplicates: true,
+          });
+
+          return pMap(
+            list,
+            async ({ userEmail, aliases }) => {
+              return prisma.user.update({
+                where: {
+                  email: userEmail,
+                },
+                data: {
+                  aliases: {
+                    connectOrCreate: aliases.map((email) => {
+                      return {
+                        create: {
+                          email,
+                        },
+                        where: {
+                          email,
+                        },
+                      };
+                    }),
+                    deleteMany: {
+                      NOT: {
+                        email: {
+                          in: aliases,
+                        },
+                      },
+                    },
+                  },
+                },
+              });
+            },
+            {
+              concurrency: 4,
+            }
+          );
         },
       },
       AdminUserQueries: {

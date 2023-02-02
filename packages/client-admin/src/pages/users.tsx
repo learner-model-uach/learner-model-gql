@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import {
   AdminUsersQuery,
+  EmailAliasInput,
   gql,
   useGQLMutation,
   useGQLQuery,
@@ -59,6 +60,7 @@ gql(/* GraphQL */ `
       code
       label
     }
+    emailAliases
   }
 `);
 
@@ -170,6 +172,111 @@ function UpsertUsers() {
   );
 }
 
+function EmailAliases() {
+  const [text, setText] = useState("");
+
+  const { mutateAsync, isLoading } = useGQLMutation(
+    gql(/* GraphQL */ `
+      mutation SetEmailAliases($list: [EmailAliasInput!]!) {
+        adminUsers {
+          setEmailAliases(list: $list) {
+            email
+          }
+        }
+      }
+    `),
+    {
+      async onSuccess() {
+        await queryClient.invalidateQueries();
+      },
+    }
+  );
+
+  const list = useMemo<EmailAliasInput[]>(() => {
+    return Array.from(
+      text
+        .trim()
+        .split(/\r\n|\n/g)
+        .reduce<Array<EmailAliasInput>>((acum, value) => {
+          const row = value.trim();
+
+          const [userEmail, ...aliases] = row.split(",").map((v) => v.trim());
+
+          if (userEmail)
+            acum.push({
+              userEmail,
+              aliases: aliases
+                .map((alias) => alias.trim())
+                .filter((alias) => !!alias.length),
+            });
+
+          return acum;
+        }, [])
+    );
+  }, [text]);
+
+  return (
+    <FormModal
+      title="Set email aliases"
+      onSubmit={async () => {
+        if (!list.length) return;
+
+        await mutateAsync({
+          list,
+        });
+      }}
+      triggerButton={{
+        colorScheme: "facebook",
+        leftIcon: <FaUsers />,
+      }}
+      saveButton={{
+        isDisabled: isLoading || !list.length,
+      }}
+      modalProps={{
+        size: "6xl",
+      }}
+    >
+      <FormControl>
+        <FormLabel>Aliases List</FormLabel>
+        <Textarea
+          value={text}
+          onChange={(ev) => {
+            setText(ev.target.value);
+          }}
+        />
+        <FormHelperText>
+          List of emails separated by a new line, first email is target user,
+          and each alias is separated by a comma after the first email. <br />
+          <br />
+          For example:
+          <br />
+          <br />{" "}
+          <code>
+            pablosaez1995@gmail.com, pablo.saez@hotmail.com, pablo.saez@uach.cl{" "}
+            <br />
+            mallium@gmail.com, jguerra@inf.uach.cl
+          </code>
+          <br />
+          <br />
+          The email <b>pablosaez1995@gmail.com</b> has the aliases
+          <b>
+            <i> pablo.saez@hotmail.com </i>
+          </b>
+          and{" "}
+          <b>
+            <i>pablo.saez@uach.cl</i>
+          </b>
+          , <br />
+          and <b>mallium@gmail.com</b> has the alias{" "}
+          <b>
+            <i>jguerra@inf.uach.cl</i>
+          </b>
+        </FormHelperText>
+      </FormControl>
+    </FormModal>
+  );
+}
+
 export default withAdminAuth(function UsersPage() {
   const { pagination, prevPage, nextPage, pageInfo, resetPagination } =
     useCursorPagination();
@@ -229,6 +336,7 @@ export default withAdminAuth(function UsersPage() {
   return (
     <VStack>
       <UpsertUsers />
+      <EmailAliases />
       <DataTable<AdminUsersQuery["adminUsers"]["allUsers"]["nodes"][number]>
         data={data?.adminUsers.allUsers.nodes || []}
         prevPage={prevPage}
@@ -389,6 +497,18 @@ export default withAdminAuth(function UsersPage() {
                 return tagsSelect;
               }
               return tags.join(" | ");
+            },
+          },
+          {
+            id: "Email aliases",
+            Header: "Email aliases",
+            accessor: "emailAliases",
+            Cell({
+              row: {
+                original: { emailAliases },
+              },
+            }) {
+              return emailAliases?.join(" | ") || "";
             },
           },
           getDateRow({ id: "lastOnline", label: "Last Online" }),

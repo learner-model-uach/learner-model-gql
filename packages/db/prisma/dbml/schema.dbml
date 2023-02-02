@@ -18,6 +18,13 @@ Table User {
   projects Project [not null]
   actions Action [not null]
   modelStates ModelState [not null]
+  aliases UserEmailAlias [not null]
+}
+
+Table UserEmailAlias {
+  email String [pk]
+  userId Int [not null]
+  user User [not null]
 }
 
 Table UserUID {
@@ -253,6 +260,8 @@ Enum UserRole {
   ADMIN
   USER
 }
+
+Ref: UserEmailAlias.userId > User.id [delete: Cascade]
 
 Ref: UserUID.userId > User.id
 

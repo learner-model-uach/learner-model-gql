@@ -325,16 +325,39 @@ export function GetDBUser(auth0UserPromise: Promise<Auth0User | null>) {
     if (userUid?.user) {
       userDb = userUid.user;
     } else {
-      await Promise.all([
-        prisma.user.createMany({
-          data: {
-            email,
-            name,
-            picture,
-            lastOnline,
-          },
-          skipDuplicates: true,
-        }),
+      [userDb] = await Promise.all([
+        prisma.userEmailAlias
+          .findUnique({
+            where: {
+              email,
+            },
+            select: {
+              user: {
+                include: userInclude,
+              },
+            },
+          })
+          .then((alias) => {
+            if (alias) return alias.user;
+
+            return prisma.user.upsert({
+              create: {
+                email,
+                name,
+                picture,
+                lastOnline,
+              },
+              update: {
+                name,
+                picture,
+                lastOnline,
+              },
+              where: {
+                email,
+              },
+              include: userInclude,
+            });
+          }),
         prisma.userUID.createMany({
           data: {
             uid,
@@ -342,13 +365,6 @@ export function GetDBUser(auth0UserPromise: Promise<Auth0User | null>) {
           skipDuplicates: true,
         }),
       ]);
-
-      userDb = await prisma.user.findUniqueOrThrow({
-        where: {
-          email,
-        },
-        include: userInclude,
-      });
 
       await delayUpdate(() =>
         prisma.userUID.updateMany({
