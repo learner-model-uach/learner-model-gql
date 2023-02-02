@@ -199,7 +199,7 @@ export const ORDER_BY = {
   DESC: "DESC",
 } as const;
 
-export type ORDER_BY = typeof ORDER_BY[keyof typeof ORDER_BY];
+export type ORDER_BY = (typeof ORDER_BY)[keyof typeof ORDER_BY];
 /** Paginated related information */
 export type PageInfo = {
   __typename?: "PageInfo";

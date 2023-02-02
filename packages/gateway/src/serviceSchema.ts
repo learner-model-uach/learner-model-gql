@@ -2,7 +2,7 @@ import type { EZContext } from "@graphql-ez/fastify";
 import type { SubschemaConfig } from "@graphql-tools/delegate";
 import type { AsyncExecutor } from "@graphql-tools/utils";
 import { observableToAsyncIterable } from "@graphql-tools/utils";
-import { introspectSchema } from "@graphql-tools/wrap";
+import { schemaFromExecutor } from "@graphql-tools/wrap";
 import { IS_TEST, logger, ServiceName, IS_DEVELOPMENT } from "api-base";
 import { readFile } from "fs/promises";
 import { buildSchema, DocumentNode } from "graphql";
@@ -170,7 +170,7 @@ export async function getServiceSchema({
   const schema =
     IS_DEVELOPMENT && schemaGraphqlFile
       ? buildSchema(schemaGraphqlFile)
-      : await introspectSchema(remoteExecutor);
+      : await schemaFromExecutor(remoteExecutor);
 
   const serviceSubschema: SubschemaConfig = {
     schema,

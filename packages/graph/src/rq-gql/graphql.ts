@@ -1067,7 +1067,8 @@ export const KcRelationType = {
   Prerequisite: "PREREQUISITE",
 } as const;
 
-export type KcRelationType = typeof KcRelationType[keyof typeof KcRelationType];
+export type KcRelationType =
+  (typeof KcRelationType)[keyof typeof KcRelationType];
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -1112,7 +1113,7 @@ export const ModelStateAlgorithm = {
 } as const;
 
 export type ModelStateAlgorithm =
-  typeof ModelStateAlgorithm[keyof typeof ModelStateAlgorithm];
+  (typeof ModelStateAlgorithm)[keyof typeof ModelStateAlgorithm];
 /** Paginated Model States */
 export type ModelStateConnection = Connection & {
   __typename?: "ModelStateConnection";
@@ -1246,7 +1247,7 @@ export const Order_By = {
   Desc: "DESC",
 } as const;
 
-export type Order_By = typeof Order_By[keyof typeof Order_By];
+export type Order_By = (typeof Order_By)[keyof typeof Order_By];
 /** Paginated related information */
 export type PageInfo = {
   __typename?: "PageInfo";
@@ -1821,7 +1822,7 @@ export const UserRole = {
   User: "USER",
 } as const;
 
-export type UserRole = typeof UserRole[keyof typeof UserRole];
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 /** Paginated Users */
 export type UsersConnection = Connection & {
   __typename?: "UsersConnection";
