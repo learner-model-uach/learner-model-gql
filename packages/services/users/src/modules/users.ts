@@ -86,7 +86,7 @@ export const usersModule = registerModule(
       """
       tags: [String!]
       """
-      Filter by text search inside "email", "name" or "tags"
+      Filter by text search inside "email", "name", "tags" or "projects"
       """
       textSearch: String
     }
@@ -342,11 +342,31 @@ export const usersModule = registerModule(
                           {
                             name: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
                             tags: {
                               has: filters.textSearch,
+                            },
+                          },
+                          {
+                            projects: {
+                              some: {
+                                OR: [
+                                  {
+                                    code: {
+                                      contains: filters.textSearch,
+                                    },
+                                  },
+                                  {
+                                    label: {
+                                      contains: filters.textSearch,
+                                      mode: "insensitive",
+                                    },
+                                  },
+                                ],
+                              },
                             },
                           },
                         ]

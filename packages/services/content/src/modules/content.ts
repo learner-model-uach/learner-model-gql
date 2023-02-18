@@ -200,7 +200,7 @@ export const contentModule = registerModule(
       kcs: [IntID!]
 
       """
-      Filter by text search inside "code", "label" or "tags"
+      Filter by text search inside "code", "label", "tags" or "kcs"
       """
       textSearch: String
     }
@@ -399,11 +399,31 @@ export const contentModule = registerModule(
                           {
                             label: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
                             tags: {
                               has: filters.textSearch,
+                            },
+                          },
+                          {
+                            kcs: {
+                              some: {
+                                OR: [
+                                  {
+                                    code: {
+                                      contains: filters.textSearch,
+                                    },
+                                  },
+                                  {
+                                    label: {
+                                      contains: filters.textSearch,
+                                      mode: "insensitive",
+                                    },
+                                  },
+                                ],
+                              },
                             },
                           },
                         ]

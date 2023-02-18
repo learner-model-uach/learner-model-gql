@@ -25,7 +25,7 @@ input AdminContentFilter {
   """
   tags: [String!]
   """
-  Filter by text search inside "code", "label" or "tags"
+  Filter by text search inside "code", "label", "tags" or "kcs"
   """
   textSearch: String
 }

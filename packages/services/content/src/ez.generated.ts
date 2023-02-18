@@ -73,7 +73,7 @@ export type AdminContentFilter = {
    * If any of the content's tags matches any of the specified tags, the content is included
    */
   tags?: InputMaybe<Array<Scalars["String"]>>;
-  /** Filter by text search inside "code", "label" or "tags" */
+  /** Filter by text search inside "code", "label", "tags" or "kcs" */
   textSearch?: InputMaybe<Scalars["String"]>;
 };
 
