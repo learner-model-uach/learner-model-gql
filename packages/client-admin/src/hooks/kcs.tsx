@@ -6,6 +6,7 @@ import {
   gql,
   useGQLInfiniteQuery,
 } from "graph";
+import { keyBy, uniqBy } from "lodash";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useImmer } from "use-immer";
 import {
@@ -191,12 +192,28 @@ export const useSelectMultiKCs = ({
   selectProps?: Partial<AsyncSelectProps>;
   kcsBase: KCsBaseOptions;
 }) => {
-  const { isFetching, isLoading, asOptions, kcsFilter, produceKCsFilter } =
+  const { isFetching, isLoading, asOptions, kcsFilter, produceKCsFilter, kcs } =
     useKCsBase(kcsBase);
 
   const selectRef = useRef<SelectRefType>(null);
 
   const [selectedKCs, setSelectedKCs] = state || useState<OptionValue[]>([]);
+
+  const optionsByCode = useMemo(() => {
+    const kcsById = keyBy(kcs, (v) => v.id);
+
+    const accOptionsByCode: Record<string, (typeof asOptions)[number]> = {};
+
+    for (const option of asOptions) {
+      const kc = kcsById[option.value];
+
+      if (!kc) continue;
+
+      accOptionsByCode[kc.code.toLowerCase()] = option;
+    }
+
+    return accOptionsByCode;
+  }, [asOptions, kcs]);
 
   const selectMultiKCComponent = useMemo(() => {
     return (
@@ -211,9 +228,32 @@ export const useSelectMultiKCs = ({
         placeholder="Search a KC"
         selectRef={selectRef}
         inputValue={kcsFilter.textSearch || ""}
-        onInputChange={(v) => {
+        onInputChange={(newInputValue) => {
+          if (newInputValue.endsWith(" ")) {
+            const inputSplit = newInputValue.split(/,( )?/g);
+
+            const optionsToAdd: OptionValue[] = [];
+
+            for (const inputValue of inputSplit) {
+              if (!inputValue) continue;
+
+              const optionFromCodeLowercase =
+                optionsByCode[inputValue.trim().toLowerCase()];
+
+              if (!optionFromCodeLowercase) continue;
+
+              optionsToAdd.push(optionFromCodeLowercase);
+            }
+
+            if (optionsToAdd.length) {
+              setSelectedKCs(
+                uniqBy([...selectedKCs, ...optionsToAdd], (v) => v.value)
+              );
+            }
+          }
+
           produceKCsFilter((draft) => {
-            draft.textSearch = v;
+            draft.textSearch = newInputValue;
           });
         }}
         {...selectProps}
@@ -227,6 +267,7 @@ export const useSelectMultiKCs = ({
     selectProps,
     kcsFilter,
     produceKCsFilter,
+    optionsByCode,
   ]);
 
   return {
