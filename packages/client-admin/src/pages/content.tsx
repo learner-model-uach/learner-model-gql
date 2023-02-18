@@ -121,7 +121,6 @@ const CreateContent = memo(function CreateContent() {
     selectMultiKCComponent,
     selectedKCs,
     produceKCsFilter,
-    isFetching: isKcsFetching,
     setSelectedKCs,
   } = useSelectMultiKCs({
     selectProps,
@@ -133,11 +132,13 @@ const CreateContent = memo(function CreateContent() {
     },
   });
 
+  const selectPropsIsDisabled = !selectedProject;
+
   useEffect(() => {
     setSelectProps({
-      isDisabled: !selectedProject || isKcsFetching,
+      isDisabled: selectPropsIsDisabled,
     });
-  }, [isKcsFetching || !selectedProject]);
+  }, [selectPropsIsDisabled]);
 
   useEffect(() => {
     produceKCsFilter((draft) => {
