@@ -394,6 +394,7 @@ export const contentModule = registerModule(
                           {
                             code: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
@@ -414,6 +415,7 @@ export const contentModule = registerModule(
                                   {
                                     code: {
                                       contains: filters.textSearch,
+                                      mode: "insensitive",
                                     },
                                   },
                                   {

@@ -337,6 +337,7 @@ export const usersModule = registerModule(
                           {
                             email: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
@@ -357,6 +358,7 @@ export const usersModule = registerModule(
                                   {
                                     code: {
                                       contains: filters.textSearch,
+                                      mode: "insensitive",
                                     },
                                   },
                                   {

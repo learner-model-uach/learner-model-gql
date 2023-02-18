@@ -445,11 +445,13 @@ export const domainModule = registerModule(
                           {
                             code: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
                             label: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
@@ -484,11 +486,13 @@ export const domainModule = registerModule(
                           {
                             code: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
                             label: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                         ]

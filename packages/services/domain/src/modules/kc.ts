@@ -304,11 +304,13 @@ export const kcModule = registerModule(
                           {
                             code: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                           {
                             label: {
                               contains: filters.textSearch,
+                              mode: "insensitive",
                             },
                           },
                         ]
