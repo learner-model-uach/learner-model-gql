@@ -4,7 +4,7 @@
     "text": "Comenzaremos este capítulo con un ejercicio relativamente fácil"
   },
   "messageEasy": {
-    "label": "Más fácil",
+    "label": "Un poco más fácil",
     "text": "Para adquidir conocimientos pre-requisito o practicar con menos complejidad"
   },
   "messageSimilar": {
@@ -12,7 +12,7 @@
     "text": "Para adquirir fluidez en las habilidades que estás aprendiendo"
   },
   "messageHarder": {
-    "label": "Más dificil",
+    "label": "Un poco más dificil",
     "text": "Para nuevos aprendizajes o combinar conocimientos"
   },
   "messageTopicCompleted": {
