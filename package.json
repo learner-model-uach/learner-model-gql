@@ -37,7 +37,7 @@
     "common": "workspace:^0.0.1",
     "common-api": "workspace:^1.0.0",
     "dotenv": "^16.0.3",
-    "esbuild": "^0.17.2",
+    "esbuild": "^0.17.18",
     "fastify": "^4.11.0",
     "graphql": "^16.6.0",
     "graphql-ez": "^0.16.0",
@@ -79,7 +79,7 @@
   },
   "engines": {
     "node": "^16.13.2",
-    "pnpm": ">=7.2.0"
+    "pnpm": ">=8.3.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
