@@ -542,6 +542,7 @@ export default withAdminAuth(function ContentPage() {
   pageInfo.current = data?.adminContent.allContent.pageInfo;
 
   return (
+    // @ts-ignore
     <VStack>
       <CreateContent />
       <DataTable<ContentInfoFragment>

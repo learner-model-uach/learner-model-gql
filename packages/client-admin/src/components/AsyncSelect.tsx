@@ -123,9 +123,10 @@ const components = {
       innerProps,
       data: { isFixed },
     }: any) => (
+      // @ts-ignore
       <Tag
         ref={innerRef}
-        {...innerProps}
+        {...(innerProps as any)}
         m="0.125rem"
         variant={isFixed ? "solid" : "subtle"}
       >

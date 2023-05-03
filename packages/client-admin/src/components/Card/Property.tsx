@@ -1,7 +1,8 @@
 import { Box, Flex, FlexProps, useColorModeValue } from "@chakra-ui/react";
 import type { ReactNode } from "react";
 
-interface Props extends FlexProps {
+interface Props {
+  maxW?: FlexProps["maxW"];
   label?: string;
   value: ReactNode;
 }
@@ -9,6 +10,7 @@ interface Props extends FlexProps {
 export const Property = (props: Props) => {
   const { label, value, ...flexProps } = props;
   return (
+    // @ts-ignore
     <Flex
       as="dl"
       direction={{ base: "column", sm: "row" }}
