@@ -1,10 +1,10 @@
 {
   "messageFirst": {
-    "label": "Fácil",
-    "text": "Comenzaremos este capítulo con un ejercicio relativamente fácil"
+    "label": "Dificultad menor",
+    "text": "Comenzaremos este capítulo con un ejercicio de dificultad menor"
   },
   "messageEasy": {
-    "label": "Un poco más fácil",
+    "label": "Dificultad menor",
     "text": "Para adquidir conocimientos pre-requisito o practicar con menos complejidad"
   },
   "messageSimilar": {
@@ -12,7 +12,7 @@
     "text": "Para adquirir fluidez en las habilidades que estás aprendiendo"
   },
   "messageHarder": {
-    "label": "Un poco más dificil",
+    "label": "Dificultad mayor",
     "text": "Para nuevos aprendizajes o combinar conocimientos"
   },
   "messageTopicCompleted": {

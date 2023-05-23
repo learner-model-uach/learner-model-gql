@@ -168,7 +168,7 @@ export const contentSelectionModule = registerModule(
                   orderBy: { createdAt: "desc" },
                 },
                 actions: {
-                  where: { projectId: projectId },
+                  where: { projectId: projectId, verbName: "completeContent" },
                 },
               },
             }),
@@ -176,9 +176,7 @@ export const contentSelectionModule = registerModule(
 
           let A = U.actions
             .filter(
-              (action) =>
-                action.verbName == "completeContent" &&
-                topicId.includes(action.topicId ?? 0) //topic
+              (action) => topicId.includes(action.topicId ?? 0) //topic
             )
             .sort(function (x, y) {
               //sometimes array is desorder
