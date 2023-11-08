@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 onlyBuiltDependencies:
   - fsevents
 
@@ -682,6 +686,15 @@ importers:
       typescript:
         specifier: ^4.9.4
         version: 4.9.4
+
+  packages/services/actionsTopic:
+    dependencies:
+      api-base:
+        specifier: workspace:^0.0.1
+        version: link:../../api-base
+      db:
+        specifier: workspace:^0.0.1
+        version: link:../../db
 
   packages/services/content:
     dependencies:

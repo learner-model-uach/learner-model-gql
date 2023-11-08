@@ -108,12 +108,42 @@ type ActionVerb {
   name: String!
 }
 
+type ActionsByTopicConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllTopicsReturn!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
+type ActionsByUserConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllActionsByUserReturn!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
 "Paginated Actions"
 type ActionsConnection implements Connection {
   "Nodes of the current page"
   nodes: [Action!]!
   "Pagination related information"
   pageInfo: PageInfo!
+}
+
+input ActionsTopicInput {
+  projectId: Int!
+  topicsIds: Int!
+}
+
+type ActionsTopicQueries {
+  allActionsByTopic(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByTopicConnection!
+  allActionsByUser(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByUserConnection!
 }
 
 "Paginated Actions Verbs"
@@ -463,6 +493,29 @@ input AdminUsersFilter {
   Filter by text search inside "email", "name", "tags" or "projects"
   """
   textSearch: String
+}
+
+type AllActionsByContentReturn {
+  actions: [Action!]!
+  code: String!
+  id: IntID!
+  json: JSONObject!
+  kcs: [KC!]!
+}
+
+type AllActionsByUserReturn {
+  actions: [Action!]!
+  email: String!
+  id: IntID!
+  modelStates: JSON!
+}
+
+type AllTopicsReturn {
+  actions: [Action!]!
+  code: String!
+  id: IntID!
+  json: JSONObject!
+  kcs: [KC!]!
 }
 
 "Pagination Interface"
@@ -1257,6 +1310,8 @@ type ProjectsConnection implements Connection {
 }
 
 type Query {
+  "ActionsTopic Query"
+  actionsTopic: ActionsTopicQueries!
   """
   Admin related actions queries, only authenticated users with the role "ADMIN" can access
   """

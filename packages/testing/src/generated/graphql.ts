@@ -138,6 +138,22 @@ export type ActionVerb = {
   name: Scalars["String"];
 };
 
+export type ActionsByTopicConnection = Connection & {
+  __typename?: "ActionsByTopicConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllTopicsReturn>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
+export type ActionsByUserConnection = Connection & {
+  __typename?: "ActionsByUserConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllActionsByUserReturn>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
 /** Paginated Actions */
 export type ActionsConnection = Connection & {
   __typename?: "ActionsConnection";
@@ -145,6 +161,27 @@ export type ActionsConnection = Connection & {
   nodes: Array<Action>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+export type ActionsTopicInput = {
+  projectId: Scalars["Int"];
+  topicsIds: Scalars["Int"];
+};
+
+export type ActionsTopicQueries = {
+  __typename?: "ActionsTopicQueries";
+  allActionsByTopic: ActionsByTopicConnection;
+  allActionsByUser: ActionsByUserConnection;
+};
+
+export type ActionsTopicQueriesallActionsByTopicArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
+};
+
+export type ActionsTopicQueriesallActionsByUserArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
 };
 
 /** Paginated Actions Verbs */
@@ -622,6 +659,32 @@ export type AdminUsersFilter = {
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Filter by text search inside "email", "name", "tags" or "projects" */
   textSearch?: InputMaybe<Scalars["String"]>;
+};
+
+export type AllActionsByContentReturn = {
+  __typename?: "AllActionsByContentReturn";
+  actions: Array<Action>;
+  code: Scalars["String"];
+  id: Scalars["IntID"];
+  json: Scalars["JSONObject"];
+  kcs: Array<KC>;
+};
+
+export type AllActionsByUserReturn = {
+  __typename?: "AllActionsByUserReturn";
+  actions: Array<Action>;
+  email: Scalars["String"];
+  id: Scalars["IntID"];
+  modelStates: Scalars["JSON"];
+};
+
+export type AllTopicsReturn = {
+  __typename?: "AllTopicsReturn";
+  actions: Array<Action>;
+  code: Scalars["String"];
+  id: Scalars["IntID"];
+  json: Scalars["JSONObject"];
+  kcs: Array<KC>;
 };
 
 /** Pagination Interface */
@@ -1418,6 +1481,8 @@ export type ProjectsConnection = Connection & {
 
 export type Query = {
   __typename?: "Query";
+  /** ActionsTopic Query */
+  actionsTopic: ActionsTopicQueries;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
