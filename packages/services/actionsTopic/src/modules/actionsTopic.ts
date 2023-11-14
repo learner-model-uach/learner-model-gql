@@ -23,7 +23,7 @@ export const actionsTopicModule = registerModule(
 
     input ActionsTopicInput {
       projectId: Int!
-      topicsIds: Int!
+      topicsIds: [Int!]!
     }
 
     type ActionsByTopicConnection implements Connection {
@@ -59,6 +59,7 @@ export const actionsTopicModule = registerModule(
 
     type AllActionsByUserReturn {
       id: IntID!
+      createdAt: DateTime!
       email: String!
       modelStates: JSON!
       actions: [Action!]!
@@ -160,7 +161,9 @@ export const actionsTopicModule = registerModule(
               where: {
                 topics: {
                   some: {
-                    id: input.topicsIds,
+                    id: {
+                      in: input.topicsIds,
+                    },
                   },
                 },
               },
@@ -217,7 +220,9 @@ export const actionsTopicModule = registerModule(
                 actions: {
                   where: {
                     topic: {
-                      id: input.topicsIds,
+                      id: {
+                        in: input.topicsIds,
+                      },
                     },
                   },
                   select: {

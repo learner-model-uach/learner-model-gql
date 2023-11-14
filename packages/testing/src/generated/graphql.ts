@@ -165,7 +165,7 @@ export type ActionsConnection = Connection & {
 
 export type ActionsTopicInput = {
   projectId: Scalars["Int"];
-  topicsIds: Scalars["Int"];
+  topicsIds: Array<Scalars["Int"]>;
 };
 
 export type ActionsTopicQueries = {
@@ -673,6 +673,7 @@ export type AllActionsByContentReturn = {
 export type AllActionsByUserReturn = {
   __typename?: "AllActionsByUserReturn";
   actions: Array<Action>;
+  createdAt: Scalars["DateTime"];
   email: Scalars["String"];
   id: Scalars["IntID"];
   modelStates: Scalars["JSON"];

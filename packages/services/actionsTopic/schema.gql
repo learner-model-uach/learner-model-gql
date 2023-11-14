@@ -58,7 +58,7 @@ type ActionsByUserConnection implements Connection {
 
 input ActionsTopicInput {
   projectId: Int!
-  topicsIds: Int!
+  topicsIds: [Int!]!
 }
 
 type ActionsTopicQueries {
@@ -82,6 +82,7 @@ type AllActionsByContentReturn {
 
 type AllActionsByUserReturn {
   actions: [Action!]!
+  createdAt: DateTime!
   email: String!
   id: IntID!
   modelStates: JSON!

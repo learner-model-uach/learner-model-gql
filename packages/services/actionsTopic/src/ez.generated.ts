@@ -111,7 +111,7 @@ export type ActionsByUserConnection = Connection & {
 
 export type ActionsTopicInput = {
   projectId: Scalars["Int"];
-  topicsIds: Scalars["Int"];
+  topicsIds: Array<Scalars["Int"]>;
 };
 
 export type ActionsTopicQueries = {
@@ -142,6 +142,7 @@ export type AllActionsByContentReturn = {
 export type AllActionsByUserReturn = {
   __typename?: "AllActionsByUserReturn";
   actions: Array<Action>;
+  createdAt: Scalars["DateTime"];
   email: Scalars["String"];
   id: Scalars["IntID"];
   modelStates: Scalars["JSON"];
@@ -552,6 +553,7 @@ export type AllActionsByUserReturnResolvers<
   ParentType extends ResolversParentTypes["AllActionsByUserReturn"] = ResolversParentTypes["AllActionsByUserReturn"]
 > = {
   actions?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
