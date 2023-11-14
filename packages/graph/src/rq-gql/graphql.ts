@@ -138,18 +138,20 @@ export type ActionVerb = {
   name: Scalars["String"];
 };
 
-export type ActionsByTopicConnection = Connection & {
-  __typename?: "ActionsByTopicConnection";
+/** Paginated ActionsByContent */
+export type ActionsByContentConnection = Connection & {
+  __typename?: "ActionsByContentConnection";
   /** Nodes of the current page */
-  nodes: Array<AllTopicsReturn>;
+  nodes: Array<AllActionsByContent>;
   /** Pagination related information */
   pageInfo: PageInfo;
 };
 
+/** Paginated ActionsByUser */
 export type ActionsByUserConnection = Connection & {
   __typename?: "ActionsByUserConnection";
   /** Nodes of the current page */
-  nodes: Array<AllActionsByUserReturn>;
+  nodes: Array<AllActionsByUser>;
   /** Pagination related information */
   pageInfo: PageInfo;
 };
@@ -170,11 +172,21 @@ export type ActionsTopicInput = {
 
 export type ActionsTopicQueries = {
   __typename?: "ActionsTopicQueries";
-  allActionsByTopic: ActionsByTopicConnection;
+  /**
+   * Returns all actions performed, grouped by Content.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
+  allActionsByContent: ActionsByContentConnection;
+  /**
+   * Returns all actions performed, grouped by users.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
   allActionsByUser: ActionsByUserConnection;
 };
 
-export type ActionsTopicQueriesAllActionsByTopicArgs = {
+export type ActionsTopicQueriesAllActionsByContentArgs = {
   input: ActionsTopicInput;
   pagination: CursorConnectionArgs;
 };
@@ -661,31 +673,32 @@ export type AdminUsersFilter = {
   textSearch?: InputMaybe<Scalars["String"]>;
 };
 
-export type AllActionsByContentReturn = {
-  __typename?: "AllActionsByContentReturn";
+export type AllActionsByContent = {
+  __typename?: "AllActionsByContent";
+  /** Actions performed on the content. */
   actions: Array<Action>;
+  /** Unique string identifier */
   code: Scalars["String"];
+  /** Unique numeric identifier */
   id: Scalars["IntID"];
+  /** Arbitrary JSON object data */
   json: Scalars["JSONObject"];
+  /** KCs associated with the content */
   kcs: Array<Kc>;
 };
 
-export type AllActionsByUserReturn = {
-  __typename?: "AllActionsByUserReturn";
+export type AllActionsByUser = {
+  __typename?: "AllActionsByUser";
+  /** Actions performed by user */
   actions: Array<Action>;
+  /** Date of creation */
   createdAt: Scalars["DateTime"];
+  /** Email Address */
   email: Scalars["String"];
+  /** Unique numeric identifier */
   id: Scalars["IntID"];
+  /** Model States associated with user */
   modelStates: Scalars["JSON"];
-};
-
-export type AllTopicsReturn = {
-  __typename?: "AllTopicsReturn";
-  actions: Array<Action>;
-  code: Scalars["String"];
-  id: Scalars["IntID"];
-  json: Scalars["JSONObject"];
-  kcs: Array<Kc>;
 };
 
 /** Pagination Interface */
@@ -1482,7 +1495,10 @@ export type ProjectsConnection = Connection & {
 
 export type Query = {
   __typename?: "Query";
-  /** ActionsTopic Query */
+  /**
+   * This service retrieves all actions performed on the specified topics through the input.
+   * These actions are grouped by user and content.
+   */
   actionsTopic: ActionsTopicQueries;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
@@ -2063,8 +2079,8 @@ export type AllKCsBaseQuery = {
   };
 };
 
-type Pagination_ActionsByTopicConnection_Fragment = {
-  __typename?: "ActionsByTopicConnection";
+type Pagination_ActionsByContentConnection_Fragment = {
+  __typename?: "ActionsByContentConnection";
   pageInfo: {
     __typename?: "PageInfo";
     hasNextPage: boolean;
@@ -2218,7 +2234,7 @@ type Pagination_UsersConnection_Fragment = {
 };
 
 export type PaginationFragment =
-  | Pagination_ActionsByTopicConnection_Fragment
+  | Pagination_ActionsByContentConnection_Fragment
   | Pagination_ActionsByUserConnection_Fragment
   | Pagination_ActionsConnection_Fragment
   | Pagination_ActionsVerbsConnection_Fragment

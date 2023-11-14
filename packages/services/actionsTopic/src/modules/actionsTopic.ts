@@ -5,16 +5,29 @@ export const actionsTopicModule = registerModule(
   // This defines the types
   gql`
     extend type Query {
-      "ActionsTopic Query"
+      """
+      This service retrieves all actions performed on the specified topics through the input.
+      These actions are grouped by user and content.
+      """
       actionsTopic: ActionsTopicQueries!
     }
 
     type ActionsTopicQueries {
-      allActionsByTopic(
+      """
+      Returns all actions performed, grouped by Content.
+      Pagination parameters are used to control the number of returned results,
+      making this parameter mandatory.
+      """
+      allActionsByContent(
         pagination: CursorConnectionArgs!
         input: ActionsTopicInput!
-      ): ActionsByTopicConnection!
+      ): ActionsByContentConnection!
 
+      """
+      Returns all actions performed, grouped by users.
+      Pagination parameters are used to control the number of returned results,
+      making this parameter mandatory.
+      """
       allActionsByUser(
         pagination: CursorConnectionArgs!
         input: ActionsTopicInput!
@@ -26,42 +39,46 @@ export const actionsTopicModule = registerModule(
       topicsIds: [Int!]!
     }
 
-    type ActionsByTopicConnection implements Connection {
+    "Paginated ActionsByContent"
+    type ActionsByContentConnection implements Connection {
       "Nodes of the current page"
-      nodes: [AllTopicsReturn!]!
+      nodes: [AllActionsByContent!]!
 
       "Pagination related information"
       pageInfo: PageInfo!
     }
+    "Paginated ActionsByUser"
     type ActionsByUserConnection implements Connection {
       "Nodes of the current page"
-      nodes: [AllActionsByUserReturn!]!
+      nodes: [AllActionsByUser!]!
 
       "Pagination related information"
       pageInfo: PageInfo!
     }
 
-    type AllTopicsReturn {
+    type AllActionsByContent {
+      "Unique numeric identifier"
       id: IntID!
+      "Unique string identifier"
       code: String!
+      "Arbitrary JSON object data"
       json: JSONObject!
+      "KCs associated with the content"
       kcs: [KC!]!
+      "Actions performed on the content."
       actions: [Action!]!
     }
 
-    type AllActionsByContentReturn {
+    type AllActionsByUser {
+      "Unique numeric identifier"
       id: IntID!
-      code: String!
-      kcs: [KC!]!
-      json: JSONObject!
-      actions: [Action!]!
-    }
-
-    type AllActionsByUserReturn {
-      id: IntID!
+      "Date of creation"
       createdAt: DateTime!
+      "Email Address"
       email: String!
+      "Model States associated with user"
       modelStates: JSON!
+      "Actions performed by user"
       actions: [Action!]!
     }
 
@@ -151,7 +168,7 @@ export const actionsTopicModule = registerModule(
         },
       },
       ActionsTopicQueries: {
-        allActionsByTopic(_root, { pagination, input }, { prisma }) {
+        allActionsByContent(_root, { pagination, input }, { prisma }) {
           return ResolveCursorConnection(pagination, (connection) => {
             return prisma.content.findMany({
               ...connection,
