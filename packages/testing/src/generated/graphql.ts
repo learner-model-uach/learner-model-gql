@@ -138,6 +138,24 @@ export type ActionVerb = {
   name: Scalars["String"];
 };
 
+/** Paginated ActionsByContent */
+export type ActionsByContentConnection = Connection & {
+  __typename?: "ActionsByContentConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllActionsByContent>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
+/** Paginated ActionsByUser */
+export type ActionsByUserConnection = Connection & {
+  __typename?: "ActionsByUserConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllActionsByUser>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
 /** Paginated Actions */
 export type ActionsConnection = Connection & {
   __typename?: "ActionsConnection";
@@ -145,6 +163,45 @@ export type ActionsConnection = Connection & {
   nodes: Array<Action>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+export type ActionsTopicInput = {
+  /** End interval for conducting the search. */
+  endDate: Scalars["DateTime"];
+  /** ID of the project. */
+  projectId: Scalars["Int"];
+  /** Start interval for conducting the search. */
+  startDate: Scalars["DateTime"];
+  /** Array of topic IDs where the search will be performed. */
+  topicsIds: Array<Scalars["Int"]>;
+  /** Array of verbs to be used for action search. */
+  verbNames: Array<Scalars["String"]>;
+};
+
+export type ActionsTopicQueries = {
+  __typename?: "ActionsTopicQueries";
+  /**
+   * Returns all actions performed, grouped by Content.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
+  allActionsByContent: ActionsByContentConnection;
+  /**
+   * Returns all actions performed, grouped by users.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
+  allActionsByUser: ActionsByUserConnection;
+};
+
+export type ActionsTopicQueriesallActionsByContentArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
+};
+
+export type ActionsTopicQueriesallActionsByUserArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
 };
 
 /** Paginated Actions Verbs */
@@ -622,6 +679,34 @@ export type AdminUsersFilter = {
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Filter by text search inside "email", "name", "tags" or "projects" */
   textSearch?: InputMaybe<Scalars["String"]>;
+};
+
+export type AllActionsByContent = {
+  __typename?: "AllActionsByContent";
+  /** Actions performed on the content. */
+  actions: Array<Action>;
+  /** Unique string identifier */
+  code: Scalars["String"];
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON object data */
+  json: Scalars["JSONObject"];
+  /** KCs associated with the content */
+  kcs: Array<KC>;
+};
+
+export type AllActionsByUser = {
+  __typename?: "AllActionsByUser";
+  /** Actions performed by user */
+  actions: Array<Action>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Email Address */
+  email: Scalars["String"];
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Model States associated with user */
+  modelStates: Scalars["JSON"];
 };
 
 /** Pagination Interface */
@@ -1418,6 +1503,11 @@ export type ProjectsConnection = Connection & {
 
 export type Query = {
   __typename?: "Query";
+  /**
+   * This service retrieves all actions performed on the specified topics through the input.
+   * These actions are grouped by user and content.
+   */
+  actionsTopic: ActionsTopicQueries;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */

@@ -153,6 +153,24 @@ export type ActionVerb = {
   name: Scalars["String"];
 };
 
+/** Paginated ActionsByContent */
+export type ActionsByContentConnection = Connection & {
+  __typename?: "ActionsByContentConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllActionsByContent>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
+/** Paginated ActionsByUser */
+export type ActionsByUserConnection = Connection & {
+  __typename?: "ActionsByUserConnection";
+  /** Nodes of the current page */
+  nodes: Array<AllActionsByUser>;
+  /** Pagination related information */
+  pageInfo: PageInfo;
+};
+
 /** Paginated Actions */
 export type ActionsConnection = Connection & {
   __typename?: "ActionsConnection";
@@ -160,6 +178,45 @@ export type ActionsConnection = Connection & {
   nodes: Array<Action>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+export type ActionsTopicInput = {
+  /** End interval for conducting the search. */
+  endDate: Scalars["DateTime"];
+  /** ID of the project. */
+  projectId: Scalars["Int"];
+  /** Start interval for conducting the search. */
+  startDate: Scalars["DateTime"];
+  /** Array of topic IDs where the search will be performed. */
+  topicsIds: Array<Scalars["Int"]>;
+  /** Array of verbs to be used for action search. */
+  verbNames: Array<Scalars["String"]>;
+};
+
+export type ActionsTopicQueries = {
+  __typename?: "ActionsTopicQueries";
+  /**
+   * Returns all actions performed, grouped by Content.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
+  allActionsByContent: ActionsByContentConnection;
+  /**
+   * Returns all actions performed, grouped by users.
+   * Pagination parameters are used to control the number of returned results,
+   * making this parameter mandatory.
+   */
+  allActionsByUser: ActionsByUserConnection;
+};
+
+export type ActionsTopicQueriesallActionsByContentArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
+};
+
+export type ActionsTopicQueriesallActionsByUserArgs = {
+  input: ActionsTopicInput;
+  pagination: CursorConnectionArgs;
 };
 
 /** Paginated Actions Verbs */
@@ -637,6 +694,34 @@ export type AdminUsersFilter = {
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Filter by text search inside "email", "name", "tags" or "projects" */
   textSearch?: InputMaybe<Scalars["String"]>;
+};
+
+export type AllActionsByContent = {
+  __typename?: "AllActionsByContent";
+  /** Actions performed on the content. */
+  actions: Array<Action>;
+  /** Unique string identifier */
+  code: Scalars["String"];
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON object data */
+  json: Scalars["JSONObject"];
+  /** KCs associated with the content */
+  kcs: Array<KC>;
+};
+
+export type AllActionsByUser = {
+  __typename?: "AllActionsByUser";
+  /** Actions performed by user */
+  actions: Array<Action>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Email Address */
+  email: Scalars["String"];
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Model States associated with user */
+  modelStates: Scalars["JSON"];
 };
 
 /** Pagination Interface */
@@ -1433,6 +1518,11 @@ export type ProjectsConnection = Connection & {
 
 export type Query = {
   __typename?: "Query";
+  /**
+   * This service retrieves all actions performed on the specified topics through the input.
+   * These actions are grouped by user and content.
+   */
+  actionsTopic: ActionsTopicQueries;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
@@ -1970,7 +2060,12 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars["ID"]>;
   ActionInput: ActionInput;
   ActionVerb: ResolverTypeWrapper<ActionVerb>;
+  ActionsByContentConnection: ResolverTypeWrapper<ActionsByContentConnection>;
+  ActionsByUserConnection: ResolverTypeWrapper<ActionsByUserConnection>;
   ActionsConnection: ResolverTypeWrapper<ActionsConnection>;
+  ActionsTopicInput: ActionsTopicInput;
+  Int: ResolverTypeWrapper<Scalars["Int"]>;
+  ActionsTopicQueries: ResolverTypeWrapper<ActionsTopicQueries>;
   ActionsVerbsConnection: ResolverTypeWrapper<ActionsVerbsConnection>;
   AdminActionQueries: ResolverTypeWrapper<AdminActionQueries>;
   AdminActionsFilter: AdminActionsFilter;
@@ -1990,7 +2085,11 @@ export type ResolversTypes = {
   AdminUserMutations: ResolverTypeWrapper<AdminUserMutations>;
   AdminUserQueries: ResolverTypeWrapper<AdminUserQueries>;
   AdminUsersFilter: AdminUsersFilter;
+  AllActionsByContent: ResolverTypeWrapper<AllActionsByContent>;
+  AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
   Connection:
+    | ResolversTypes["ActionsByContentConnection"]
+    | ResolversTypes["ActionsByUserConnection"]
     | ResolversTypes["ActionsConnection"]
     | ResolversTypes["ActionsVerbsConnection"]
     | ResolversTypes["ContentConnection"]
@@ -2004,7 +2103,6 @@ export type ResolversTypes = {
     | ResolversTypes["TopicsConnection"]
     | ResolversTypes["UsersConnection"];
   Content: ResolverTypeWrapper<Content>;
-  Int: ResolverTypeWrapper<Scalars["Int"]>;
   ContentConnection: ResolverTypeWrapper<ContentConnection>;
   ContentSelectedPropsReturn: ResolverTypeWrapper<ContentSelectedPropsReturn>;
   ContentSelectionInput: ContentSelectionInput;
@@ -2084,7 +2182,12 @@ export type ResolversParentTypes = {
   ID: Scalars["ID"];
   ActionInput: ActionInput;
   ActionVerb: ActionVerb;
+  ActionsByContentConnection: ActionsByContentConnection;
+  ActionsByUserConnection: ActionsByUserConnection;
   ActionsConnection: ActionsConnection;
+  ActionsTopicInput: ActionsTopicInput;
+  Int: Scalars["Int"];
+  ActionsTopicQueries: ActionsTopicQueries;
   ActionsVerbsConnection: ActionsVerbsConnection;
   AdminActionQueries: AdminActionQueries;
   AdminActionsFilter: AdminActionsFilter;
@@ -2104,7 +2207,11 @@ export type ResolversParentTypes = {
   AdminUserMutations: AdminUserMutations;
   AdminUserQueries: AdminUserQueries;
   AdminUsersFilter: AdminUsersFilter;
+  AllActionsByContent: AllActionsByContent;
+  AllActionsByUser: AllActionsByUser;
   Connection:
+    | ResolversParentTypes["ActionsByContentConnection"]
+    | ResolversParentTypes["ActionsByUserConnection"]
     | ResolversParentTypes["ActionsConnection"]
     | ResolversParentTypes["ActionsVerbsConnection"]
     | ResolversParentTypes["ContentConnection"]
@@ -2118,7 +2225,6 @@ export type ResolversParentTypes = {
     | ResolversParentTypes["TopicsConnection"]
     | ResolversParentTypes["UsersConnection"];
   Content: Content;
-  Int: Scalars["Int"];
   ContentConnection: ContentConnection;
   ContentSelectedPropsReturn: ContentSelectedPropsReturn;
   ContentSelectionInput: ContentSelectionInput;
@@ -2220,12 +2326,63 @@ export type ActionVerbResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ActionsByContentConnectionResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ActionsByContentConnection"] = ResolversParentTypes["ActionsByContentConnection"]
+> = {
+  nodes?: Resolver<
+    Array<ResolversTypes["AllActionsByContent"]>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<ResolversTypes["PageInfo"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ActionsByUserConnectionResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ActionsByUserConnection"] = ResolversParentTypes["ActionsByUserConnection"]
+> = {
+  nodes?: Resolver<
+    Array<ResolversTypes["AllActionsByUser"]>,
+    ParentType,
+    ContextType
+  >;
+  pageInfo?: Resolver<ResolversTypes["PageInfo"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ActionsConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["ActionsConnection"] = ResolversParentTypes["ActionsConnection"]
 > = {
   nodes?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes["PageInfo"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ActionsTopicQueriesResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ActionsTopicQueries"] = ResolversParentTypes["ActionsTopicQueries"]
+> = {
+  allActionsByContent?: Resolver<
+    ResolversTypes["ActionsByContentConnection"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      ActionsTopicQueriesallActionsByContentArgs,
+      "input" | "pagination"
+    >
+  >;
+  allActionsByUser?: Resolver<
+    ResolversTypes["ActionsByUserConnection"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      ActionsTopicQueriesallActionsByUserArgs,
+      "input" | "pagination"
+    >
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2507,11 +2664,37 @@ export type AdminUserQueriesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AllActionsByContentResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["AllActionsByContent"] = ResolversParentTypes["AllActionsByContent"]
+> = {
+  actions?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
+  code?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  json?: Resolver<ResolversTypes["JSONObject"], ParentType, ContextType>;
+  kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AllActionsByUserResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["AllActionsByUser"] = ResolversParentTypes["AllActionsByUser"]
+> = {
+  actions?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Connection"] = ResolversParentTypes["Connection"]
 > = {
   __resolveType: TypeResolveFn<
+    | "ActionsByContentConnection"
+    | "ActionsByUserConnection"
     | "ActionsConnection"
     | "ActionsVerbsConnection"
     | "ContentConnection"
@@ -2992,6 +3175,11 @@ export type QueryResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  actionsTopic?: Resolver<
+    ResolversTypes["ActionsTopicQueries"],
+    ParentType,
+    ContextType
+  >;
   adminActions?: Resolver<
     ResolversTypes["AdminActionQueries"],
     ParentType,
@@ -3230,7 +3418,10 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   Action?: ActionResolvers<ContextType>;
   ActionVerb?: ActionVerbResolvers<ContextType>;
+  ActionsByContentConnection?: ActionsByContentConnectionResolvers<ContextType>;
+  ActionsByUserConnection?: ActionsByUserConnectionResolvers<ContextType>;
   ActionsConnection?: ActionsConnectionResolvers<ContextType>;
+  ActionsTopicQueries?: ActionsTopicQueriesResolvers<ContextType>;
   ActionsVerbsConnection?: ActionsVerbsConnectionResolvers<ContextType>;
   AdminActionQueries?: AdminActionQueriesResolvers<ContextType>;
   AdminContentMutations?: AdminContentMutationsResolvers<ContextType>;
@@ -3242,6 +3433,8 @@ export type Resolvers<ContextType = EZContext> = {
   AdminStateQueries?: AdminStateQueriesResolvers<ContextType>;
   AdminUserMutations?: AdminUserMutationsResolvers<ContextType>;
   AdminUserQueries?: AdminUserQueriesResolvers<ContextType>;
+  AllActionsByContent?: AllActionsByContentResolvers<ContextType>;
+  AllActionsByUser?: AllActionsByUserResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;

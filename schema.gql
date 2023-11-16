@@ -108,12 +108,62 @@ type ActionVerb {
   name: String!
 }
 
+"Paginated ActionsByContent"
+type ActionsByContentConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllActionsByContent!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
+"Paginated ActionsByUser"
+type ActionsByUserConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllActionsByUser!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
 "Paginated Actions"
 type ActionsConnection implements Connection {
   "Nodes of the current page"
   nodes: [Action!]!
   "Pagination related information"
   pageInfo: PageInfo!
+}
+
+input ActionsTopicInput {
+  "End interval for conducting the search."
+  endDate: DateTime!
+  "ID of the project."
+  projectId: Int!
+  "Start interval for conducting the search."
+  startDate: DateTime!
+  "Array of topic IDs where the search will be performed."
+  topicsIds: [Int!]!
+  "Array of verbs to be used for action search."
+  verbNames: [String!]!
+}
+
+type ActionsTopicQueries {
+  """
+  Returns all actions performed, grouped by Content.
+  Pagination parameters are used to control the number of returned results,
+  making this parameter mandatory.
+  """
+  allActionsByContent(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByContentConnection!
+  """
+  Returns all actions performed, grouped by users.
+  Pagination parameters are used to control the number of returned results,
+  making this parameter mandatory.
+  """
+  allActionsByUser(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByUserConnection!
 }
 
 "Paginated Actions Verbs"
@@ -463,6 +513,32 @@ input AdminUsersFilter {
   Filter by text search inside "email", "name", "tags" or "projects"
   """
   textSearch: String
+}
+
+type AllActionsByContent {
+  "Actions performed on the content."
+  actions: [Action!]!
+  "Unique string identifier"
+  code: String!
+  "Unique numeric identifier"
+  id: IntID!
+  "Arbitrary JSON object data"
+  json: JSONObject!
+  "KCs associated with the content"
+  kcs: [KC!]!
+}
+
+type AllActionsByUser {
+  "Actions performed by user"
+  actions: [Action!]!
+  "Date of creation"
+  createdAt: DateTime!
+  "Email Address"
+  email: String!
+  "Unique numeric identifier"
+  id: IntID!
+  "Model States associated with user"
+  modelStates: JSON!
 }
 
 "Pagination Interface"
@@ -1257,6 +1333,11 @@ type ProjectsConnection implements Connection {
 }
 
 type Query {
+  """
+  This service retrieves all actions performed on the specified topics through the input.
+  These actions are grouped by user and content.
+  """
+  actionsTopic: ActionsTopicQueries!
   """
   Admin related actions queries, only authenticated users with the role "ADMIN" can access
   """

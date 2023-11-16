@@ -1,0 +1,283 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Action {
+  "Arbitrary numeric amount"
+  amount: Float
+  "Related content"
+  content: Content
+  "Timestamp of the action, set by the database on row creation"
+  createdAt: DateTime!
+  "Arbitrary string content detail"
+  detail: String
+  "Arbitrary JSON object data"
+  extra: JSONObject
+  "Arbitrary hint identifier"
+  hintID: ID
+  "Unique numeric identifier"
+  id: IntID!
+  "Related KCs"
+  kcs: [KC!]!
+  "Arbitrary numeric result"
+  result: Float
+  "Arbitrary step identifier"
+  stepID: ID
+  "Timestamp of the action, set by the action emitter"
+  timestamp: Timestamp!
+  "Related topic"
+  topic: Topic
+  "User that emitted the action"
+  user: User
+  "Type of action"
+  verb: ActionVerb!
+}
+
+type ActionVerb {
+  "Unique numeric identifier"
+  id: IntID!
+  "Name of the verb"
+  name: String!
+}
+
+"Paginated ActionsByContent"
+type ActionsByContentConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllActionsByContent!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
+"Paginated ActionsByUser"
+type ActionsByUserConnection implements Connection {
+  "Nodes of the current page"
+  nodes: [AllActionsByUser!]!
+  "Pagination related information"
+  pageInfo: PageInfo!
+}
+
+input ActionsTopicInput {
+  "End interval for conducting the search."
+  endDate: DateTime!
+  "ID of the project."
+  projectId: Int!
+  "Start interval for conducting the search."
+  startDate: DateTime!
+  "Array of topic IDs where the search will be performed."
+  topicsIds: [Int!]!
+  "Array of verbs to be used for action search."
+  verbNames: [String!]!
+}
+
+type ActionsTopicQueries {
+  """
+  Returns all actions performed, grouped by Content.
+  Pagination parameters are used to control the number of returned results,
+  making this parameter mandatory.
+  """
+  allActionsByContent(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByContentConnection!
+  """
+  Returns all actions performed, grouped by users.
+  Pagination parameters are used to control the number of returned results,
+  making this parameter mandatory.
+  """
+  allActionsByUser(
+    input: ActionsTopicInput!
+    pagination: CursorConnectionArgs!
+  ): ActionsByUserConnection!
+}
+
+type AllActionsByContent {
+  "Actions performed on the content."
+  actions: [Action!]!
+  "Unique string identifier"
+  code: String!
+  "Unique numeric identifier"
+  id: IntID!
+  "Arbitrary JSON object data"
+  json: JSONObject!
+  "KCs associated with the content"
+  kcs: [KC!]!
+}
+
+type AllActionsByUser {
+  "Actions performed by user"
+  actions: [Action!]!
+  "Date of creation"
+  createdAt: DateTime!
+  "Email Address"
+  email: String!
+  "Unique numeric identifier"
+  id: IntID!
+  "Model States associated with user"
+  modelStates: JSON!
+}
+
+"Pagination Interface"
+interface Connection {
+  "Pagination information"
+  pageInfo: PageInfo!
+}
+
+"Content entity"
+type Content {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
+"""
+Pagination parameters
+
+Forward pagination parameters can't be mixed with Backward pagination parameters simultaneously
+
+first & after => Forward Pagination
+
+last & before => Backward Pagination
+"""
+input CursorConnectionArgs {
+  """
+  Set the minimum boundary
+
+  Use the "endCursor" field of "pageInfo"
+  """
+  after: IntID
+  """
+  Set the maximum boundary
+
+  Use the "startCursor" field of "pageInfo"
+  """
+  before: IntID
+  """
+  Set the limit of nodes to be fetched
+
+  It can't be more than 50
+  """
+  first: NonNegativeInt
+  """
+  Set the limit of nodes to be fetched
+
+  It can't be more than 50
+  """
+  last: NonNegativeInt
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+"""
+A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/.
+"""
+scalar EmailAddress @specifiedBy(url: "https://www.w3.org/Protocols/rfc822/")
+
+"""
+ID that parses as non-negative integer, serializes to string, and can be passed as string or number
+"""
+scalar IntID
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+  @specifiedBy(
+    url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
+  )
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+  @specifiedBy(
+    url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf"
+  )
+
+type KC {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
+type Mutation {
+  "Returns 'Hello World!'"
+  hello: String!
+}
+
+"Minimum Entity Information"
+interface Node {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
+"""
+Integers that will have a value of 0 or more.
+"""
+scalar NonNegativeInt
+
+"Order ascendingly or descendingly"
+enum ORDER_BY {
+  ASC
+  DESC
+}
+
+"Paginated related information"
+type PageInfo {
+  "Cursor parameter normally used for forward pagination"
+  endCursor: String
+  """
+  Utility field that returns "true" if a next page can be fetched
+  """
+  hasNextPage: Boolean!
+  """
+  Utility field that returns "true" if a previous page can be fetched
+  """
+  hasPreviousPage: Boolean!
+  "Cursor parameter normally used for backward pagination"
+  startCursor: String
+}
+
+type Query {
+  """
+  This service retrieves all actions performed on the specified topics through the input.
+  These actions are grouped by user and content.
+  """
+  actionsTopic: ActionsTopicQueries!
+  "Returns 'Hello World!'"
+  hello: String!
+}
+
+type Subscription {
+  "Emits 'Hello World1', 'Hello World2', 'Hello World3', 'Hello World4' and 'Hello World5'"
+  hello: String!
+}
+
+"""
+The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
+"Topic entity"
+type Topic {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
+"""
+A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
+"""
+scalar URL
+
+"User entity"
+type User {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
+"""
+Represents NULL values
+"""
+scalar Void

@@ -7,6 +7,7 @@ export const baseServicesList = {
   state: 3007,
   model: 3008,
   contentSelection: 3009,
+  actionstopic: 3010,
 } as const;
 
 export const servicesNames = Object.keys(baseServicesList) as ServiceName[];
