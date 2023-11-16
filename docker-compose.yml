@@ -60,7 +60,7 @@ services:
       AUTH0_CLIENT: ${AUTH0_CLIENT}
       AUTH0_SECRET: ${AUTH0_SECRET}
     command: pnpm --filter=service-state -r start
-  actionsTopic:
+  actionstopic:
     restart: always
     image: pabloszx/learner-model-gql
     network_mode: host
@@ -69,7 +69,7 @@ services:
       AUTH0_DOMAIN: ${AUTH0_DOMAIN}
       AUTH0_CLIENT: ${AUTH0_CLIENT}
       AUTH0_SECRET: ${AUTH0_SECRET}
-    command: pnpm --filter=service-actionsTopic -r actionsTopic
+    command: pnpm --filter=service-actionstopic -r actionstopic
   gateway:
     restart: always
     image: pabloszx/learner-model-gql

@@ -166,8 +166,16 @@ export type ActionsConnection = Connection & {
 };
 
 export type ActionsTopicInput = {
+  /** End interval for conducting the search. */
+  endDate: Scalars["DateTime"];
+  /** ID of the project. */
   projectId: Scalars["Int"];
+  /** Start interval for conducting the search. */
+  startDate: Scalars["DateTime"];
+  /** Array of topic IDs where the search will be performed. */
   topicsIds: Array<Scalars["Int"]>;
+  /** Array of verbs to be used for action search. */
+  verbNames: Array<Scalars["String"]>;
 };
 
 export type ActionsTopicQueries = {

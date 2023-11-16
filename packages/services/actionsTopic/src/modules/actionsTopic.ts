@@ -35,8 +35,16 @@ export const actionsTopicModule = registerModule(
     }
 
     input ActionsTopicInput {
+      "ID of the project."
       projectId: Int!
+      "Array of topic IDs where the search will be performed."
       topicsIds: [Int!]!
+      "Array of verbs to be used for action search."
+      verbNames: [String!]!
+      "Start interval for conducting the search."
+      startDate: DateTime!
+      "End interval for conducting the search."
+      endDate: DateTime!
     }
 
     "Paginated ActionsByContent"
@@ -193,6 +201,17 @@ export const actionsTopicModule = registerModule(
                           id: input.projectId,
                         },
                       },
+                      createdAt: {
+                        gte: input.startDate,
+                        lte: input.endDate,
+                      },
+                    },
+                    verbName: {
+                      in: input.verbNames,
+                    },
+                    createdAt: {
+                      gte: input.startDate,
+                      lte: input.endDate,
                     },
                   },
                   select: {
@@ -206,6 +225,7 @@ export const actionsTopicModule = registerModule(
                     },
                     verb: {
                       select: {
+                        id: true,
                         name: true,
                       },
                     },
@@ -232,6 +252,10 @@ export const actionsTopicModule = registerModule(
                     id: input.projectId,
                   },
                 },
+                createdAt: {
+                  gte: input.startDate,
+                  lte: input.endDate,
+                },
               },
               include: {
                 actions: {
@@ -240,6 +264,13 @@ export const actionsTopicModule = registerModule(
                       id: {
                         in: input.topicsIds,
                       },
+                    },
+                    verbName: {
+                      in: input.verbNames,
+                    },
+                    createdAt: {
+                      gte: input.startDate,
+                      lte: input.endDate,
                     },
                   },
                   select: {

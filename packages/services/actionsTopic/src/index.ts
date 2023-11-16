@@ -25,8 +25,8 @@ app.ready(async (err) => {
   }
 
   // This will listen on the expected port, considering development mode and environment variables.
-  await smartListen(app, baseServicesList.actionsTopic);
+  await smartListen(app, baseServicesList.actionstopic);
 
   // This will notify the gateway to re-introspect all the services, and detect possible changes
-  pubSub.publish("updateGateway", "actionsTopic");
+  pubSub.publish("updateGateway", "actionstopic");
 });

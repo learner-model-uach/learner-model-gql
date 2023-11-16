@@ -59,8 +59,16 @@ type ActionsByUserConnection implements Connection {
 }
 
 input ActionsTopicInput {
+  "End interval for conducting the search."
+  endDate: DateTime!
+  "ID of the project."
   projectId: Int!
+  "Start interval for conducting the search."
+  startDate: DateTime!
+  "Array of topic IDs where the search will be performed."
   topicsIds: [Int!]!
+  "Array of verbs to be used for action search."
+  verbNames: [String!]!
 }
 
 type ActionsTopicQueries {
