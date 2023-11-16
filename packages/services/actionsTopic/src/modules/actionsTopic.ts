@@ -288,6 +288,12 @@ export const actionsTopicModule = registerModule(
                   orderBy: {
                     createdAt: "desc",
                   },
+                  where: {
+                    createdAt: {
+                      gte: input.startDate,
+                      lte: input.endDate,
+                    },
+                  },
                 },
               },
             });
