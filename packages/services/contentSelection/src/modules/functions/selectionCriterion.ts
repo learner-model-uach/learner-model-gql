@@ -176,7 +176,7 @@ export const selectionCriterion = (
       table = table.sort((a, b) => (a.diff ?? 0) - (b.diff ?? 0)); //menor a mayor difficulty
       table = table.filter((x) => (x.diff ?? 0) > 0);
       //table = shuffle(table.filter((x) => (x.diff ?? 0) == table[0]?.diff));
-      const ejercicio1 = table.filter((x)=>x>2).sort(() => Math.random() - 0.5)[0]?.P;
+      const ejercicio1 = table.filter((x) => (x.diff ?? 0) == table[0]?.diff)).sort(() => Math.random() - 0.5)[0]?.P;
       //table[Math.floor((Math.random() * table.length) / 4)]?.P; //primero!!
       contentSelected.push({
         P: ejercicio1,
