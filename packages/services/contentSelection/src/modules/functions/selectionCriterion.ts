@@ -1,6 +1,6 @@
 import type { Content, KC, ModelState } from "api-base";
 import { difficulty } from "./difficulty";
-import { shuffle, maxBy, minBy } from "lodash-es";
+import { maxBy, minBy } from "lodash-es";
 import { probSuccessAvg } from "./probSuccessAvg";
 import { probSuccessMult } from "./probSuccessMult";
 import { similarity } from "./similarity";
