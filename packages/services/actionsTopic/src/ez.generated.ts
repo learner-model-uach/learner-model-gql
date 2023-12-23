@@ -168,14 +168,16 @@ export type AllActionsByUser = {
   __typename?: "AllActionsByUser";
   /** Actions performed by user */
   actions: Array<Action>;
-  /** Date of creation */
-  createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Model States associated with user */
   modelStates: Scalars["JSON"];
+  /** role */
+  role: Scalars["String"];
+  /** Date of creation */
+  updatedAt: Scalars["DateTime"];
 };
 
 /** Pagination Interface */
@@ -575,10 +577,11 @@ export type AllActionsByUserResolvers<
   ParentType extends ResolversParentTypes["AllActionsByUser"] = ResolversParentTypes["AllActionsByUser"]
 > = {
   actions?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

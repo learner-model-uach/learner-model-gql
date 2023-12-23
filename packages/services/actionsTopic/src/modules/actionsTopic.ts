@@ -81,13 +81,15 @@ export const actionsTopicModule = registerModule(
       "Unique numeric identifier"
       id: IntID!
       "Date of creation"
-      createdAt: DateTime!
+      updatedAt: DateTime!
       "Email Address"
       email: String!
       "Model States associated with user"
       modelStates: JSON!
       "Actions performed by user"
       actions: [Action!]!
+      "role"
+      role: String!
     }
 
     "User entity"
@@ -201,10 +203,6 @@ export const actionsTopicModule = registerModule(
                           id: input.projectId,
                         },
                       },
-                      createdAt: {
-                        gte: input.startDate,
-                        lte: input.endDate,
-                      },
                     },
                     verbName: {
                       in: input.verbNames,
@@ -217,6 +215,7 @@ export const actionsTopicModule = registerModule(
                   select: {
                     id: true,
                     stepID: true,
+                    result: true,
                     user: {
                       select: {
                         id: true,
@@ -252,10 +251,6 @@ export const actionsTopicModule = registerModule(
                     id: input.projectId,
                   },
                 },
-                createdAt: {
-                  gte: input.startDate,
-                  lte: input.endDate,
-                },
               },
               include: {
                 actions: {
@@ -286,10 +281,10 @@ export const actionsTopicModule = registerModule(
                 modelStates: {
                   take: 1,
                   orderBy: {
-                    createdAt: "desc",
+                    updatedAt: "desc",
                   },
                   where: {
-                    createdAt: {
+                    updatedAt: {
                       gte: input.startDate,
                       lte: input.endDate,
                     },

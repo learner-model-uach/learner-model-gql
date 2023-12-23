@@ -531,14 +531,16 @@ type AllActionsByContent {
 type AllActionsByUser {
   "Actions performed by user"
   actions: [Action!]!
-  "Date of creation"
-  createdAt: DateTime!
   "Email Address"
   email: String!
   "Unique numeric identifier"
   id: IntID!
   "Model States associated with user"
   modelStates: JSON!
+  "role"
+  role: String!
+  "Date of creation"
+  updatedAt: DateTime!
 }
 
 "Pagination Interface"

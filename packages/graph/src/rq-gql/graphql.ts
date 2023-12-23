@@ -699,14 +699,16 @@ export type AllActionsByUser = {
   __typename?: "AllActionsByUser";
   /** Actions performed by user */
   actions: Array<Action>;
-  /** Date of creation */
-  createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Model States associated with user */
   modelStates: Scalars["JSON"];
+  /** role */
+  role: Scalars["String"];
+  /** Date of creation */
+  updatedAt: Scalars["DateTime"];
 };
 
 /** Pagination Interface */
