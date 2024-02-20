@@ -183,6 +183,8 @@ export type ActionsConnection = Connection & {
 export type ActionsTopicInput = {
   /** End interval for conducting the search. */
   endDate: Scalars["DateTime"];
+  /** Array of group identifiers that will be used to filter the information corresponding to the users of those groups. */
+  groupIds: Array<Scalars["Int"]>;
   /** ID of the project. */
   projectId: Scalars["Int"];
   /** Start interval for conducting the search. */
@@ -720,10 +722,8 @@ export type AllActionsByUser = {
   id: Scalars["IntID"];
   /** Model States associated with user */
   modelStates: Scalars["JSON"];
-  /** role */
+  /** User role */
   role: Scalars["String"];
-  /** Date of creation */
-  updatedAt: Scalars["DateTime"];
 };
 
 /** Pagination Interface */
@@ -2687,7 +2687,6 @@ export type AllActionsByUserResolvers<
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
   role?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

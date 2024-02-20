@@ -45,6 +45,8 @@ export const actionsTopicModule = registerModule(
       startDate: DateTime!
       "End interval for conducting the search."
       endDate: DateTime!
+      "Array of group identifiers that will be used to filter the information corresponding to the users of those groups."
+      groupIds: [Int!]!
     }
 
     "Paginated ActionsByContent"
@@ -80,15 +82,13 @@ export const actionsTopicModule = registerModule(
     type AllActionsByUser {
       "Unique numeric identifier"
       id: IntID!
-      "Date of creation"
-      updatedAt: DateTime!
       "Email Address"
       email: String!
       "Model States associated with user"
       modelStates: JSON!
       "Actions performed by user"
       actions: [Action!]!
-      "role"
+      "User role"
       role: String!
     }
 
@@ -216,6 +216,7 @@ export const actionsTopicModule = registerModule(
                     id: true,
                     stepID: true,
                     result: true,
+                    createdAt: true,
                     user: {
                       select: {
                         id: true,
@@ -251,6 +252,13 @@ export const actionsTopicModule = registerModule(
                     id: input.projectId,
                   },
                 },
+                groups: {
+                  some: {
+                    id: {
+                      in: input.groupIds,
+                    },
+                  },
+                },
               },
               include: {
                 actions: {
@@ -279,16 +287,16 @@ export const actionsTopicModule = registerModule(
                   },
                 },
                 modelStates: {
-                  take: 1,
-                  orderBy: {
-                    updatedAt: "desc",
-                  },
                   where: {
                     updatedAt: {
                       gte: input.startDate,
                       lte: input.endDate,
                     },
                   },
+                  orderBy: {
+                    updatedAt: "desc",
+                  },
+                  take: 1,
                 },
               },
             });

@@ -135,6 +135,8 @@ type ActionsConnection implements Connection {
 input ActionsTopicInput {
   "End interval for conducting the search."
   endDate: DateTime!
+  "Array of group identifiers that will be used to filter the information corresponding to the users of those groups."
+  groupIds: [Int!]!
   "ID of the project."
   projectId: Int!
   "Start interval for conducting the search."
@@ -537,10 +539,8 @@ type AllActionsByUser {
   id: IntID!
   "Model States associated with user"
   modelStates: JSON!
-  "role"
+  "User role"
   role: String!
-  "Date of creation"
-  updatedAt: DateTime!
 }
 
 "Pagination Interface"
