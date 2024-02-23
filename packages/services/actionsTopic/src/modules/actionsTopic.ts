@@ -82,6 +82,8 @@ export const actionsTopicModule = registerModule(
     type AllActionsByUser {
       "Unique numeric identifier"
       id: IntID!
+      "Date of creation"
+      createdAt: DateTime!
       "Email Address"
       email: String!
       "Model States associated with user"
@@ -216,7 +218,6 @@ export const actionsTopicModule = registerModule(
                     id: true,
                     stepID: true,
                     result: true,
-                    createdAt: true,
                     user: {
                       select: {
                         id: true,
@@ -281,6 +282,7 @@ export const actionsTopicModule = registerModule(
                   select: {
                     id: true,
                     stepID: true,
+                    createdAt: true,
                     verb: {
                       select: {
                         name: true,
