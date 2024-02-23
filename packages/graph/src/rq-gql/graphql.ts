@@ -168,6 +168,8 @@ export type ActionsConnection = Connection & {
 export type ActionsTopicInput = {
   /** End interval for conducting the search. */
   endDate: Scalars["DateTime"];
+  /** Array of group identifiers that will be used to filter the information corresponding to the users of those groups. */
+  groupIds?: InputMaybe<Array<Scalars["Int"]>>;
   /** ID of the project. */
   projectId: Scalars["Int"];
   /** Start interval for conducting the search. */
@@ -699,14 +701,14 @@ export type AllActionsByUser = {
   __typename?: "AllActionsByUser";
   /** Actions performed by user */
   actions: Array<Action>;
-  /** Date of creation */
-  createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
   /** Unique numeric identifier */
   id: Scalars["IntID"];
   /** Model States associated with user */
   modelStates: Scalars["JSON"];
+  /** User role */
+  role: Scalars["String"];
 };
 
 /** Pagination Interface */

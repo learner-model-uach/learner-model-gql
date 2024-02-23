@@ -45,6 +45,8 @@ export const actionsTopicModule = registerModule(
       startDate: DateTime!
       "End interval for conducting the search."
       endDate: DateTime!
+      "Array of group identifiers that will be used to filter the information corresponding to the users of those groups."
+      groupIds: [Int!]
     }
 
     "Paginated ActionsByContent"
@@ -88,6 +90,8 @@ export const actionsTopicModule = registerModule(
       modelStates: JSON!
       "Actions performed by user"
       actions: [Action!]!
+      "User role"
+      role: String!
     }
 
     "User entity"
@@ -201,10 +205,6 @@ export const actionsTopicModule = registerModule(
                           id: input.projectId,
                         },
                       },
-                      createdAt: {
-                        gte: input.startDate,
-                        lte: input.endDate,
-                      },
                     },
                     verbName: {
                       in: input.verbNames,
@@ -217,6 +217,7 @@ export const actionsTopicModule = registerModule(
                   select: {
                     id: true,
                     stepID: true,
+                    result: true,
                     user: {
                       select: {
                         id: true,
@@ -252,10 +253,15 @@ export const actionsTopicModule = registerModule(
                     id: input.projectId,
                   },
                 },
-                createdAt: {
-                  gte: input.startDate,
-                  lte: input.endDate,
-                },
+                groups: input.groupIds
+                  ? {
+                      some: {
+                        id: {
+                          in: input.groupIds,
+                        },
+                      },
+                    }
+                  : undefined,
               },
               include: {
                 actions: {
@@ -276,6 +282,7 @@ export const actionsTopicModule = registerModule(
                   select: {
                     id: true,
                     stepID: true,
+                    createdAt: true,
                     verb: {
                       select: {
                         name: true,
@@ -284,16 +291,16 @@ export const actionsTopicModule = registerModule(
                   },
                 },
                 modelStates: {
-                  take: 1,
-                  orderBy: {
-                    createdAt: "desc",
-                  },
                   where: {
-                    createdAt: {
+                    updatedAt: {
                       gte: input.startDate,
                       lte: input.endDate,
                     },
                   },
+                  orderBy: {
+                    updatedAt: "desc",
+                  },
+                  take: 1,
                 },
               },
             });
