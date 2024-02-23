@@ -115,7 +115,7 @@ export type ActionsTopicInput = {
   /** End interval for conducting the search. */
   endDate: Scalars["DateTime"];
   /** Array of group identifiers that will be used to filter the information corresponding to the users of those groups. */
-  groupIds: Array<Scalars["Int"]>;
+  groupIds?: InputMaybe<Array<Scalars["Int"]>>;
   /** ID of the project. */
   projectId: Scalars["Int"];
   /** Start interval for conducting the search. */

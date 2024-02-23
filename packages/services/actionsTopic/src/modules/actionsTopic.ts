@@ -46,7 +46,7 @@ export const actionsTopicModule = registerModule(
       "End interval for conducting the search."
       endDate: DateTime!
       "Array of group identifiers that will be used to filter the information corresponding to the users of those groups."
-      groupIds: [Int!]!
+      groupIds: [Int!]
     }
 
     "Paginated ActionsByContent"
@@ -252,13 +252,15 @@ export const actionsTopicModule = registerModule(
                     id: input.projectId,
                   },
                 },
-                groups: {
-                  some: {
-                    id: {
-                      in: input.groupIds,
-                    },
-                  },
-                },
+                groups: input.groupIds
+                  ? {
+                      some: {
+                        id: {
+                          in: input.groupIds,
+                        },
+                      },
+                    }
+                  : undefined,
               },
               include: {
                 actions: {
