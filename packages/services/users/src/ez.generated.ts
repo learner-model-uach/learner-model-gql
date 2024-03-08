@@ -118,6 +118,7 @@ export type AdminUserMutationsupdateUserArgs = {
 export type AdminUserMutationsupsertUsersWithProjectsArgs = {
   emails: Array<Scalars["EmailAddress"]>;
   projectsIds: Array<Scalars["IntID"]>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** Admin User-Related Queries */
