@@ -77,7 +77,7 @@ const documents = {
     graphql.UserInfoFragmentDoc,
   "\n  query AdminUsers(\n    $pagination: CursorConnectionArgs!\n    $filters: AdminUsersFilter\n  ) {\n    adminUsers {\n      allUsers(pagination: $pagination, filters: $filters) {\n        nodes {\n          ...UserInfo\n        }\n        ...Pagination\n      }\n    }\n  }\n":
     graphql.AdminUsersDocument,
-  "\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(emails: $emails, projectsIds: $projectsIds) {\n            ...UserInfo\n          }\n        }\n      }\n    ":
+  "\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n        $tags: [String!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(\n            emails: $emails\n            projectsIds: $projectsIds\n            tags: $tags\n          ) {\n            ...UserInfo\n          }\n        }\n      }\n    ":
     graphql.UpsertUsersWithProjectsDocument,
   "\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    ":
     graphql.SetEmailAliasesDocument,
@@ -197,8 +197,8 @@ export function gql(
   source: "\n  query AdminUsers(\n    $pagination: CursorConnectionArgs!\n    $filters: AdminUsersFilter\n  ) {\n    adminUsers {\n      allUsers(pagination: $pagination, filters: $filters) {\n        nodes {\n          ...UserInfo\n        }\n        ...Pagination\n      }\n    }\n  }\n"
 ): (typeof documents)["\n  query AdminUsers(\n    $pagination: CursorConnectionArgs!\n    $filters: AdminUsersFilter\n  ) {\n    adminUsers {\n      allUsers(pagination: $pagination, filters: $filters) {\n        nodes {\n          ...UserInfo\n        }\n        ...Pagination\n      }\n    }\n  }\n"];
 export function gql(
-  source: "\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(emails: $emails, projectsIds: $projectsIds) {\n            ...UserInfo\n          }\n        }\n      }\n    "
-): (typeof documents)["\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(emails: $emails, projectsIds: $projectsIds) {\n            ...UserInfo\n          }\n        }\n      }\n    "];
+  source: "\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n        $tags: [String!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(\n            emails: $emails\n            projectsIds: $projectsIds\n            tags: $tags\n          ) {\n            ...UserInfo\n          }\n        }\n      }\n    "
+): (typeof documents)["\n      mutation UpsertUsersWithProjects(\n        $emails: [EmailAddress!]!\n        $projectsIds: [IntID!]!\n        $tags: [String!]!\n      ) {\n        adminUsers {\n          upsertUsersWithProjects(\n            emails: $emails\n            projectsIds: $projectsIds\n            tags: $tags\n          ) {\n            ...UserInfo\n          }\n        }\n      }\n    "];
 export function gql(
   source: "\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    "
 ): (typeof documents)["\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    "];

@@ -18,7 +18,7 @@ import {
   UserInfoFragment,
   UserRole,
 } from "graph";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaUsers } from "react-icons/fa";
 import {
   MdCheck,
@@ -94,6 +94,8 @@ const UsersState = proxy<
   >
 >({});
 
+const emptyList: [] = [];
+
 function UpsertUsers() {
   const [text, setText] = useState("");
 
@@ -105,9 +107,14 @@ function UpsertUsers() {
       mutation UpsertUsersWithProjects(
         $emails: [EmailAddress!]!
         $projectsIds: [IntID!]!
+        $tags: [String!]!
       ) {
         adminUsers {
-          upsertUsersWithProjects(emails: $emails, projectsIds: $projectsIds) {
+          upsertUsersWithProjects(
+            emails: $emails
+            projectsIds: $projectsIds
+            tags: $tags
+          ) {
             ...UserInfo
           }
         }
@@ -135,6 +142,13 @@ function UpsertUsers() {
     );
   }, [text]);
 
+  const tagsRef = useRef<SelectRefType>(null);
+
+  const { tagsSelect } = useTagsSelect({
+    tagsRef,
+    defaultTags: emptyList,
+  });
+
   return (
     <FormModal
       title="Upsert Users"
@@ -144,6 +158,7 @@ function UpsertUsers() {
         await mutateAsync({
           emails,
           projectsIds: selectedProjects.map((v) => v.value),
+          tags: tagsRef.current?.getValue().map((v) => v.value) || emptyList,
         });
       }}
       triggerButton={{
@@ -157,6 +172,10 @@ function UpsertUsers() {
       <FormControl>
         <FormLabel>Projects</FormLabel>
         {selectMultiProjectComponent}
+      </FormControl>
+      <FormControl>
+        <FormLabel>Tags</FormLabel>
+        {tagsSelect}
       </FormControl>
       <FormControl>
         <FormLabel>Users List</FormLabel>
