@@ -6,23 +6,20 @@ import pMap from "p-map";
 import { createUser } from "./createAuth0Users";
 import { setTimeout } from "timers/promises";
 
-const csvTest = await readFile(
-  resolve(__dirname, "./assets/lista.cuentas2023.csv"),
-  "utf-8"
-);
+const csvTest = await readFile(resolve(__dirname, "./lista.csv"), "utf-8");
 
 const parsedjson = z
   .array(
     z.object({
       email: z.string(),
-      email_alt: z.string(),
+      // email_alt: z.string(),
       password: z.string(),
-      tags: z.string(),
+      // tags: z.string(),
     })
   )
   .parse(
     await csvtojson({
-      delimiter: ";",
+      delimiter: "	",
     }).fromString(csvTest)
   );
 
