@@ -110,6 +110,8 @@ type AllActionsByContent {
 type AllActionsByUser {
   "Actions performed by user"
   actions: [Action!]!
+  "Date of creation"
+  createdAt: DateTime!
   "Email Address"
   email: String!
   "Unique numeric identifier"

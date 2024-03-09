@@ -144,6 +144,7 @@ export const usersModule = registerModule(
       upsertUsersWithProjects(
         emails: [EmailAddress!]!
         projectsIds: [IntID!]!
+        tags: [String!]
       ): [User!]!
 
       "Update an existent user entity"
@@ -230,7 +231,7 @@ export const usersModule = registerModule(
       AdminUserMutations: {
         async upsertUsersWithProjects(
           _root,
-          { emails, projectsIds },
+          { emails, projectsIds, tags },
           { prisma }
         ) {
           return pMap(
@@ -242,6 +243,11 @@ export const usersModule = registerModule(
                   projects: {
                     connect: projectsIds.map((id) => ({ id })),
                   },
+                  tags: tags?.length
+                    ? {
+                        set: tags,
+                      }
+                    : undefined,
                 },
                 where: {
                   email,
@@ -250,6 +256,11 @@ export const usersModule = registerModule(
                   projects: {
                     connect: projectsIds.map((id) => ({ id })),
                   },
+                  tags: tags?.length
+                    ? {
+                        push: tags,
+                      }
+                    : undefined,
                 },
               });
             },

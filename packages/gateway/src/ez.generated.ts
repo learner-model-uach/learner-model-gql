@@ -655,6 +655,7 @@ export type AdminUserMutationsupdateUserArgs = {
 export type AdminUserMutationsupsertUsersWithProjectsArgs = {
   emails: Array<Scalars["EmailAddress"]>;
   projectsIds: Array<Scalars["IntID"]>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** Admin User-Related Queries */
@@ -716,6 +717,8 @@ export type AllActionsByUser = {
   __typename?: "AllActionsByUser";
   /** Actions performed by user */
   actions: Array<Action>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
   /** Unique numeric identifier */
@@ -2683,6 +2686,7 @@ export type AllActionsByUserResolvers<
   ParentType extends ResolversParentTypes["AllActionsByUser"] = ResolversParentTypes["AllActionsByUser"]
 > = {
   actions?: Resolver<Array<ResolversTypes["Action"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;

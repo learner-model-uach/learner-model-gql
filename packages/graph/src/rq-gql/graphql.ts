@@ -640,6 +640,7 @@ export type AdminUserMutationsUpdateUserArgs = {
 export type AdminUserMutationsUpsertUsersWithProjectsArgs = {
   emails: Array<Scalars["EmailAddress"]>;
   projectsIds: Array<Scalars["IntID"]>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** Admin User-Related Queries */
@@ -701,6 +702,8 @@ export type AllActionsByUser = {
   __typename?: "AllActionsByUser";
   /** Actions performed by user */
   actions: Array<Action>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
   /** Email Address */
   email: Scalars["String"];
   /** Unique numeric identifier */
@@ -2996,6 +2999,7 @@ export type AdminUsersQuery = {
 export type UpsertUsersWithProjectsMutationVariables = Exact<{
   emails: Array<Scalars["EmailAddress"]> | Scalars["EmailAddress"];
   projectsIds: Array<Scalars["IntID"]> | Scalars["IntID"];
+  tags: Array<Scalars["String"]> | Scalars["String"];
 }>;
 
 export type UpsertUsersWithProjectsMutation = {
@@ -5869,6 +5873,23 @@ export const UpsertUsersWithProjectsDocument = {
             },
           },
         },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "tags" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "String" },
+                },
+              },
+            },
+          },
+        },
       ],
       selectionSet: {
         kind: "SelectionSet",
@@ -5897,6 +5918,14 @@ export const UpsertUsersWithProjectsDocument = {
                       value: {
                         kind: "Variable",
                         name: { kind: "Name", value: "projectsIds" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "tags" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "tags" },
                       },
                     },
                   ],

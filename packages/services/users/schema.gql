@@ -32,6 +32,7 @@ type AdminUserMutations {
   upsertUsersWithProjects(
     emails: [EmailAddress!]!
     projectsIds: [IntID!]!
+    tags: [String!]
   ): [User!]!
 }
 
