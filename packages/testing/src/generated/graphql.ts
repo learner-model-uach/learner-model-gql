@@ -1174,6 +1174,13 @@ export const KCRelationType = {
 
 export type KCRelationType =
   (typeof KCRelationType)[keyof typeof KCRelationType];
+/** All the KCs associated with the specified topics */
+export type KCsByTopic = {
+  __typename?: "KCsByTopic";
+  kcs: Array<KC>;
+  topic: Topic;
+};
+
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -1571,6 +1578,12 @@ export type Query = {
    */
   kcs: Array<KC>;
   /**
+   * Get all the KCs associated with the specified topics
+   *
+   * If topic is not found or does not have any content, it is not included in the response
+   */
+  kcsByTopics: Array<KCsByTopic>;
+  /**
    * Get specified project by either "id" or "code".
    *
    * - If user is not authenticated it will always return NULL.
@@ -1628,6 +1641,11 @@ export type QuerygroupsArgs = {
 
 export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerykcsByTopicsArgs = {
+  projectCode: Scalars["String"];
+  topicsCodes: Array<Scalars["String"]>;
 };
 
 export type QueryprojectArgs = {

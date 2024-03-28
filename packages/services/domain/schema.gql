@@ -326,6 +326,12 @@ enum KCRelationType {
   PREREQUISITE
 }
 
+"All the KCs associated with the specified topics"
+type KCsByTopic {
+  kcs: [KC!]!
+  topic: Topic!
+}
+
 "Paginated KCs"
 type KCsConnection implements Connection {
   "Nodes of the current page"
@@ -416,6 +422,12 @@ type Query {
   If any of the specified identifiers is not found or forbidden, query fails
   """
   kcs(ids: [IntID!]!): [KC!]!
+  """
+  Get all the KCs associated with the specified topics
+
+  If topic is not found or does not have any content, it is not included in the response
+  """
+  kcsByTopics(projectCode: String!, topicsCodes: [String!]!): [KCsByTopic!]!
   """
   Get all the projects associated with the specified identifiers
 

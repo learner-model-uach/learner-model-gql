@@ -183,6 +183,13 @@ export const kcModule = registerModule(
       unsetKCRelation(data: KCRelationInput!): Void
     }
 
+    "All the KCs associated with the specified topics"
+    type KCsByTopic {
+      topic: Topic!
+
+      kcs: [KC!]!
+    }
+
     extend type Query {
       """
       Get all the KCs associated with the specified identifiers
@@ -192,6 +199,12 @@ export const kcModule = registerModule(
       If any of the specified identifiers is not found or forbidden, query fails
       """
       kcs(ids: [IntID!]!): [KC!]!
+      """
+      Get all the KCs associated with the specified topics
+
+      If topic is not found or does not have any content, it is not included in the response
+      """
+      kcsByTopics(topicsCodes: [String!]!, projectCode: String!): [KCsByTopic!]!
     }
   `,
   {
@@ -264,6 +277,7 @@ export const kcModule = registerModule(
           );
         },
       },
+
       AdminDomainQueries: {
         allKCs(_root, { pagination, filters }, { prisma }) {
           return ResolveCursorConnection(pagination, (connection) => {
@@ -438,6 +452,47 @@ export const kcModule = registerModule(
         },
       },
       Query: {
+        async kcsByTopics(
+          _root,
+          { topicsCodes, projectCode },
+          { prisma, authorization }
+        ) {
+          const checkProject =
+            await authorization.expectProjectsIdInPrismaFilter;
+
+          const data = await prisma.topic.findMany({
+            where: {
+              code: {
+                in: topicsCodes,
+              },
+              content: {
+                some: {},
+              },
+              project: checkProject
+                ? {
+                    AND: [
+                      {
+                        code: projectCode,
+                      },
+                      checkProject,
+                    ],
+                  }
+                : {
+                    code: projectCode,
+                  },
+            },
+            select: {
+              id: true,
+              kcs: {
+                select: {
+                  id: true,
+                },
+              },
+            },
+          });
+
+          return data.map(({ kcs, ...topic }) => ({ topic, kcs }));
+        },
         async kcs(_root, { ids }, { prisma, authorization }) {
           return getNodeIdList(
             prisma.kC.findMany({
