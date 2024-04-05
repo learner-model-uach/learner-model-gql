@@ -1593,11 +1593,11 @@ export type Query = {
    */
   kcs: Array<KC>;
   /**
-   * Get all the KCs associated with the specified topics
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
    *
    * If topic is not found or does not have any content, it is not included in the response
    */
-  kcsByTopics: Array<KCsByTopic>;
+  kcsByContentByTopics: Array<KCsByTopic>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1658,7 +1658,7 @@ export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QuerykcsByTopicsArgs = {
+export type QuerykcsByContentByTopicsArgs = {
   projectCode: Scalars["String"];
   topicsCodes: Array<Scalars["String"]>;
 };
@@ -3286,11 +3286,11 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerykcsArgs, "ids">
   >;
-  kcsByTopics?: Resolver<
+  kcsByContentByTopics?: Resolver<
     Array<ResolversTypes["KCsByTopic"]>,
     ParentType,
     ContextType,
-    RequireFields<QuerykcsByTopicsArgs, "projectCode" | "topicsCodes">
+    RequireFields<QuerykcsByContentByTopicsArgs, "projectCode" | "topicsCodes">
   >;
   project?: Resolver<
     Maybe<ResolversTypes["Project"]>,

@@ -1,9 +1,10 @@
 import {
-  getNodeIdList,
-  ResolveCursorConnection,
-  KcRelation,
   enumParser,
+  getNodeIdList,
+  KcRelation,
+  ResolveCursorConnection,
 } from "api-base";
+import pMap from "p-map";
 import { gql, registerModule } from "../ez";
 import { KCRelationType } from "../ez.generated";
 
@@ -200,11 +201,14 @@ export const kcModule = registerModule(
       """
       kcs(ids: [IntID!]!): [KC!]!
       """
-      Get all the KCs associated with the specified topics
+      Get all the KCs associated with the specified topics and the content of the specified topics, within that project
 
       If topic is not found or does not have any content, it is not included in the response
       """
-      kcsByTopics(topicsCodes: [String!]!, projectCode: String!): [KCsByTopic!]!
+      kcsByContentByTopics(
+        topicsCodes: [String!]!
+        projectCode: String!
+      ): [KCsByTopic!]!
     }
   `,
   {
@@ -452,7 +456,7 @@ export const kcModule = registerModule(
         },
       },
       Query: {
-        async kcsByTopics(
+        async kcsByContentByTopics(
           _root,
           { topicsCodes, projectCode },
           { prisma, authorization }
@@ -460,7 +464,7 @@ export const kcModule = registerModule(
           const checkProject =
             await authorization.expectProjectsIdInPrismaFilter;
 
-          const data = await prisma.topic.findMany({
+          const topics = await prisma.topic.findMany({
             where: {
               code: {
                 in: topicsCodes,
@@ -483,15 +487,52 @@ export const kcModule = registerModule(
             },
             select: {
               id: true,
-              kcs: {
-                select: {
-                  id: true,
-                },
-              },
             },
           });
 
-          return data.map(({ kcs, ...topic }) => ({ topic, kcs }));
+          const data = await pMap(
+            topics,
+            async (topic) => {
+              const topicId = topic.id;
+              const kcs = await prisma.kC.findMany({
+                where: {
+                  OR: [
+                    {
+                      topics: {
+                        some: {
+                          id: topicId,
+                        },
+                      },
+                    },
+                    {
+                      content: {
+                        some: {
+                          topics: {
+                            some: {
+                              id: topicId,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+                select: {
+                  id: true,
+                },
+              });
+
+              return {
+                topic,
+                kcs,
+              };
+            },
+            {
+              concurrency: 4,
+            }
+          );
+
+          return data;
         },
         async kcs(_root, { ids }, { prisma, authorization }) {
           return getNodeIdList(

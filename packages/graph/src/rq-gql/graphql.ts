@@ -1578,11 +1578,11 @@ export type Query = {
    */
   kcs: Array<Kc>;
   /**
-   * Get all the KCs associated with the specified topics
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
    *
    * If topic is not found or does not have any content, it is not included in the response
    */
-  kcsByTopics: Array<KCsByTopic>;
+  kcsByContentByTopics: Array<KCsByTopic>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1643,7 +1643,7 @@ export type QueryKcsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
-export type QueryKcsByTopicsArgs = {
+export type QueryKcsByContentByTopicsArgs = {
   projectCode: Scalars["String"];
   topicsCodes: Array<Scalars["String"]>;
 };

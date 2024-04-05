@@ -423,11 +423,14 @@ type Query {
   """
   kcs(ids: [IntID!]!): [KC!]!
   """
-  Get all the KCs associated with the specified topics
+  Get all the KCs associated with the specified topics and the content of the specified topics, within that project
 
   If topic is not found or does not have any content, it is not included in the response
   """
-  kcsByTopics(projectCode: String!, topicsCodes: [String!]!): [KCsByTopic!]!
+  kcsByContentByTopics(
+    projectCode: String!
+    topicsCodes: [String!]!
+  ): [KCsByTopic!]!
   """
   Get all the projects associated with the specified identifiers
 
