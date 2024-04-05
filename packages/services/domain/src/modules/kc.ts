@@ -488,6 +488,9 @@ export const kcModule = registerModule(
             select: {
               id: true,
             },
+            orderBy: {
+              id: "asc",
+            },
           });
 
           const data = await pMap(
@@ -519,6 +522,9 @@ export const kcModule = registerModule(
                 },
                 select: {
                   id: true,
+                },
+                orderBy: {
+                  id: "asc",
                 },
               });
 

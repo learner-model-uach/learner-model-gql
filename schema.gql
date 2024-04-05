@@ -546,6 +546,26 @@ type AllActionsByUser {
   role: String!
 }
 
+"Anonymized Model State Entity"
+type AnonymizedModelState {
+  "Date of creation"
+  createdAt: DateTime!
+  "Creator of model state"
+  creator: String!
+  "Domain associated with Model State"
+  domain: Domain!
+  "Unique numeric identifier"
+  id: IntID!
+  "Arbitrary JSON Data"
+  json: JSON!
+  "Type / Category of model state"
+  type: String
+  "Date of last update"
+  updatedAt: DateTime!
+  "Unique anonimized user hash identifier"
+  userUniqueHash: String!
+}
+
 "Pagination Interface"
 interface Connection {
   "Pagination information"
@@ -1398,6 +1418,19 @@ type Query {
   If any of the specified identifiers is not found or forbidden, query fails
   """
   domains(ids: [IntID!]!): [Domain!]!
+  "Anonymized model state of a group"
+  groupModelStates(
+    "Optional user identifier to filter out the model state of the specified user"
+    currentUserId: IntID
+    "Unique numeric identifier of the group that holds the users"
+    groupId: IntID!
+    "Code of the project where the model state is classified under"
+    projectCode: String!
+    "Skip the first n elements"
+    skip: NonNegativeInt! = 0
+    "Take the first n elements. Default is 25"
+    take: NonNegativeInt! = 25
+  ): [AnonymizedModelState!]!
   """
   Get all the groups associated with the specified identifiers
 

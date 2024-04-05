@@ -729,6 +729,27 @@ export type AllActionsByUser = {
   role: Scalars["String"];
 };
 
+/** Anonymized Model State Entity */
+export type AnonymizedModelState = {
+  __typename?: "AnonymizedModelState";
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Creator of model state */
+  creator: Scalars["String"];
+  /** Domain associated with Model State */
+  domain: Domain;
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON Data */
+  json: Scalars["JSON"];
+  /** Type / Category of model state */
+  type?: Maybe<Scalars["String"]>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+  /** Unique anonimized user hash identifier */
+  userUniqueHash: Scalars["String"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -1574,6 +1595,8 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   domains: Array<Domain>;
+  /** Anonymized model state of a group */
+  groupModelStates: Array<AnonymizedModelState>;
   /**
    * Get all the groups associated with the specified identifiers
    *
@@ -1648,6 +1671,14 @@ export type QuerycontentByCodeArgs = {
 
 export type QuerydomainsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerygroupModelStatesArgs = {
+  currentUserId?: InputMaybe<Scalars["IntID"]>;
+  groupId: Scalars["IntID"];
+  projectCode: Scalars["String"];
+  skip?: Scalars["NonNegativeInt"];
+  take?: Scalars["NonNegativeInt"];
 };
 
 export type QuerygroupsArgs = {
@@ -2110,6 +2141,7 @@ export type ResolversTypes = {
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: ResolverTypeWrapper<AllActionsByContent>;
   AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
+  AnonymizedModelState: ResolverTypeWrapper<AnonymizedModelState>;
   Connection:
     | ResolversTypes["ActionsByContentConnection"]
     | ResolversTypes["ActionsByUserConnection"]
@@ -2233,6 +2265,7 @@ export type ResolversParentTypes = {
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: AllActionsByContent;
   AllActionsByUser: AllActionsByUser;
+  AnonymizedModelState: AnonymizedModelState;
   Connection:
     | ResolversParentTypes["ActionsByContentConnection"]
     | ResolversParentTypes["ActionsByUserConnection"]
@@ -2711,6 +2744,21 @@ export type AllActionsByUserResolvers<
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   modelStates?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
   role?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type AnonymizedModelStateResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["AnonymizedModelState"] = ResolversParentTypes["AnonymizedModelState"]
+> = {
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  domain?: Resolver<ResolversTypes["Domain"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  json?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  userUniqueHash?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3273,6 +3321,15 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerydomainsArgs, "ids">
   >;
+  groupModelStates?: Resolver<
+    Array<ResolversTypes["AnonymizedModelState"]>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      QuerygroupModelStatesArgs,
+      "groupId" | "projectCode" | "skip" | "take"
+    >
+  >;
   groups?: Resolver<
     Array<ResolversTypes["Group"]>,
     ParentType,
@@ -3476,6 +3533,7 @@ export type Resolvers<ContextType = EZContext> = {
   AdminUserQueries?: AdminUserQueriesResolvers<ContextType>;
   AllActionsByContent?: AllActionsByContentResolvers<ContextType>;
   AllActionsByUser?: AllActionsByUserResolvers<ContextType>;
+  AnonymizedModelState?: AnonymizedModelStateResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;

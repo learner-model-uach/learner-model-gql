@@ -714,6 +714,27 @@ export type AllActionsByUser = {
   role: Scalars["String"];
 };
 
+/** Anonymized Model State Entity */
+export type AnonymizedModelState = {
+  __typename?: "AnonymizedModelState";
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Creator of model state */
+  creator: Scalars["String"];
+  /** Domain associated with Model State */
+  domain: Domain;
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON Data */
+  json: Scalars["JSON"];
+  /** Type / Category of model state */
+  type?: Maybe<Scalars["String"]>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+  /** Unique anonimized user hash identifier */
+  userUniqueHash: Scalars["String"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -1559,6 +1580,8 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   domains: Array<Domain>;
+  /** Anonymized model state of a group */
+  groupModelStates: Array<AnonymizedModelState>;
   /**
    * Get all the groups associated with the specified identifiers
    *
@@ -1633,6 +1656,14 @@ export type QuerycontentByCodeArgs = {
 
 export type QuerydomainsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerygroupModelStatesArgs = {
+  currentUserId?: InputMaybe<Scalars["IntID"]>;
+  groupId: Scalars["IntID"];
+  projectCode: Scalars["String"];
+  skip?: Scalars["NonNegativeInt"];
+  take?: Scalars["NonNegativeInt"];
 };
 
 export type QuerygroupsArgs = {
