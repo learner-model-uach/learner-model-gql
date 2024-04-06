@@ -714,6 +714,27 @@ export type AllActionsByUser = {
   role: Scalars["String"];
 };
 
+/** Anonymized Model State Entity */
+export type AnonymizedModelState = {
+  __typename?: "AnonymizedModelState";
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Creator of model state */
+  creator: Scalars["String"];
+  /** Domain associated with Model State */
+  domain: Domain;
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON Data */
+  json: Scalars["JSON"];
+  /** Type / Category of model state */
+  type?: Maybe<Scalars["String"]>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+  /** Unique anonimized user hash identifier */
+  userUniqueHash: Scalars["String"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -1174,6 +1195,13 @@ export const KCRelationType = {
 
 export type KCRelationType =
   (typeof KCRelationType)[keyof typeof KCRelationType];
+/** All the KCs associated with the specified topics */
+export type KCsByTopic = {
+  __typename?: "KCsByTopic";
+  kcs: Array<KC>;
+  topic: Topic;
+};
+
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -1552,6 +1580,8 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   domains: Array<Domain>;
+  /** Anonymized model state of a group */
+  groupModelStates: Array<AnonymizedModelState>;
   /**
    * Get all the groups associated with the specified identifiers
    *
@@ -1570,6 +1600,12 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   kcs: Array<KC>;
+  /**
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
+   *
+   * If topic is not found or does not have any content, it is not included in the response
+   */
+  kcsByContentByTopics: Array<KCsByTopic>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1622,12 +1658,25 @@ export type QuerydomainsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
+export type QuerygroupModelStatesArgs = {
+  currentUserId?: InputMaybe<Scalars["IntID"]>;
+  groupId: Scalars["IntID"];
+  projectCode: Scalars["String"];
+  skip?: Scalars["NonNegativeInt"];
+  take?: Scalars["NonNegativeInt"];
+};
+
 export type QuerygroupsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerykcsByContentByTopicsArgs = {
+  projectCode: Scalars["String"];
+  topicsCodes: Array<Scalars["String"]>;
 };
 
 export type QueryprojectArgs = {

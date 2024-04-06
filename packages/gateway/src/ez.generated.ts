@@ -729,6 +729,27 @@ export type AllActionsByUser = {
   role: Scalars["String"];
 };
 
+/** Anonymized Model State Entity */
+export type AnonymizedModelState = {
+  __typename?: "AnonymizedModelState";
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Creator of model state */
+  creator: Scalars["String"];
+  /** Domain associated with Model State */
+  domain: Domain;
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  /** Arbitrary JSON Data */
+  json: Scalars["JSON"];
+  /** Type / Category of model state */
+  type?: Maybe<Scalars["String"]>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+  /** Unique anonimized user hash identifier */
+  userUniqueHash: Scalars["String"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -1189,6 +1210,13 @@ export const KCRelationType = {
 
 export type KCRelationType =
   (typeof KCRelationType)[keyof typeof KCRelationType];
+/** All the KCs associated with the specified topics */
+export type KCsByTopic = {
+  __typename?: "KCsByTopic";
+  kcs: Array<KC>;
+  topic: Topic;
+};
+
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -1567,6 +1595,8 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   domains: Array<Domain>;
+  /** Anonymized model state of a group */
+  groupModelStates: Array<AnonymizedModelState>;
   /**
    * Get all the groups associated with the specified identifiers
    *
@@ -1585,6 +1615,12 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   kcs: Array<KC>;
+  /**
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
+   *
+   * If topic is not found or does not have any content, it is not included in the response
+   */
+  kcsByContentByTopics: Array<KCsByTopic>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1637,12 +1673,25 @@ export type QuerydomainsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
+export type QuerygroupModelStatesArgs = {
+  currentUserId?: InputMaybe<Scalars["IntID"]>;
+  groupId: Scalars["IntID"];
+  projectCode: Scalars["String"];
+  skip?: Scalars["NonNegativeInt"];
+  take?: Scalars["NonNegativeInt"];
+};
+
 export type QuerygroupsArgs = {
   ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerykcsByContentByTopicsArgs = {
+  projectCode: Scalars["String"];
+  topicsCodes: Array<Scalars["String"]>;
 };
 
 export type QueryprojectArgs = {
@@ -2092,6 +2141,7 @@ export type ResolversTypes = {
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: ResolverTypeWrapper<AllActionsByContent>;
   AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
+  AnonymizedModelState: ResolverTypeWrapper<AnonymizedModelState>;
   Connection:
     | ResolversTypes["ActionsByContentConnection"]
     | ResolversTypes["ActionsByUserConnection"]
@@ -2137,6 +2187,7 @@ export type ResolversTypes = {
   KCRelation: ResolverTypeWrapper<KCRelation>;
   KCRelationInput: KCRelationInput;
   KCRelationType: KCRelationType;
+  KCsByTopic: ResolverTypeWrapper<KCsByTopic>;
   KCsConnection: ResolverTypeWrapper<KCsConnection>;
   Message: ResolverTypeWrapper<Message>;
   ModelState: ResolverTypeWrapper<ModelState>;
@@ -2214,6 +2265,7 @@ export type ResolversParentTypes = {
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: AllActionsByContent;
   AllActionsByUser: AllActionsByUser;
+  AnonymizedModelState: AnonymizedModelState;
   Connection:
     | ResolversParentTypes["ActionsByContentConnection"]
     | ResolversParentTypes["ActionsByUserConnection"]
@@ -2258,6 +2310,7 @@ export type ResolversParentTypes = {
   KC: KC;
   KCRelation: KCRelation;
   KCRelationInput: KCRelationInput;
+  KCsByTopic: KCsByTopic;
   KCsConnection: KCsConnection;
   Message: Message;
   ModelState: ModelState;
@@ -2694,6 +2747,21 @@ export type AllActionsByUserResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AnonymizedModelStateResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["AnonymizedModelState"] = ResolversParentTypes["AnonymizedModelState"]
+> = {
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  creator?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  domain?: Resolver<ResolversTypes["Domain"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  json?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  userUniqueHash?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Connection"] = ResolversParentTypes["Connection"]
@@ -2973,6 +3041,15 @@ export type KCRelationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type KCsByTopicResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["KCsByTopic"] = ResolversParentTypes["KCsByTopic"]
+> = {
+  kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes["Topic"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type KCsConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["KCsConnection"] = ResolversParentTypes["KCsConnection"]
@@ -3244,6 +3321,15 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerydomainsArgs, "ids">
   >;
+  groupModelStates?: Resolver<
+    Array<ResolversTypes["AnonymizedModelState"]>,
+    ParentType,
+    ContextType,
+    RequireFields<
+      QuerygroupModelStatesArgs,
+      "groupId" | "projectCode" | "skip" | "take"
+    >
+  >;
   groups?: Resolver<
     Array<ResolversTypes["Group"]>,
     ParentType,
@@ -3256,6 +3342,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QuerykcsArgs, "ids">
+  >;
+  kcsByContentByTopics?: Resolver<
+    Array<ResolversTypes["KCsByTopic"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerykcsByContentByTopicsArgs, "projectCode" | "topicsCodes">
   >;
   project?: Resolver<
     Maybe<ResolversTypes["Project"]>,
@@ -3441,6 +3533,7 @@ export type Resolvers<ContextType = EZContext> = {
   AdminUserQueries?: AdminUserQueriesResolvers<ContextType>;
   AllActionsByContent?: AllActionsByContentResolvers<ContextType>;
   AllActionsByUser?: AllActionsByUserResolvers<ContextType>;
+  AnonymizedModelState?: AnonymizedModelStateResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;
@@ -3459,6 +3552,7 @@ export type Resolvers<ContextType = EZContext> = {
   JSONObject?: GraphQLScalarType;
   KC?: KCResolvers<ContextType>;
   KCRelation?: KCRelationResolvers<ContextType>;
+  KCsByTopic?: KCsByTopicResolvers<ContextType>;
   KCsConnection?: KCsConnectionResolvers<ContextType>;
   Message?: MessageResolvers<ContextType>;
   ModelState?: ModelStateResolvers<ContextType>;

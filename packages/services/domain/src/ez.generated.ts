@@ -396,6 +396,13 @@ export const KCRelationType = {
 
 export type KCRelationType =
   (typeof KCRelationType)[keyof typeof KCRelationType];
+/** All the KCs associated with the specified topics */
+export type KCsByTopic = {
+  __typename?: "KCsByTopic";
+  kcs: Array<KC>;
+  topic: Topic;
+};
+
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -480,6 +487,12 @@ export type Query = {
    */
   kcs: Array<KC>;
   /**
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
+   *
+   * If topic is not found or does not have any content, it is not included in the response
+   */
+  kcsByContentByTopics: Array<KCsByTopic>;
+  /**
    * Get all the projects associated with the specified identifiers
    *
    * The projects data is guaranteed to follow the specified identifiers order
@@ -514,6 +527,11 @@ export type QuerydomainsArgs = {
 
 export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerykcsByContentByTopicsArgs = {
+  projectCode: Scalars["String"];
+  topicsCodes: Array<Scalars["String"]>;
 };
 
 export type QueryprojectsArgs = {
@@ -754,6 +772,7 @@ export type ResolversTypes = {
   KCRelation: ResolverTypeWrapper<KCRelation>;
   KCRelationInput: KCRelationInput;
   KCRelationType: KCRelationType;
+  KCsByTopic: ResolverTypeWrapper<KCsByTopic>;
   KCsConnection: ResolverTypeWrapper<KCsConnection>;
   Mutation: ResolverTypeWrapper<{}>;
   Node: never;
@@ -802,6 +821,7 @@ export type ResolversParentTypes = {
   KC: KC;
   KCRelation: KCRelation;
   KCRelationInput: KCRelationInput;
+  KCsByTopic: KCsByTopic;
   KCsConnection: KCsConnection;
   Mutation: {};
   Node: never;
@@ -1006,6 +1026,15 @@ export type KCRelationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type KCsByTopicResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["KCsByTopic"] = ResolversParentTypes["KCsByTopic"]
+> = {
+  kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes["Topic"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type KCsConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["KCsConnection"] = ResolversParentTypes["KCsConnection"]
@@ -1101,6 +1130,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerykcsArgs, "ids">
   >;
+  kcsByContentByTopics?: Resolver<
+    Array<ResolversTypes["KCsByTopic"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerykcsByContentByTopicsArgs, "projectCode" | "topicsCodes">
+  >;
   projects?: Resolver<
     Array<ResolversTypes["Project"]>,
     ParentType,
@@ -1188,6 +1223,7 @@ export type Resolvers<ContextType = EZContext> = {
   JSONObject?: GraphQLScalarType;
   KC?: KCResolvers<ContextType>;
   KCRelation?: KCRelationResolvers<ContextType>;
+  KCsByTopic?: KCsByTopicResolvers<ContextType>;
   KCsConnection?: KCsConnectionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;

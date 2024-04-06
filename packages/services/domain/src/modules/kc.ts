@@ -1,9 +1,10 @@
 import {
-  getNodeIdList,
-  ResolveCursorConnection,
-  KcRelation,
   enumParser,
+  getNodeIdList,
+  KcRelation,
+  ResolveCursorConnection,
 } from "api-base";
+import pMap from "p-map";
 import { gql, registerModule } from "../ez";
 import { KCRelationType } from "../ez.generated";
 
@@ -183,6 +184,13 @@ export const kcModule = registerModule(
       unsetKCRelation(data: KCRelationInput!): Void
     }
 
+    "All the KCs associated with the specified topics"
+    type KCsByTopic {
+      topic: Topic!
+
+      kcs: [KC!]!
+    }
+
     extend type Query {
       """
       Get all the KCs associated with the specified identifiers
@@ -192,6 +200,15 @@ export const kcModule = registerModule(
       If any of the specified identifiers is not found or forbidden, query fails
       """
       kcs(ids: [IntID!]!): [KC!]!
+      """
+      Get all the KCs associated with the specified topics and the content of the specified topics, within that project
+
+      If topic is not found or does not have any content, it is not included in the response
+      """
+      kcsByContentByTopics(
+        topicsCodes: [String!]!
+        projectCode: String!
+      ): [KCsByTopic!]!
     }
   `,
   {
@@ -264,6 +281,7 @@ export const kcModule = registerModule(
           );
         },
       },
+
       AdminDomainQueries: {
         allKCs(_root, { pagination, filters }, { prisma }) {
           return ResolveCursorConnection(pagination, (connection) => {
@@ -438,6 +456,90 @@ export const kcModule = registerModule(
         },
       },
       Query: {
+        async kcsByContentByTopics(
+          _root,
+          { topicsCodes, projectCode },
+          { prisma, authorization }
+        ) {
+          const checkProject =
+            await authorization.expectProjectsIdInPrismaFilter;
+
+          const topics = await prisma.topic.findMany({
+            where: {
+              code: {
+                in: topicsCodes,
+              },
+              content: {
+                some: {},
+              },
+              project: checkProject
+                ? {
+                    AND: [
+                      {
+                        code: projectCode,
+                      },
+                      checkProject,
+                    ],
+                  }
+                : {
+                    code: projectCode,
+                  },
+            },
+            select: {
+              id: true,
+            },
+            orderBy: {
+              id: "asc",
+            },
+          });
+
+          const data = await pMap(
+            topics,
+            async (topic) => {
+              const topicId = topic.id;
+              const kcs = await prisma.kC.findMany({
+                where: {
+                  OR: [
+                    {
+                      topics: {
+                        some: {
+                          id: topicId,
+                        },
+                      },
+                    },
+                    {
+                      content: {
+                        some: {
+                          topics: {
+                            some: {
+                              id: topicId,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+                select: {
+                  id: true,
+                },
+                orderBy: {
+                  id: "asc",
+                },
+              });
+
+              return {
+                topic,
+                kcs,
+              };
+            },
+            {
+              concurrency: 4,
+            }
+          );
+
+          return data;
+        },
         async kcs(_root, { ids }, { prisma, authorization }) {
           return getNodeIdList(
             prisma.kC.findMany({
