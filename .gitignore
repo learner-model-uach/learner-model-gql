@@ -107,3 +107,7 @@ dist
 temp
 
 .test-postgres-data
+
+
+/scripts/assets
+scripts/createUsersFromFromCsv.ts
