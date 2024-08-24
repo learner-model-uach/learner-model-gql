@@ -399,6 +399,7 @@ export type KCRelationType =
 /** All the KCs associated with the specified topics */
 export type KCsByTopic = {
   __typename?: "KCsByTopic";
+  contents: Array<Content>;
   kcs: Array<KC>;
   topic: Topic;
 };
@@ -1030,6 +1031,11 @@ export type KCsByTopicResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["KCsByTopic"] = ResolversParentTypes["KCsByTopic"]
 > = {
+  contents?: Resolver<
+    Array<ResolversTypes["Content"]>,
+    ParentType,
+    ContextType
+  >;
   kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
   topic?: Resolver<ResolversTypes["Topic"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

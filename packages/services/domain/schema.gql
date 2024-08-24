@@ -328,6 +328,7 @@ enum KCRelationType {
 
 "All the KCs associated with the specified topics"
 type KCsByTopic {
+  contents: [Content!]!
   kcs: [KC!]!
   topic: Topic!
 }

@@ -189,6 +189,8 @@ export const kcModule = registerModule(
       topic: Topic!
 
       kcs: [KC!]!
+
+      contents: [Content!]!
     }
 
     extend type Query {
@@ -497,40 +499,58 @@ export const kcModule = registerModule(
             topics,
             async (topic) => {
               const topicId = topic.id;
-              const kcs = await prisma.kC.findMany({
-                where: {
-                  OR: [
-                    {
-                      topics: {
-                        some: {
-                          id: topicId,
+              const [kcs, contents] = await Promise.all([
+                prisma.kC.findMany({
+                  where: {
+                    OR: [
+                      {
+                        topics: {
+                          some: {
+                            id: topicId,
+                          },
                         },
                       },
-                    },
-                    {
-                      content: {
-                        some: {
-                          topics: {
-                            some: {
-                              id: topicId,
+                      {
+                        content: {
+                          some: {
+                            topics: {
+                              some: {
+                                id: topicId,
+                              },
                             },
                           },
                         },
                       },
+                    ],
+                  },
+                  select: {
+                    id: true,
+                  },
+                  orderBy: {
+                    id: "asc",
+                  },
+                }),
+                prisma.content.findMany({
+                  where: {
+                    topics: {
+                      some: {
+                        id: topicId,
+                      },
                     },
-                  ],
-                },
-                select: {
-                  id: true,
-                },
-                orderBy: {
-                  id: "asc",
-                },
-              });
+                  },
+                  select: {
+                    id: true,
+                  },
+                  orderBy: {
+                    id: "asc",
+                  },
+                }),
+              ]);
 
               return {
                 topic,
                 kcs,
+                contents,
               };
             },
             {
