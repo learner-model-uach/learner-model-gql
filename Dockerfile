@@ -1,6 +1,6 @@
 # Build Prisma
 
-FROM --platform=linux/x86_64 node:16 as prisma-build
+FROM --platform=linux/x86_64 node:18 as prisma-build
 
 WORKDIR /home/prisma-build
 
@@ -16,7 +16,7 @@ RUN pnpm generate
 
 # Learner Model GQL
 
-FROM --platform=linux/x86_64 node:16
+FROM --platform=linux/x86_64 node:18
 
 RUN npm i --location=global pnpm
 
