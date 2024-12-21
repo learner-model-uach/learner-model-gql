@@ -43,6 +43,7 @@ Table Group {
   users User [not null]
   projects Project [not null]
   flags GroupFlags
+  challenges Challenge [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
 }
@@ -67,6 +68,8 @@ Table Project {
   topics Topic [not null]
   content Content [not null]
   actions Action [not null]
+  polls Poll [not null]
+  challenges Challenge [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
 }
@@ -99,6 +102,7 @@ Table Topic {
   actions Action [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
+  challenges Challenge [not null]
 }
 
 Table KC {
@@ -176,6 +180,7 @@ Table Content {
   topics Topic [not null]
   kcs KC [not null]
   actions Action [not null]
+  challenges Challenge [not null]
   description String [not null]
   binary Bytes
   binaryFilename String
@@ -216,6 +221,48 @@ Table ModelState {
   updatedAt DateTime [default: `now()`, not null]
 }
 
+Table Poll {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  project Project [not null]
+  projectId Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+  tags String[] [not null]
+  items PollItem [not null]
+}
+
+Table PollItem {
+  id Int [pk, increment]
+  index Int [not null]
+  tags String[] [not null]
+  poll Poll [not null]
+  pollId Int [not null]
+  content Json [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+
+  indexes {
+    (index, pollId) [unique]
+  }
+}
+
+Table Challenge {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  tags String[] [not null]
+  project Project [not null]
+  projectId Int [not null]
+  endDate DateTime
+  topics Topic [not null]
+  content Content [not null]
+  groups Group [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [default: `now()`, not null]
+}
+
 Table GroupToUser {
   groupsId Int [ref: > Group.id]
   usersId Int [ref: > User.id]
@@ -228,6 +275,11 @@ Table ProjectToUser {
 
 Table GroupToProject {
   projectsId Int [ref: > Project.id]
+  groupsId Int [ref: > Group.id]
+}
+
+Table ChallengeToGroup {
+  challengesId Int [ref: > Challenge.id]
   groupsId Int [ref: > Group.id]
 }
 
@@ -246,6 +298,11 @@ Table KCToTopic {
   topicsId Int [ref: > Topic.id]
 }
 
+Table ChallengeToTopic {
+  challengesId Int [ref: > Challenge.id]
+  topicsId Int [ref: > Topic.id]
+}
+
 Table ContentToKC {
   contentId Int [ref: > Content.id]
   kcsId Int [ref: > KC.id]
@@ -254,6 +311,11 @@ Table ContentToKC {
 Table ActionToKC {
   actionsId Int [ref: > Action.id]
   kcsId Int [ref: > KC.id]
+}
+
+Table ChallengeToContent {
+  challengesId Int [ref: > Challenge.id]
+  contentId Int [ref: > Content.id]
 }
 
 Enum UserRole {
@@ -298,3 +360,9 @@ Ref: ModelState.type > ModelStateType.name
 Ref: ModelState.creator > ModelStateCreator.name
 
 Ref: ModelState.domainId > Domain.id
+
+Ref: Poll.projectId > Project.id [delete: Cascade]
+
+Ref: PollItem.pollId > Poll.id [delete: Cascade]
+
+Ref: Challenge.projectId > Project.id [delete: Cascade]

@@ -79,6 +79,8 @@ model Group {
 
   flags GroupFlags?
 
+  challenges Challenge[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
@@ -111,6 +113,9 @@ model Project {
   content Content[]
 
   actions Action[]
+
+  polls      Poll[]
+  challenges Challenge[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -159,6 +164,8 @@ model Topic {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  challenges Challenge[]
 
   @@index([id, projectId])
 }
@@ -276,6 +283,8 @@ model Content {
 
   actions Action[]
 
+  challenges Challenge[]
+
   description String
 
   binary         Bytes?
@@ -326,6 +335,65 @@ model ModelState {
   domainId Int
 
   json Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Poll {
+  id Int @id @default(autoincrement())
+
+  title String
+
+  description String?
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  tags String[]
+
+  items PollItem[]
+}
+
+model PollItem {
+  id Int @id @default(autoincrement())
+
+  index Int
+
+  tags String[]
+
+  poll   Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId Int
+
+  content Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([index, pollId])
+}
+
+model Challenge {
+  id Int @id @default(autoincrement())
+
+  title       String
+  description String?
+
+  tags String[]
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+
+  endDate DateTime?
+
+  topics Topic[]
+
+  content Content[]
+
+  groups Group[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
