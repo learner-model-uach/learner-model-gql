@@ -243,6 +243,12 @@ model Action {
   user   User? @relation(fields: [userId], references: [id])
   userId Int?
 
+  poll   Poll? @relation(fields: [pollId], references: [id])
+  pollId Int?
+
+  challenge   Challenge? @relation(fields: [challengeId], references: [id])
+  challengeId Int?
+
   content   Content? @relation(fields: [contentId], references: [id])
   contentId Int?
 
@@ -343,7 +349,11 @@ model ModelState {
 model Poll {
   id Int @id @default(autoincrement())
 
+  code String @unique
+
   title String
+
+  enabled Boolean @default(true)
 
   description String?
 
@@ -356,6 +366,8 @@ model Poll {
   tags String[]
 
   items PollItem[]
+
+  actions Action[]
 }
 
 model PollItem {
@@ -379,6 +391,8 @@ model PollItem {
 model Challenge {
   id Int @id @default(autoincrement())
 
+  code String @unique
+
   title       String
   description String?
 
@@ -394,6 +408,8 @@ model Challenge {
   content Content[]
 
   groups Group[]
+
+  actions Action[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

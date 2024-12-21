@@ -57,6 +57,8 @@ export type Action = {
   id: Scalars["IntID"];
   /** Related KCs */
   kcs: Array<Kc>;
+  /** Related poll */
+  poll?: Maybe<Poll>;
   /** Arbitrary numeric result */
   result?: Maybe<Scalars["Float"]>;
   /** Arbitrary step identifier */
@@ -75,6 +77,12 @@ export type Action = {
 export type ActionInput = {
   /** Arbitrary numeric amount */
   amount?: InputMaybe<Scalars["Float"]>;
+  /**
+   * Challenge identifier
+   *
+   * If it's numeric, it points to the "id" property of the challenge, otherwise, it points to the "code" property.
+   */
+  challengeID?: InputMaybe<Scalars["ID"]>;
   /**
    * Content identifier
    *
@@ -97,6 +105,12 @@ export type ActionInput = {
    * Validation of kc presence/authorization is made before confirming action
    */
   kcsIDs?: InputMaybe<Array<Scalars["ID"]>>;
+  /**
+   * Poll identifier
+   *
+   * If it's numeric, it points to the "id" property of the poll, otherwise, it points to the "code" property.
+   */
+  pollID?: InputMaybe<Scalars["ID"]>;
   /**
    * Identifier of project related to action.
    *
@@ -735,6 +749,13 @@ export type AnonymizedModelState = {
   userUniqueHash: Scalars["String"];
 };
 
+/** Challenge entity */
+export type Challenge = {
+  __typename?: "Challenge";
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -1354,18 +1375,32 @@ export type Mutation = {
   adminProjects: AdminProjectsMutations;
   /** Admin related user mutations, only authenticated users with the role "ADMIN" can access */
   adminUsers: AdminUserMutations;
+  /** Create a poll */
+  createPoll: Poll;
   /** Returns 'Hello World!' */
   hello: Scalars["String"];
   /** Update model state with new state */
   updateModelState?: Maybe<Scalars["Void"]>;
+  /** Update a poll */
+  updatePoll: Poll;
 };
 
 export type MutationActionArgs = {
   data: ActionInput;
 };
 
+export type MutationCreatePollArgs = {
+  data: PollInput;
+  projectId: Scalars["IntID"];
+};
+
 export type MutationUpdateModelStateArgs = {
   input: UpdateModelStateInput;
+};
+
+export type MutationUpdatePollArgs = {
+  data: PollInput;
+  id: Scalars["IntID"];
 };
 
 /** Minimum Entity Information */
@@ -1392,6 +1427,49 @@ export type PageInfo = {
   hasPreviousPage: Scalars["Boolean"];
   /** Cursor parameter normally used for backward pagination */
   startCursor?: Maybe<Scalars["String"]>;
+};
+
+/** Poll */
+export type Poll = {
+  __typename?: "Poll";
+  createdAt: Scalars["DateTime"];
+  description?: Maybe<Scalars["String"]>;
+  /** Unique numeric identifier */
+  id: Scalars["IntID"];
+  items: Array<PollItem>;
+  project: Project;
+  projectId: Scalars["IntID"];
+  tags: Array<Scalars["String"]>;
+  title: Scalars["String"];
+  updatedAt: Scalars["DateTime"];
+};
+
+export type PollInput = {
+  code: Scalars["String"];
+  description?: InputMaybe<Scalars["String"]>;
+  enabled?: Scalars["Boolean"];
+  items: Array<PollItemInput>;
+  projectId: Scalars["IntID"];
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  title: Scalars["String"];
+};
+
+/** Poll Item */
+export type PollItem = {
+  __typename?: "PollItem";
+  content: Scalars["JSON"];
+  createdAt: Scalars["DateTime"];
+  id: Scalars["IntID"];
+  index: Scalars["Int"];
+  poll: Poll;
+  pollId: Scalars["IntID"];
+  tags: Array<Scalars["String"]>;
+  updatedAt: Scalars["DateTime"];
+};
+
+export type PollItemInput = {
+  content: Scalars["JSON"];
+  tags?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** Project entity */
@@ -1606,6 +1684,12 @@ export type Query = {
    * If topic is not found or does not have any content, it is not included in the response
    */
   kcsByContentByTopics: Array<KCsByTopic>;
+  /** Get a poll by its code */
+  pollByCode?: Maybe<Poll>;
+  /** Get a poll by its id */
+  pollById?: Maybe<Poll>;
+  /** Get all polls */
+  polls: Array<Poll>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1677,6 +1761,18 @@ export type QueryKcsArgs = {
 export type QueryKcsByContentByTopicsArgs = {
   projectCode: Scalars["String"];
   topicsCodes: Array<Scalars["String"]>;
+};
+
+export type QueryPollByCodeArgs = {
+  code: Scalars["String"];
+};
+
+export type QueryPollByIdArgs = {
+  id: Scalars["IntID"];
+};
+
+export type QueryPollsArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QueryProjectArgs = {

@@ -24,6 +24,8 @@ type Action {
   id: IntID!
   "Related KCs"
   kcs: [KC!]!
+  "Related poll"
+  poll: Poll
   "Arbitrary numeric result"
   result: Float
   "Arbitrary step identifier"
@@ -42,6 +44,12 @@ type Action {
 input ActionInput {
   "Arbitrary numeric amount"
   amount: Float
+  """
+  Challenge identifier
+
+  If it's numeric, it points to the "id" property of the challenge, otherwise, it points to the "code" property.
+  """
+  challengeID: ID
   """
   Content identifier
 
@@ -66,6 +74,12 @@ input ActionInput {
   Validation of kc presence/authorization is made before confirming action
   """
   kcsIDs: [ID!]
+  """
+  Poll identifier
+
+  If it's numeric, it points to the "id" property of the poll, otherwise, it points to the "code" property.
+  """
+  pollID: ID
   """
   Identifier of project related to action.
 
@@ -206,6 +220,14 @@ input AdminActionsOrderBy {
   id: ORDER_BY = DESC
 }
 
+"""
+Challenge entity
+"""
+type Challenge {
+  "Unique numeric identifier"
+  id: IntID!
+}
+
 "Pagination Interface"
 interface Connection {
   "Pagination information"
@@ -298,8 +320,16 @@ type Mutation {
   - Authenticated user has to be associated with specified project
   """
   action(data: ActionInput!): Void
+  """
+  Create a poll
+  """
+  createPoll(data: PollInput!, projectId: IntID!): Poll!
   "Returns 'Hello World!'"
   hello: String!
+  """
+  Update a poll
+  """
+  updatePoll(data: PollInput!, id: IntID!): Poll!
 }
 
 "Minimum Entity Information"
@@ -333,6 +363,51 @@ type PageInfo {
   hasPreviousPage: Boolean!
   "Cursor parameter normally used for backward pagination"
   startCursor: String
+}
+
+"""
+Poll
+"""
+type Poll {
+  createdAt: DateTime!
+  description: String
+  "Unique numeric identifier"
+  id: IntID!
+  items: [PollItem!]!
+  project: Project!
+  projectId: IntID!
+  tags: [String!]!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input PollInput {
+  code: String!
+  description: String
+  enabled: Boolean! = true
+  items: [PollItemInput!]!
+  projectId: IntID!
+  tags: [String!]
+  title: String!
+}
+
+"""
+Poll Item
+"""
+type PollItem {
+  content: JSON!
+  createdAt: DateTime!
+  id: IntID!
+  index: Int!
+  poll: Poll!
+  pollId: IntID!
+  tags: [String!]!
+  updatedAt: DateTime!
+}
+
+input PollItemInput {
+  content: JSON!
+  tags: [String!]
 }
 
 type Project {
@@ -404,6 +479,18 @@ type Query {
   adminActions: AdminActionQueries!
   "Returns 'Hello World!'"
   hello: String!
+  """
+  Get a poll by its code
+  """
+  pollByCode(code: String!): Poll
+  """
+  Get a poll by its id
+  """
+  pollById(id: IntID!): Poll
+  """
+  Get all polls
+  """
+  polls(ids: [IntID!]!): [Poll!]!
   """
   Get all the projects associated with the specified identifiers
 

@@ -155,6 +155,10 @@ Table Action {
   projectId Int [not null]
   user User
   userId Int
+  poll Poll
+  pollId Int
+  challenge Challenge
+  challengeId Int
   content Content
   contentId Int
   topic Topic
@@ -223,7 +227,9 @@ Table ModelState {
 
 Table Poll {
   id Int [pk, increment]
+  code String [unique, not null]
   title String [not null]
+  enabled Boolean [not null, default: true]
   description String
   project Project [not null]
   projectId Int [not null]
@@ -231,6 +237,7 @@ Table Poll {
   updatedAt DateTime [default: `now()`, not null]
   tags String[] [not null]
   items PollItem [not null]
+  actions Action [not null]
 }
 
 Table PollItem {
@@ -250,6 +257,7 @@ Table PollItem {
 
 Table Challenge {
   id Int [pk, increment]
+  code String [unique, not null]
   title String [not null]
   description String
   tags String[] [not null]
@@ -259,6 +267,7 @@ Table Challenge {
   topics Topic [not null]
   content Content [not null]
   groups Group [not null]
+  actions Action [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [default: `now()`, not null]
 }
@@ -346,6 +355,10 @@ Ref: Action.verbName > ActionVerb.name
 Ref: Action.projectId > Project.id
 
 Ref: Action.userId > User.id
+
+Ref: Action.pollId > Poll.id
+
+Ref: Action.challengeId > Challenge.id
 
 Ref: Action.contentId > Content.id
 
