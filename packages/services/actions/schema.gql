@@ -138,6 +138,17 @@ type ActionsVerbsConnection implements Connection {
   pageInfo: PageInfo!
 }
 
+type AdminActionMutations {
+  """
+  Create a poll
+  """
+  createPoll(data: PollInput!, projectId: IntID!): Poll!
+  """
+  Update a poll
+  """
+  updatePoll(data: PollInput!, id: IntID!): Poll!
+}
+
 "Admin Action-Related Queries"
 type AdminActionQueries {
   """
@@ -321,15 +332,11 @@ type Mutation {
   """
   action(data: ActionInput!): Void
   """
-  Create a poll
+  Admin related actions mutations, only authenticated users with the role "ADMIN" can access
   """
-  createPoll(data: PollInput!, projectId: IntID!): Poll!
+  adminActions: AdminActionMutations!
   "Returns 'Hello World!'"
   hello: String!
-  """
-  Update a poll
-  """
-  updatePoll(data: PollInput!, id: IntID!): Poll!
 }
 
 "Minimum Entity Information"
@@ -369,25 +376,45 @@ type PageInfo {
 Poll
 """
 type Poll {
+  "Unique code"
+  code: String!
+  "Date of creation"
   createdAt: DateTime!
+  "Description of the poll"
   description: String
-  "Unique numeric identifier"
+  "Unique identifier"
   id: IntID!
+  "Items of the poll"
   items: [PollItem!]!
+  "Project of the poll"
   project: Project!
+  "ID of the project of the poll"
   projectId: IntID!
+  "Tags of the poll"
   tags: [String!]!
+  "Title of the poll"
   title: String!
+  "Date of last update"
   updatedAt: DateTime!
 }
 
+"""
+Input for creating or updating a poll
+"""
 input PollInput {
+  "Unique code for the poll"
   code: String!
+  "Description of the poll"
   description: String
+  "Enabled status of the poll"
   enabled: Boolean! = true
+  "Items of the poll"
   items: [PollItemInput!]!
+  "Project ID"
   projectId: IntID!
+  "Tags for the poll"
   tags: [String!]
+  "Title of the poll"
   title: String!
 }
 
@@ -395,18 +422,28 @@ input PollInput {
 Poll Item
 """
 type PollItem {
+  "Content of the item"
   content: JSON!
+  "Date of creation"
   createdAt: DateTime!
+  "Unique identifier"
   id: IntID!
+  "Index of the item in the poll"
   index: Int!
+  "Poll of the item"
   poll: Poll!
+  "ID of the poll of the item"
   pollId: IntID!
+  "Tags of the item"
   tags: [String!]!
+  "Date of last update"
   updatedAt: DateTime!
 }
 
 input PollItemInput {
+  "Content of the poll item"
   content: JSON!
+  "Tags for the poll item"
   tags: [String!]
 }
 
@@ -480,13 +517,9 @@ type Query {
   "Returns 'Hello World!'"
   hello: String!
   """
-  Get a poll by its code
+  Get a poll by either its code or id
   """
-  pollByCode(code: String!): Poll
-  """
-  Get a poll by its id
-  """
-  pollById(id: IntID!): Poll
+  poll(code: String, id: IntID): Poll
   """
   Get all polls
   """

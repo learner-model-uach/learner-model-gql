@@ -316,6 +316,11 @@ export const actionModule = registerModule(
       - Authenticated user has to be associated with specified project
       """
       action(data: ActionInput!): Void
+
+      """
+      Admin related actions mutations, only authenticated users with the role "ADMIN" can access
+      """
+      adminActions: AdminActionMutations!
     }
   `,
   {
@@ -489,6 +494,11 @@ export const actionModule = registerModule(
         },
       },
       Mutation: {
+        async adminActions(_root, _args, { authorization }) {
+          await authorization.expectAdmin;
+
+          return {};
+        },
         async action(
           _root,
           {

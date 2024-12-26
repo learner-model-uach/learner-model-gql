@@ -190,6 +190,17 @@ type ActionsVerbsConnection implements Connection {
   pageInfo: PageInfo!
 }
 
+type AdminActionMutations {
+  """
+  Create a poll
+  """
+  createPoll(data: PollInput!, projectId: IntID!): Poll!
+  """
+  Update a poll
+  """
+  updatePoll(data: PollInput!, id: IntID!): Poll!
+}
+
 "Admin Action-Related Queries"
 type AdminActionQueries {
   """
@@ -302,8 +313,16 @@ input AdminContentFilter {
 Admin related content mutations, only authenticated users with the role "ADMIN" can access
 """
 type AdminContentMutations {
+  """
+  Create a challenge
+  """
+  createChallenge(data: ChallengeInput!): Challenge!
   "Create a new content entity"
   createContent(data: CreateContent!): Content!
+  """
+  Update a challenge
+  """
+  updateChallenge(data: ChallengeInput!, id: IntID!): Challenge!
   "Update an existent content entity"
   updateContent(data: UpdateContent!): Content!
 }
@@ -581,11 +600,85 @@ type AnonymizedModelState {
 }
 
 """
-Challenge entity
+A challenge
 """
 type Challenge {
-  "Unique numeric identifier"
+  """
+  Unique code for the challenge
+  """
+  code: String!
+  """
+  Content of the challenge
+  """
+  content: [Content!]!
+  """
+  Date of creation
+  """
+  createdAt: DateTime!
+  """
+  Description of the challenge
+  """
+  description: String
+  """
+  End date of the challenge
+  """
+  endDate: DateTime
+  """
+  Groups of the challenge
+  """
+  groups: [Group!]!
+  """
+  ID of the challenge
+  """
   id: IntID!
+  """
+  Project of the challenge
+  """
+  project: Project!
+  """
+  Project ID
+  """
+  projectId: IntID!
+  """
+  Tags for the challenge
+  """
+  tags: [String!]!
+  """
+  Title of the challenge
+  """
+  title: String!
+  """
+  Topics of the challenge
+  """
+  topics: [Topic!]!
+  """
+  Date of last update
+  """
+  updatedAt: DateTime!
+}
+
+"""
+Input for creating or updating a challenge
+"""
+input ChallengeInput {
+  "Unique code for the challenge"
+  code: String!
+  "Content of the challenge"
+  contentIds: [IntID!]
+  "Description of the challenge"
+  description: String
+  "End date of the challenge"
+  endDate: DateTime
+  "Groups of the challenge"
+  groupsIds: [IntID!]
+  "Project ID"
+  projectId: IntID!
+  "Tags for the challenge"
+  tags: [String!]
+  "Title of the challenge"
+  title: String!
+  "Topics of the challenge"
+  topicsIds: [IntID!]
 }
 
 "Pagination Interface"
@@ -1197,6 +1290,10 @@ type Mutation {
   """
   action(data: ActionInput!): Void
   """
+  Admin related actions mutations, only authenticated users with the role "ADMIN" can access
+  """
+  adminActions: AdminActionMutations!
+  """
   Admin related content mutations, only authenticated users with the role "ADMIN" can access
   """
   adminContent: AdminContentMutations!
@@ -1212,18 +1309,10 @@ type Mutation {
   Admin related user mutations, only authenticated users with the role "ADMIN" can access
   """
   adminUsers: AdminUserMutations!
-  """
-  Create a poll
-  """
-  createPoll(data: PollInput!, projectId: IntID!): Poll!
   "Returns 'Hello World!'"
   hello: String!
   "Update model state with new state"
   updateModelState(input: UpdateModelStateInput!): Void
-  """
-  Update a poll
-  """
-  updatePoll(data: PollInput!, id: IntID!): Poll!
 }
 
 "Minimum Entity Information"
@@ -1263,25 +1352,45 @@ type PageInfo {
 Poll
 """
 type Poll {
+  "Unique code"
+  code: String!
+  "Date of creation"
   createdAt: DateTime!
+  "Description of the poll"
   description: String
-  "Unique numeric identifier"
+  "Unique identifier"
   id: IntID!
+  "Items of the poll"
   items: [PollItem!]!
+  "Project of the poll"
   project: Project!
+  "ID of the project of the poll"
   projectId: IntID!
+  "Tags of the poll"
   tags: [String!]!
+  "Title of the poll"
   title: String!
+  "Date of last update"
   updatedAt: DateTime!
 }
 
+"""
+Input for creating or updating a poll
+"""
 input PollInput {
+  "Unique code for the poll"
   code: String!
+  "Description of the poll"
   description: String
+  "Enabled status of the poll"
   enabled: Boolean! = true
+  "Items of the poll"
   items: [PollItemInput!]!
+  "Project ID"
   projectId: IntID!
+  "Tags for the poll"
   tags: [String!]
+  "Title of the poll"
   title: String!
 }
 
@@ -1289,18 +1398,28 @@ input PollInput {
 Poll Item
 """
 type PollItem {
+  "Content of the item"
   content: JSON!
+  "Date of creation"
   createdAt: DateTime!
+  "Unique identifier"
   id: IntID!
+  "Index of the item in the poll"
   index: Int!
+  "Poll of the item"
   poll: Poll!
+  "ID of the poll of the item"
   pollId: IntID!
+  "Tags of the item"
   tags: [String!]!
+  "Date of last update"
   updatedAt: DateTime!
 }
 
 input PollItemInput {
+  "Content of the poll item"
   content: JSON!
+  "Tags for the poll item"
   tags: [String!]
 }
 
@@ -1467,6 +1586,14 @@ type Query {
   """
   adminUsers: AdminUserQueries!
   """
+  Get a challenge by either its ID or code
+  """
+  challenge(code: String, id: IntID): Challenge
+  """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
+  """
   Get all the content associated with the specified identifiers
 
   The content data is guaranteed to follow the specified identifiers order
@@ -1534,13 +1661,9 @@ type Query {
     topicsCodes: [String!]!
   ): [KCsByTopic!]!
   """
-  Get a poll by its code
+  Get a poll by either its code or id
   """
-  pollByCode(code: String!): Poll
-  """
-  Get a poll by its id
-  """
-  pollById(id: IntID!): Poll
+  poll(code: String, id: IntID): Poll
   """
   Get all polls
   """
