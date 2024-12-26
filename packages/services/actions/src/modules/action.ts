@@ -507,6 +507,11 @@ export const actionModule = registerModule(
           return {};
         },
       },
+      AdminActionMutations: {
+        hello() {
+          return "Hello World";
+        },
+      },
       Mutation: {
         async adminActions(_root, _args, { authorization }) {
           await authorization.expectAdmin;
