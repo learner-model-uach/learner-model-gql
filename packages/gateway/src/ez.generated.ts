@@ -244,6 +244,7 @@ export type ActionsVerbsConnection = Connection & {
   pageInfo: PageInfo;
 };
 
+/** Admin actions. If user is not admin, it will throw an error. */
 export type AdminActionMutations = {
   __typename?: "AdminActionMutations";
   /** Create a poll */
@@ -252,11 +253,13 @@ export type AdminActionMutations = {
   updatePoll: Poll;
 };
 
+/** Admin actions. If user is not admin, it will throw an error. */
 export type AdminActionMutationscreatePollArgs = {
   data: PollInput;
   projectId: Scalars["IntID"];
 };
 
+/** Admin actions. If user is not admin, it will throw an error. */
 export type AdminActionMutationsupdatePollArgs = {
   data: PollInput;
   id: Scalars["IntID"];
@@ -1511,7 +1514,7 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars["String"]>;
 };
 
-/** Poll */
+/** Poll entity */
 export type Poll = {
   __typename?: "Poll";
   /** Unique code */
@@ -1520,6 +1523,8 @@ export type Poll = {
   createdAt: Scalars["DateTime"];
   /** Description of the poll */
   description?: Maybe<Scalars["String"]>;
+  /** Enabled status of the poll */
+  enabled: Scalars["Boolean"];
   /** Unique identifier */
   id: Scalars["IntID"];
   /** Items of the poll */
@@ -1575,6 +1580,7 @@ export type PollItem = {
   updatedAt: Scalars["DateTime"];
 };
 
+/** Input for creating or updating a poll item */
 export type PollItemInput = {
   /** Content of the poll item */
   content: Scalars["JSON"];
@@ -3508,6 +3514,7 @@ export type PollResolvers<
     ParentType,
     ContextType
   >;
+  enabled?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   items?: Resolver<Array<ResolversTypes["PollItem"]>, ParentType, ContextType>;
   project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;

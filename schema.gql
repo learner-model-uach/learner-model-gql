@@ -190,6 +190,9 @@ type ActionsVerbsConnection implements Connection {
   pageInfo: PageInfo!
 }
 
+"""
+Admin actions. If user is not admin, it will throw an error.
+"""
 type AdminActionMutations {
   """
   Create a poll
@@ -1349,7 +1352,7 @@ type PageInfo {
 }
 
 """
-Poll
+Poll entity
 """
 type Poll {
   "Unique code"
@@ -1358,6 +1361,8 @@ type Poll {
   createdAt: DateTime!
   "Description of the poll"
   description: String
+  "Enabled status of the poll"
+  enabled: Boolean!
   "Unique identifier"
   id: IntID!
   "Items of the poll"
@@ -1416,6 +1421,9 @@ type PollItem {
   updatedAt: DateTime!
 }
 
+"""
+Input for creating or updating a poll item
+"""
 input PollItemInput {
   "Content of the poll item"
   content: JSON!

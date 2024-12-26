@@ -4,7 +4,7 @@ import { gql, registerModule } from "../ez";
 export const pollsModule = registerModule(
   gql`
     """
-    Poll
+    Poll entity
     """
     type Poll {
       "Unique identifier"
@@ -33,6 +33,9 @@ export const pollsModule = registerModule(
       createdAt: DateTime!
       "Date of last update"
       updatedAt: DateTime!
+
+      "Enabled status of the poll"
+      enabled: Boolean!
     }
 
     """
@@ -94,6 +97,9 @@ export const pollsModule = registerModule(
       enabled: Boolean! = true
     }
 
+    """
+    Input for creating or updating a poll item
+    """
     input PollItemInput {
       "Content of the poll item"
       content: JSON!
@@ -101,6 +107,9 @@ export const pollsModule = registerModule(
       tags: [String!]
     }
 
+    """
+    Admin actions. If user is not admin, it will throw an error.
+    """
     type AdminActionMutations {
       """
       Create a poll
