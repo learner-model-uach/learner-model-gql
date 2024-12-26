@@ -3,10 +3,7 @@ import { gql, registerModule } from "../ez";
 
 export const pollsModule = registerModule(
   gql`
-    """
-    Poll entity
-    """
-    type Poll {
+    extend type Poll {
       "Unique identifier"
       id: IntID!
 
@@ -107,10 +104,7 @@ export const pollsModule = registerModule(
       tags: [String!]
     }
 
-    """
-    Admin actions. If user is not admin, it will throw an error.
-    """
-    type AdminActionMutations {
+    extend type AdminActionMutations {
       """
       Create a poll
       """

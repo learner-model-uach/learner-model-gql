@@ -190,6 +190,7 @@ export type AdminActionMutations = {
   __typename?: "AdminActionMutations";
   /** Create a poll */
   createPoll: Poll;
+  hello: Scalars["String"];
   /** Update a poll */
   updatePoll: Poll;
 };
@@ -852,6 +853,7 @@ export type AdminActionMutationsResolvers<
     ContextType,
     RequireFields<AdminActionMutationscreatePollArgs, "data" | "projectId">
   >;
+  hello?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   updatePoll?: Resolver<
     ResolversTypes["Poll"],
     ParentType,

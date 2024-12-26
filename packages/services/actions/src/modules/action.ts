@@ -308,6 +308,20 @@ export const actionModule = registerModule(
       adminActions: AdminActionQueries!
     }
 
+    """
+    Poll entity
+    """
+    type Poll {
+      id: IntID!
+    }
+
+    """
+    Admin actions. If user is not admin, it will throw an error.
+    """
+    type AdminActionMutations {
+      hello: String!
+    }
+
     extend type Mutation {
       """
       Report an action to the modeling service

@@ -234,6 +234,7 @@ export type AdminActionMutations = {
   __typename?: "AdminActionMutations";
   /** Create a poll */
   createPoll: Poll;
+  hello: Scalars["String"];
   /** Update a poll */
   updatePoll: Poll;
 };

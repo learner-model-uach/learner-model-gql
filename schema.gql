@@ -198,6 +198,7 @@ type AdminActionMutations {
   Create a poll
   """
   createPoll(data: PollInput!, projectId: IntID!): Poll!
+  hello: String!
   """
   Update a poll
   """
