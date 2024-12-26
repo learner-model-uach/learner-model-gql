@@ -807,6 +807,8 @@ export type Challenge = {
   project: Project;
   /** Project ID */
   projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: Maybe<Scalars["DateTime"]>;
   /** Tags for the challenge */
   tags: Array<Scalars["String"]>;
   /** Title of the challenge */
@@ -831,6 +833,8 @@ export type ChallengeInput = {
   groupsIds?: InputMaybe<Array<Scalars["IntID"]>>;
   /** Project ID */
   projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: InputMaybe<Scalars["DateTime"]>;
   /** Tags for the challenge */
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Title of the challenge */

@@ -149,6 +149,8 @@ export type Challenge = {
   project: Project;
   /** Project ID */
   projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: Maybe<Scalars["DateTime"]>;
   /** Tags for the challenge */
   tags: Array<Scalars["String"]>;
   /** Title of the challenge */
@@ -173,6 +175,8 @@ export type ChallengeInput = {
   groupsIds?: InputMaybe<Array<Scalars["IntID"]>>;
   /** Project ID */
   projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: InputMaybe<Scalars["DateTime"]>;
   /** Tags for the challenge */
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Title of the challenge */
@@ -773,6 +777,11 @@ export type ChallengeResolvers<
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
   projectId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  startDate?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
   tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
   topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;

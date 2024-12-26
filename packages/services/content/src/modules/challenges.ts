@@ -60,6 +60,11 @@ export const challengesModule = registerModule(
       projectId: IntID!
 
       """
+      Start date of the challenge
+      """
+      startDate: DateTime
+
+      """
       End date of the challenge
       """
       endDate: DateTime
@@ -94,6 +99,8 @@ export const challengesModule = registerModule(
       projectId: IntID!
       "Tags for the challenge"
       tags: [String!]
+      "Start date of the challenge"
+      startDate: DateTime
       "End date of the challenge"
       endDate: DateTime
       "Topics of the challenge"
@@ -168,7 +175,8 @@ export const challengesModule = registerModule(
               title: data.title,
               description: data.description,
               tags: data.tags ?? [],
-              endDate: data.endDate,
+              startDate: data.startDate ?? null,
+              endDate: data.endDate ?? null,
               topics: data.topicsIds?.length
                 ? { connect: data.topicsIds?.map((id) => ({ id })) }
                 : undefined,
@@ -191,7 +199,8 @@ export const challengesModule = registerModule(
               title: data.title,
               description: data.description,
               tags: data.tags ?? [],
-              endDate: data.endDate,
+              startDate: data.startDate ?? null,
+              endDate: data.endDate ?? null,
               content: { set: data.contentIds?.map((id) => ({ id })) || [] },
               groups: {
                 set: data.groupsIds?.map((id) => ({ id })) || [],

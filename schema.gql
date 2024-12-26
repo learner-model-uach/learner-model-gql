@@ -644,6 +644,10 @@ type Challenge {
   """
   projectId: IntID!
   """
+  Start date of the challenge
+  """
+  startDate: DateTime
+  """
   Tags for the challenge
   """
   tags: [String!]!
@@ -677,6 +681,8 @@ input ChallengeInput {
   groupsIds: [IntID!]
   "Project ID"
   projectId: IntID!
+  "Start date of the challenge"
+  startDate: DateTime
   "Tags for the challenge"
   tags: [String!]
   "Title of the challenge"
