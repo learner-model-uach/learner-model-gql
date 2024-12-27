@@ -83,6 +83,11 @@ export const challengesModule = registerModule(
       Groups of the challenge
       """
       groups: [Group!]!
+
+      """
+      Enabled status of the challenge
+      """
+      enabled: Boolean!
     }
 
     """
@@ -109,6 +114,8 @@ export const challengesModule = registerModule(
       contentIds: [IntID!]
       "Groups of the challenge"
       groupsIds: [IntID!]
+      "Enabled status of the challenge"
+      enabled: Boolean! = true
     }
 
     extend type AdminContentMutations {
@@ -160,28 +167,19 @@ export const challengesModule = registerModule(
                   },
                 },
               },
+              enabled: true,
 
               AND: [
                 {
-                  OR: [
+                  AND: [
                     {
-                      startDate: null,
+                      startDate: {
+                        not: null,
+                      },
                     },
                     {
                       startDate: {
                         lte: new Date(),
-                      },
-                    },
-                  ],
-                },
-                {
-                  OR: [
-                    {
-                      endDate: null,
-                    },
-                    {
-                      endDate: {
-                        gte: new Date(),
                       },
                     },
                   ],
@@ -246,6 +244,7 @@ export const challengesModule = registerModule(
               groups: data.groupsIds?.length
                 ? { connect: data.groupsIds?.map((id) => ({ id })) }
                 : undefined,
+              enabled: data.enabled,
             },
           });
         },
@@ -268,6 +267,7 @@ export const challengesModule = registerModule(
               topics: {
                 set: data.topicsIds?.map((id) => ({ id })) || [],
               },
+              enabled: data.enabled,
             },
           });
         },

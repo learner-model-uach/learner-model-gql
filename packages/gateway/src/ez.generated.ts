@@ -812,6 +812,8 @@ export type Challenge = {
   createdAt: Scalars["DateTime"];
   /** Description of the challenge */
   description?: Maybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: Maybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
@@ -842,6 +844,8 @@ export type ChallengeInput = {
   contentIds?: InputMaybe<Array<Scalars["IntID"]>>;
   /** Description of the challenge */
   description?: InputMaybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled?: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: InputMaybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
@@ -2367,6 +2371,7 @@ export type ResolversTypes = {
   AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
   AnonymizedModelState: ResolverTypeWrapper<AnonymizedModelState>;
   Challenge: ResolverTypeWrapper<Challenge>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   ChallengeInput: ChallengeInput;
   Connection:
     | ResolversTypes["ActionsByContentConnection"]
@@ -2389,7 +2394,6 @@ export type ResolversTypes = {
   ContentSelectionInput: ContentSelectionInput;
   ContentSelectionQueries: ResolverTypeWrapper<ContentSelectionQueries>;
   ContentsSelectedReturn: ResolverTypeWrapper<ContentsSelectedReturn>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -2498,6 +2502,7 @@ export type ResolversParentTypes = {
   AllActionsByUser: AllActionsByUser;
   AnonymizedModelState: AnonymizedModelState;
   Challenge: Challenge;
+  Boolean: Scalars["Boolean"];
   ChallengeInput: ChallengeInput;
   Connection:
     | ResolversParentTypes["ActionsByContentConnection"]
@@ -2520,7 +2525,6 @@ export type ResolversParentTypes = {
   ContentSelectionInput: ContentSelectionInput;
   ContentSelectionQueries: ContentSelectionQueries;
   ContentsSelectedReturn: ContentsSelectedReturn;
-  Boolean: Scalars["Boolean"];
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -3044,6 +3048,7 @@ export type ChallengeResolvers<
     ParentType,
     ContextType
   >;
+  enabled?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   endDate?: Resolver<
     Maybe<ResolversTypes["DateTime"]>,
     ParentType,

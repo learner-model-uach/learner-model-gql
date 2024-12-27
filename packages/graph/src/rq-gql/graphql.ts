@@ -797,6 +797,8 @@ export type Challenge = {
   createdAt: Scalars["DateTime"];
   /** Description of the challenge */
   description?: Maybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: Maybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
@@ -827,6 +829,8 @@ export type ChallengeInput = {
   contentIds?: InputMaybe<Array<Scalars["IntID"]>>;
   /** Description of the challenge */
   description?: InputMaybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled?: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: InputMaybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
