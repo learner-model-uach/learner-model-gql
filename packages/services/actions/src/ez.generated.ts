@@ -542,6 +542,8 @@ export type ProjectActionsFilter = {
 
 export type Query = {
   __typename?: "Query";
+  /** Get all active polls based on the project id and if any matching tags are found */
+  activePolls?: Maybe<Array<Poll>>;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Returns 'Hello World!' */
@@ -558,6 +560,11 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   projects: Array<Project>;
+};
+
+export type QueryactivePollsArgs = {
+  projectId: Scalars["IntID"];
+  tags: Array<Scalars["String"]>;
 };
 
 export type QuerypollArgs = {
@@ -1052,6 +1059,12 @@ export type QueryResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  activePolls?: Resolver<
+    Maybe<Array<ResolversTypes["Poll"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryactivePollsArgs, "projectId" | "tags">
+  >;
   adminActions?: Resolver<
     ResolversTypes["AdminActionQueries"],
     ParentType,

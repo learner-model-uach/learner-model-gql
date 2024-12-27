@@ -419,6 +419,10 @@ input ProjectContentFilter {
 
 type Query {
   """
+  Get all active challenges based on the project id and any authenticated user group
+  """
+  activeChallenges(projectId: IntID!): [Challenge!]!
+  """
   Admin related content queries, only authenticated users with the role "ADMIN" can access
   """
   adminContent: AdminContentQueries!

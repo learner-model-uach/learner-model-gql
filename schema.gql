@@ -1579,6 +1579,14 @@ type Query {
   """
   actionsTopic: ActionsTopicQueries!
   """
+  Get all active challenges based on the project id and any authenticated user group
+  """
+  activeChallenges(projectId: IntID!): [Challenge!]!
+  """
+  Get all active polls based on the project id and if any matching tags are found
+  """
+  activePolls(projectId: IntID!, tags: [String!]!): [Poll!]
+  """
   Admin related actions queries, only authenticated users with the role "ADMIN" can access
   """
   adminActions: AdminActionQueries!

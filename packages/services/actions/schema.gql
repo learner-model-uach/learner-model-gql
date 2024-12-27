@@ -520,6 +520,10 @@ input ProjectActionsFilter {
 
 type Query {
   """
+  Get all active polls based on the project id and if any matching tags are found
+  """
+  activePolls(projectId: IntID!, tags: [String!]!): [Poll!]
+  """
   Admin related actions queries, only authenticated users with the role "ADMIN" can access
   """
   adminActions: AdminActionQueries!

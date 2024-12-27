@@ -133,11 +133,71 @@ export const challengesModule = registerModule(
       Get challenges by their IDs
       """
       challenges(ids: [IntID!]!): [Challenge!]!
+
+      """
+      Get all active challenges based on the project id and any authenticated user group
+      """
+      activeChallenges(projectId: IntID!): [Challenge!]!
     }
   `,
   {
     resolvers: {
       Query: {
+        async activeChallenges(
+          _root,
+          { projectId },
+          { prisma, authorization }
+        ) {
+          return prisma.challenge.findMany({
+            where: {
+              projectId,
+              groups: {
+                some: {
+                  users: {
+                    some: {
+                      id: await authorization.expectUser.then((v) => v.id),
+                    },
+                  },
+                },
+              },
+
+              AND: [
+                {
+                  OR: [
+                    {
+                      startDate: null,
+                    },
+                    {
+                      startDate: {
+                        lte: new Date(),
+                      },
+                    },
+                  ],
+                },
+                {
+                  OR: [
+                    {
+                      endDate: null,
+                    },
+                    {
+                      endDate: {
+                        gte: new Date(),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            orderBy: [
+              {
+                createdAt: "desc",
+              },
+              {
+                id: "desc",
+              },
+            ],
+          });
+        },
         async challenge(_root, { code, id }, { prisma, authorization }) {
           if (!code && !id) {
             throw new Error("Either code or id must be provided");

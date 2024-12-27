@@ -420,6 +420,8 @@ export type ProjectContentFilter = {
 
 export type Query = {
   __typename?: "Query";
+  /** Get all active challenges based on the project id and any authenticated user group */
+  activeChallenges: Array<Challenge>;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
   adminContent: AdminContentQueries;
   /** Get a challenge by either its ID or code */
@@ -459,6 +461,10 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   topics: Array<Topic>;
+};
+
+export type QueryactiveChallengesArgs = {
+  projectId: Scalars["IntID"];
 };
 
 export type QuerychallengeArgs = {
@@ -933,6 +939,12 @@ export type QueryResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  activeChallenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryactiveChallengesArgs, "projectId">
+  >;
   adminContent?: Resolver<
     ResolversTypes["AdminContentQueries"],
     ParentType,

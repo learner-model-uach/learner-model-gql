@@ -72,6 +72,10 @@ export const pollsModule = registerModule(
       Get all polls
       """
       polls(ids: [IntID!]!): [Poll!]!
+      """
+      Get all active polls based on the project id and if any matching tags are found
+      """
+      activePolls(projectId: IntID!, tags: [String!]!): [Poll!]
     }
 
     """
@@ -119,6 +123,33 @@ export const pollsModule = registerModule(
   {
     resolvers: {
       Query: {
+        async activePolls(
+          _root,
+          { projectId, tags },
+          { prisma, authorization }
+        ) {
+          await authorization.expectAllowedUserProject(projectId, {
+            checkExists: true,
+          });
+
+          return await prisma.poll.findMany({
+            where: {
+              projectId,
+              tags: {
+                hasSome: tags,
+              },
+              enabled: true,
+            },
+            orderBy: [
+              {
+                createdAt: "desc",
+              },
+              {
+                id: "desc",
+              },
+            ],
+          });
+        },
         async poll(_root, { code, id }, { prisma, authorization }) {
           if (!code && !id) {
             throw new Error("Either code or id must be provided");

@@ -1725,6 +1725,10 @@ export type Query = {
    * These actions are grouped by user and content.
    */
   actionsTopic: ActionsTopicQueries;
+  /** Get all active challenges based on the project id and any authenticated user group */
+  activeChallenges: Array<Challenge>;
+  /** Get all active polls based on the project id and if any matching tags are found */
+  activePolls?: Maybe<Array<Poll>>;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
@@ -1836,6 +1840,15 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   users: Array<User>;
+};
+
+export type QueryactiveChallengesArgs = {
+  projectId: Scalars["IntID"];
+};
+
+export type QueryactivePollsArgs = {
+  projectId: Scalars["IntID"];
+  tags: Array<Scalars["String"]>;
 };
 
 export type QuerychallengeArgs = {
