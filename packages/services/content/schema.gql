@@ -82,6 +82,10 @@ type Challenge {
   """
   description: String
   """
+  Enabled status of the challenge
+  """
+  enabled: Boolean!
+  """
   End date of the challenge
   """
   endDate: DateTime
@@ -133,6 +137,8 @@ input ChallengeInput {
   contentIds: [IntID!]
   "Description of the challenge"
   description: String
+  "Enabled status of the challenge"
+  enabled: Boolean! = true
   "End date of the challenge"
   endDate: DateTime
   "Groups of the challenge"

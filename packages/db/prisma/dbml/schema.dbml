@@ -260,6 +260,7 @@ Table Challenge {
   code String [unique, not null]
   title String [not null]
   description String
+  enabled Boolean [not null, default: true]
   tags String[] [not null]
   project Project [not null]
   projectId Int [not null]

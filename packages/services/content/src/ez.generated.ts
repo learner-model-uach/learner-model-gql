@@ -139,6 +139,8 @@ export type Challenge = {
   createdAt: Scalars["DateTime"];
   /** Description of the challenge */
   description?: Maybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: Maybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
@@ -169,6 +171,8 @@ export type ChallengeInput = {
   contentIds?: InputMaybe<Array<Scalars["IntID"]>>;
   /** Description of the challenge */
   description?: InputMaybe<Scalars["String"]>;
+  /** Enabled status of the challenge */
+  enabled?: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: InputMaybe<Scalars["DateTime"]>;
   /** Groups of the challenge */
@@ -652,6 +656,7 @@ export type ResolversTypes = {
   AdminContentMutations: ResolverTypeWrapper<AdminContentMutations>;
   AdminContentQueries: ResolverTypeWrapper<AdminContentQueries>;
   Challenge: ResolverTypeWrapper<Challenge>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   ChallengeInput: ChallengeInput;
   Connection: ResolversTypes["ContentConnection"];
   Content: ResolverTypeWrapper<Content>;
@@ -670,7 +675,6 @@ export type ResolversTypes = {
   NonNegativeInt: ResolverTypeWrapper<Scalars["NonNegativeInt"]>;
   ORDER_BY: ORDER_BY;
   PageInfo: ResolverTypeWrapper<PageInfo>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   Project: ResolverTypeWrapper<Project>;
   ProjectContentFilter: ProjectContentFilter;
   Query: ResolverTypeWrapper<{}>;
@@ -689,6 +693,7 @@ export type ResolversParentTypes = {
   AdminContentMutations: AdminContentMutations;
   AdminContentQueries: AdminContentQueries;
   Challenge: Challenge;
+  Boolean: Scalars["Boolean"];
   ChallengeInput: ChallengeInput;
   Connection: ResolversParentTypes["ContentConnection"];
   Content: Content;
@@ -706,7 +711,6 @@ export type ResolversParentTypes = {
   Node: never;
   NonNegativeInt: Scalars["NonNegativeInt"];
   PageInfo: PageInfo;
-  Boolean: Scalars["Boolean"];
   Project: Project;
   ProjectContentFilter: ProjectContentFilter;
   Query: {};
@@ -774,6 +778,7 @@ export type ChallengeResolvers<
     ParentType,
     ContextType
   >;
+  enabled?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
   endDate?: Resolver<
     Maybe<ResolversTypes["DateTime"]>,
     ParentType,
