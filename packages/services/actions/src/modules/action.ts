@@ -47,6 +47,22 @@ export const actionModule = registerModule(
       id: IntID!
     }
 
+    """
+    Poll entity
+    """
+    type Poll {
+      "Unique numeric identifier"
+      id: IntID!
+    }
+
+    """
+    Challenge entity
+    """
+    type Challenge {
+      "Unique numeric identifier"
+      id: IntID!
+    }
+
     "Input of action report"
     input ActionInput {
       """
@@ -57,6 +73,20 @@ export const actionModule = registerModule(
       Validation of content presence/authorization is made before confirming action
       """
       contentID: ID
+
+      """
+      Poll identifier
+
+      If it's numeric, it points to the "id" property of the poll, otherwise, it points to the "code" property.
+      """
+      pollID: ID
+
+      """
+      Challenge identifier
+
+      If it's numeric, it points to the "id" property of the challenge, otherwise, it points to the "code" property.
+      """
+      challengeID: ID
 
       """
       Topic identifier
@@ -140,6 +170,9 @@ export const actionModule = registerModule(
 
       "Related topic"
       topic: Topic
+
+      "Related poll"
+      poll: Poll
 
       "Related KCs"
       kcs: [KC!]!
@@ -275,6 +308,20 @@ export const actionModule = registerModule(
       adminActions: AdminActionQueries!
     }
 
+    """
+    Poll entity
+    """
+    type Poll {
+      id: IntID!
+    }
+
+    """
+    Admin actions. If user is not admin, it will throw an error.
+    """
+    type AdminActionMutations {
+      hello: String!
+    }
+
     extend type Mutation {
       """
       Report an action to the modeling service
@@ -283,6 +330,11 @@ export const actionModule = registerModule(
       - Authenticated user has to be associated with specified project
       """
       action(data: ActionInput!): Void
+
+      """
+      Admin related actions mutations, only authenticated users with the role "ADMIN" can access
+      """
+      adminActions: AdminActionMutations!
     }
   `,
   {
@@ -455,7 +507,17 @@ export const actionModule = registerModule(
           return {};
         },
       },
+      AdminActionMutations: {
+        hello() {
+          return "Hello World";
+        },
+      },
       Mutation: {
+        async adminActions(_root, _args, { authorization }) {
+          await authorization.expectAdmin;
+
+          return {};
+        },
         async action(
           _root,
           {
@@ -472,6 +534,8 @@ export const actionModule = registerModule(
               projectId,
               kcsIDs,
               result,
+              pollID,
+              challengeID,
             },
           },
           { authorization, prisma }
@@ -489,133 +553,183 @@ export const actionModule = registerModule(
             `Invalid timestamp`
           );
 
-          const [{ content }, { topic }, { kcs }] = await PromiseAllCallbacks(
-            async () => {
-              return {
-                content:
-                  contentID != null && (contentID = contentID.toString())
-                    ? {
-                        connect: {
-                          id: (
-                            await prisma.content.findFirstOrThrow({
-                              where: isInt(contentID)
-                                ? {
-                                    projectId: userProjectId,
-                                    id: parseInt(contentID.toString()),
-                                  }
-                                : {
-                                    projectId: userProjectId,
-                                    code: contentID.toString(),
-                                  },
-                              select: {
-                                id: true,
-                              },
-                            })
-                          ).id,
-                        },
-                      }
-                    : undefined,
-              };
-            },
-            async () => {
-              return {
-                topic:
-                  topicID != null && (topicID = topicID.toString())
-                    ? {
-                        connect: {
-                          id: (
-                            await prisma.topic.findFirstOrThrow({
-                              where: isInt(topicID)
-                                ? {
-                                    projectId: userProjectId,
-                                    id: parseInt(topicID),
-                                  }
-                                : {
-                                    projectId: userProjectId,
-                                    code: topicID,
-                                  },
-                              select: {
-                                id: true,
-                              },
-                            })
-                          ).id,
-                        },
-                      }
-                    : undefined,
-              };
-            },
-            async () => {
-              if (!kcsIDs?.length) return {};
+          const [{ content }, { topic }, { kcs }, { poll }, { challenge }] =
+            await PromiseAllCallbacks(
+              async () => {
+                return {
+                  content:
+                    contentID != null && (contentID = contentID.toString())
+                      ? {
+                          connect: {
+                            id: (
+                              await prisma.content.findFirstOrThrow({
+                                where: isInt(contentID)
+                                  ? {
+                                      projectId: userProjectId,
+                                      id: parseInt(contentID.toString()),
+                                    }
+                                  : {
+                                      projectId: userProjectId,
+                                      code: contentID.toString(),
+                                    },
+                                select: {
+                                  id: true,
+                                },
+                              })
+                            ).id,
+                          },
+                        }
+                      : undefined,
+                };
+              },
+              async () => {
+                return {
+                  topic:
+                    topicID != null && (topicID = topicID.toString())
+                      ? {
+                          connect: {
+                            id: (
+                              await prisma.topic.findFirstOrThrow({
+                                where: isInt(topicID)
+                                  ? {
+                                      projectId: userProjectId,
+                                      id: parseInt(topicID),
+                                    }
+                                  : {
+                                      projectId: userProjectId,
+                                      code: topicID,
+                                    },
+                                select: {
+                                  id: true,
+                                },
+                              })
+                            ).id,
+                          },
+                        }
+                      : undefined,
+                };
+              },
+              async () => {
+                if (!kcsIDs?.length) return {};
 
-              const parsedKcsIds = kcsIDs?.reduce<{
-                ids: Set<number>;
-                codes: Set<string>;
-              }>(
-                (acum, value) => {
-                  if (isInt((value = value.toString()))) {
-                    acum.ids.add(parseInt(value));
-                  } else {
-                    acum.codes.add(value);
+                const parsedKcsIds = kcsIDs?.reduce<{
+                  ids: Set<number>;
+                  codes: Set<string>;
+                }>(
+                  (acum, value) => {
+                    if (isInt((value = value.toString()))) {
+                      acum.ids.add(parseInt(value));
+                    } else {
+                      acum.codes.add(value);
+                    }
+                    return acum;
+                  },
+                  {
+                    ids: new Set(),
+                    codes: new Set(),
                   }
-                  return acum;
-                },
-                {
-                  ids: new Set(),
-                  codes: new Set(),
-                }
-              );
+                );
 
-              const kcs = await prisma.kC.findMany({
-                where: {
-                  OR: [
-                    {
-                      id: {
-                        in: Array.from(parsedKcsIds.ids),
-                      },
-                      domain: {
-                        projects: {
-                          some: {
-                            id: userProjectId,
+                const kcs = await prisma.kC.findMany({
+                  where: {
+                    OR: [
+                      {
+                        id: {
+                          in: Array.from(parsedKcsIds.ids),
+                        },
+                        domain: {
+                          projects: {
+                            some: {
+                              id: userProjectId,
+                            },
                           },
                         },
                       },
-                    },
-                    {
-                      code: {
-                        in: Array.from(parsedKcsIds.codes),
-                      },
-                      domain: {
-                        projects: {
-                          some: {
-                            id: userProjectId,
+                      {
+                        code: {
+                          in: Array.from(parsedKcsIds.codes),
+                        },
+                        domain: {
+                          projects: {
+                            some: {
+                              id: userProjectId,
+                            },
                           },
                         },
                       },
-                    },
-                  ],
-                },
-                select: {
-                  id: true,
-                },
-              });
+                    ],
+                  },
+                  select: {
+                    id: true,
+                  },
+                });
 
-              if (
-                kcs.length !==
-                parsedKcsIds.ids.size + parsedKcsIds.codes.size
-              )
-                throw Error("Forbidden!");
+                if (
+                  kcs.length !==
+                  parsedKcsIds.ids.size + parsedKcsIds.codes.size
+                )
+                  throw Error("Forbidden!");
 
-              return {
-                kcs: {
-                  connect: kcs,
-                },
-              };
-            }
-          ).catch((err) => {
-            logger.error(serializeError(err));
+                return {
+                  kcs: {
+                    connect: kcs,
+                  },
+                };
+              },
+              async () => {
+                return {
+                  poll:
+                    pollID != null && (pollID = pollID.toString())
+                      ? {
+                          connect: {
+                            id: (
+                              await prisma.poll.findFirstOrThrow({
+                                where: isInt(pollID)
+                                  ? {
+                                      projectId: userProjectId,
+                                      id: parseInt(pollID),
+                                    }
+                                  : {
+                                      projectId: userProjectId,
+                                      code: pollID,
+                                    },
+                              })
+                            ).id,
+                          },
+                        }
+                      : undefined,
+                };
+              },
+              async () => {
+                return {
+                  challenge:
+                    challengeID != null &&
+                    (challengeID = challengeID.toString())
+                      ? {
+                          connect: {
+                            id: (
+                              await prisma.challenge.findFirstOrThrow({
+                                where: isInt(challengeID)
+                                  ? {
+                                      projectId: userProjectId,
+                                      id: parseInt(challengeID),
+                                    }
+                                  : {
+                                      projectId: userProjectId,
+                                      code: challengeID,
+                                    },
+                              })
+                            ).id,
+                          },
+                        }
+                      : undefined,
+                };
+              }
+            ).catch((err) => {
+              logger.error(serializeError(err));
 
-            throw Error("Forbidden!");
-          });
+              throw Error("Forbidden!");
+            });
 
           await prisma.$executeRaw`INSERT INTO "ActionVerb" ("name") VALUES (${verbName}) ON CONFLICT DO NOTHING;`;
 
@@ -646,6 +760,8 @@ export const actionModule = registerModule(
               },
               result,
               kcs,
+              poll,
+              challenge,
             },
             select: null,
           });

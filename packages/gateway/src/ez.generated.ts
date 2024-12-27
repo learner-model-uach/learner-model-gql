@@ -72,6 +72,8 @@ export type Action = {
   id: Scalars["IntID"];
   /** Related KCs */
   kcs: Array<KC>;
+  /** Related poll */
+  poll?: Maybe<Poll>;
   /** Arbitrary numeric result */
   result?: Maybe<Scalars["Float"]>;
   /** Arbitrary step identifier */
@@ -90,6 +92,12 @@ export type Action = {
 export type ActionInput = {
   /** Arbitrary numeric amount */
   amount?: InputMaybe<Scalars["Float"]>;
+  /**
+   * Challenge identifier
+   *
+   * If it's numeric, it points to the "id" property of the challenge, otherwise, it points to the "code" property.
+   */
+  challengeID?: InputMaybe<Scalars["ID"]>;
   /**
    * Content identifier
    *
@@ -112,6 +120,12 @@ export type ActionInput = {
    * Validation of kc presence/authorization is made before confirming action
    */
   kcsIDs?: InputMaybe<Array<Scalars["ID"]>>;
+  /**
+   * Poll identifier
+   *
+   * If it's numeric, it points to the "id" property of the poll, otherwise, it points to the "code" property.
+   */
+  pollID?: InputMaybe<Scalars["ID"]>;
   /**
    * Identifier of project related to action.
    *
@@ -230,6 +244,28 @@ export type ActionsVerbsConnection = Connection & {
   pageInfo: PageInfo;
 };
 
+/** Admin actions. If user is not admin, it will throw an error. */
+export type AdminActionMutations = {
+  __typename?: "AdminActionMutations";
+  /** Create a poll */
+  createPoll: Poll;
+  hello: Scalars["String"];
+  /** Update a poll */
+  updatePoll: Poll;
+};
+
+/** Admin actions. If user is not admin, it will throw an error. */
+export type AdminActionMutationscreatePollArgs = {
+  data: PollInput;
+  projectId: Scalars["IntID"];
+};
+
+/** Admin actions. If user is not admin, it will throw an error. */
+export type AdminActionMutationsupdatePollArgs = {
+  data: PollInput;
+  id: Scalars["IntID"];
+};
+
 /** Admin Action-Related Queries */
 export type AdminActionQueries = {
   __typename?: "AdminActionQueries";
@@ -346,15 +382,30 @@ export type AdminContentFilter = {
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
 export type AdminContentMutations = {
   __typename?: "AdminContentMutations";
+  /** Create a challenge */
+  createChallenge: Challenge;
   /** Create a new content entity */
   createContent: Content;
+  /** Update a challenge */
+  updateChallenge: Challenge;
   /** Update an existent content entity */
   updateContent: Content;
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
+export type AdminContentMutationscreateChallengeArgs = {
+  data: ChallengeInput;
+};
+
+/** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
 export type AdminContentMutationscreateContentArgs = {
   data: CreateContent;
+};
+
+/** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
+export type AdminContentMutationsupdateChallengeArgs = {
+  data: ChallengeInput;
+  id: Scalars["IntID"];
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
@@ -748,6 +799,63 @@ export type AnonymizedModelState = {
   updatedAt: Scalars["DateTime"];
   /** Unique anonimized user hash identifier */
   userUniqueHash: Scalars["String"];
+};
+
+/** A challenge */
+export type Challenge = {
+  __typename?: "Challenge";
+  /** Unique code for the challenge */
+  code: Scalars["String"];
+  /** Content of the challenge */
+  content: Array<Content>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Description of the challenge */
+  description?: Maybe<Scalars["String"]>;
+  /** End date of the challenge */
+  endDate?: Maybe<Scalars["DateTime"]>;
+  /** Groups of the challenge */
+  groups: Array<Group>;
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+  /** Project of the challenge */
+  project: Project;
+  /** Project ID */
+  projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: Maybe<Scalars["DateTime"]>;
+  /** Tags for the challenge */
+  tags: Array<Scalars["String"]>;
+  /** Title of the challenge */
+  title: Scalars["String"];
+  /** Topics of the challenge */
+  topics: Array<Topic>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+};
+
+/** Input for creating or updating a challenge */
+export type ChallengeInput = {
+  /** Unique code for the challenge */
+  code: Scalars["String"];
+  /** Content of the challenge */
+  contentIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  /** Description of the challenge */
+  description?: InputMaybe<Scalars["String"]>;
+  /** End date of the challenge */
+  endDate?: InputMaybe<Scalars["DateTime"]>;
+  /** Groups of the challenge */
+  groupsIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  /** Project ID */
+  projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: InputMaybe<Scalars["DateTime"]>;
+  /** Tags for the challenge */
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  /** Title of the challenge */
+  title: Scalars["String"];
+  /** Topics of the challenge */
+  topicsIds?: InputMaybe<Array<Scalars["IntID"]>>;
 };
 
 /** Pagination Interface */
@@ -1361,6 +1469,8 @@ export type Mutation = {
    * - Authenticated user has to be associated with specified project
    */
   action?: Maybe<Scalars["Void"]>;
+  /** Admin related actions mutations, only authenticated users with the role "ADMIN" can access */
+  adminActions: AdminActionMutations;
   /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
   adminContent: AdminContentMutations;
   /** Admin related domain mutations, only authenticated users with the role "ADMIN" can access */
@@ -1407,6 +1517,80 @@ export type PageInfo = {
   hasPreviousPage: Scalars["Boolean"];
   /** Cursor parameter normally used for backward pagination */
   startCursor?: Maybe<Scalars["String"]>;
+};
+
+/** Poll entity */
+export type Poll = {
+  __typename?: "Poll";
+  /** Unique code */
+  code: Scalars["String"];
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Description of the poll */
+  description?: Maybe<Scalars["String"]>;
+  /** Enabled status of the poll */
+  enabled: Scalars["Boolean"];
+  /** Unique identifier */
+  id: Scalars["IntID"];
+  /** Items of the poll */
+  items: Array<PollItem>;
+  /** Project of the poll */
+  project: Project;
+  /** ID of the project of the poll */
+  projectId: Scalars["IntID"];
+  /** Tags of the poll */
+  tags: Array<Scalars["String"]>;
+  /** Title of the poll */
+  title: Scalars["String"];
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+};
+
+/** Input for creating or updating a poll */
+export type PollInput = {
+  /** Unique code for the poll */
+  code: Scalars["String"];
+  /** Description of the poll */
+  description?: InputMaybe<Scalars["String"]>;
+  /** Enabled status of the poll */
+  enabled?: Scalars["Boolean"];
+  /** Items of the poll */
+  items: Array<PollItemInput>;
+  /** Project ID */
+  projectId: Scalars["IntID"];
+  /** Tags for the poll */
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  /** Title of the poll */
+  title: Scalars["String"];
+};
+
+/** Poll Item */
+export type PollItem = {
+  __typename?: "PollItem";
+  /** Content of the item */
+  content: Scalars["JSON"];
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Unique identifier */
+  id: Scalars["IntID"];
+  /** Index of the item in the poll */
+  index: Scalars["Int"];
+  /** Poll of the item */
+  poll: Poll;
+  /** ID of the poll of the item */
+  pollId: Scalars["IntID"];
+  /** Tags of the item */
+  tags: Array<Scalars["String"]>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+};
+
+/** Input for creating or updating a poll item */
+export type PollItemInput = {
+  /** Content of the poll item */
+  content: Scalars["JSON"];
+  /** Tags for the poll item */
+  tags?: InputMaybe<Array<Scalars["String"]>>;
 };
 
 /** Project entity */
@@ -1556,6 +1740,10 @@ export type Query = {
    * These actions are grouped by user and content.
    */
   actionsTopic: ActionsTopicQueries;
+  /** Get all active challenges based on the project id and any authenticated user group */
+  activeChallenges: Array<Challenge>;
+  /** Get all active polls based on the project id and if any matching tags are found */
+  activePolls?: Maybe<Array<Poll>>;
   /** Admin related actions queries, only authenticated users with the role "ADMIN" can access */
   adminActions: AdminActionQueries;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
@@ -1568,6 +1756,10 @@ export type Query = {
   adminState: AdminStateQueries;
   /** Admin related user queries, only authenticated users with the role "ADMIN" can access */
   adminUsers: AdminUserQueries;
+  /** Get a challenge by either its ID or code */
+  challenge?: Maybe<Challenge>;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /**
    * Get all the content associated with the specified identifiers
    *
@@ -1621,6 +1813,10 @@ export type Query = {
    * If topic is not found or does not have any content, it is not included in the response
    */
   kcsByContentByTopics: Array<KCsByTopic>;
+  /** Get a poll by either its code or id */
+  poll?: Maybe<Poll>;
+  /** Get all polls */
+  polls: Array<Poll>;
   /**
    * Get specified project by either "id" or "code".
    *
@@ -1661,6 +1857,24 @@ export type Query = {
   users: Array<User>;
 };
 
+export type QueryactiveChallengesArgs = {
+  projectId: Scalars["IntID"];
+};
+
+export type QueryactivePollsArgs = {
+  projectId: Scalars["IntID"];
+  tags: Array<Scalars["String"]>;
+};
+
+export type QuerychallengeArgs = {
+  code?: InputMaybe<Scalars["String"]>;
+  id?: InputMaybe<Scalars["IntID"]>;
+};
+
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
+};
+
 export type QuerycontentArgs = {
   ids: Array<Scalars["IntID"]>;
 };
@@ -1692,6 +1906,15 @@ export type QuerykcsArgs = {
 export type QuerykcsByContentByTopicsArgs = {
   projectCode: Scalars["String"];
   topicsCodes: Array<Scalars["String"]>;
+};
+
+export type QuerypollArgs = {
+  code?: InputMaybe<Scalars["String"]>;
+  id?: InputMaybe<Scalars["IntID"]>;
+};
+
+export type QuerypollsArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QueryprojectArgs = {
@@ -2121,6 +2344,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars["Int"]>;
   ActionsTopicQueries: ResolverTypeWrapper<ActionsTopicQueries>;
   ActionsVerbsConnection: ResolverTypeWrapper<ActionsVerbsConnection>;
+  AdminActionMutations: ResolverTypeWrapper<AdminActionMutations>;
   AdminActionQueries: ResolverTypeWrapper<AdminActionQueries>;
   AdminActionsFilter: AdminActionsFilter;
   AdminActionsOrderBy: AdminActionsOrderBy;
@@ -2142,6 +2366,8 @@ export type ResolversTypes = {
   AllActionsByContent: ResolverTypeWrapper<AllActionsByContent>;
   AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
   AnonymizedModelState: ResolverTypeWrapper<AnonymizedModelState>;
+  Challenge: ResolverTypeWrapper<Challenge>;
+  ChallengeInput: ChallengeInput;
   Connection:
     | ResolversTypes["ActionsByContentConnection"]
     | ResolversTypes["ActionsByUserConnection"]
@@ -2205,6 +2431,10 @@ export type ResolversTypes = {
   NonNegativeInt: ResolverTypeWrapper<Scalars["NonNegativeInt"]>;
   ORDER_BY: ORDER_BY;
   PageInfo: ResolverTypeWrapper<PageInfo>;
+  Poll: ResolverTypeWrapper<Poll>;
+  PollInput: PollInput;
+  PollItem: ResolverTypeWrapper<PollItem>;
+  PollItemInput: PollItemInput;
   Project: ResolverTypeWrapper<Project>;
   ProjectActionsFilter: ProjectActionsFilter;
   ProjectContentFilter: ProjectContentFilter;
@@ -2245,6 +2475,7 @@ export type ResolversParentTypes = {
   Int: Scalars["Int"];
   ActionsTopicQueries: ActionsTopicQueries;
   ActionsVerbsConnection: ActionsVerbsConnection;
+  AdminActionMutations: AdminActionMutations;
   AdminActionQueries: AdminActionQueries;
   AdminActionsFilter: AdminActionsFilter;
   AdminActionsOrderBy: AdminActionsOrderBy;
@@ -2266,6 +2497,8 @@ export type ResolversParentTypes = {
   AllActionsByContent: AllActionsByContent;
   AllActionsByUser: AllActionsByUser;
   AnonymizedModelState: AnonymizedModelState;
+  Challenge: Challenge;
+  ChallengeInput: ChallengeInput;
   Connection:
     | ResolversParentTypes["ActionsByContentConnection"]
     | ResolversParentTypes["ActionsByUserConnection"]
@@ -2326,6 +2559,10 @@ export type ResolversParentTypes = {
   Node: never;
   NonNegativeInt: Scalars["NonNegativeInt"];
   PageInfo: PageInfo;
+  Poll: Poll;
+  PollInput: PollInput;
+  PollItem: PollItem;
+  PollItemInput: PollItemInput;
   Project: Project;
   ProjectActionsFilter: ProjectActionsFilter;
   ProjectContentFilter: ProjectContentFilter;
@@ -2366,6 +2603,7 @@ export type ActionResolvers<
   hintID?: Resolver<Maybe<ResolversTypes["ID"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
+  poll?: Resolver<Maybe<ResolversTypes["Poll"]>, ParentType, ContextType>;
   result?: Resolver<Maybe<ResolversTypes["Float"]>, ParentType, ContextType>;
   stepID?: Resolver<Maybe<ResolversTypes["ID"]>, ParentType, ContextType>;
   timestamp?: Resolver<ResolversTypes["Timestamp"], ParentType, ContextType>;
@@ -2457,6 +2695,26 @@ export type ActionsVerbsConnectionResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AdminActionMutationsResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["AdminActionMutations"] = ResolversParentTypes["AdminActionMutations"]
+> = {
+  createPoll?: Resolver<
+    ResolversTypes["Poll"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminActionMutationscreatePollArgs, "data" | "projectId">
+  >;
+  hello?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  updatePoll?: Resolver<
+    ResolversTypes["Poll"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminActionMutationsupdatePollArgs, "data" | "id">
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type AdminActionQueriesResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["AdminActionQueries"] = ResolversParentTypes["AdminActionQueries"]
@@ -2480,11 +2738,23 @@ export type AdminContentMutationsResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["AdminContentMutations"] = ResolversParentTypes["AdminContentMutations"]
 > = {
+  createChallenge?: Resolver<
+    ResolversTypes["Challenge"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminContentMutationscreateChallengeArgs, "data">
+  >;
   createContent?: Resolver<
     ResolversTypes["Content"],
     ParentType,
     ContextType,
     RequireFields<AdminContentMutationscreateContentArgs, "data">
+  >;
+  updateChallenge?: Resolver<
+    ResolversTypes["Challenge"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminContentMutationsupdateChallengeArgs, "data" | "id">
   >;
   updateContent?: Resolver<
     ResolversTypes["Content"],
@@ -2759,6 +3029,39 @@ export type AnonymizedModelStateResolvers<
   type?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   userUniqueHash?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  code?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  content?: Resolver<Array<ResolversTypes["Content"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  endDate?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
+  groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  startDate?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
+  tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3154,6 +3457,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationactionArgs, "data">
   >;
+  adminActions?: Resolver<
+    ResolversTypes["AdminActionMutations"],
+    ParentType,
+    ContextType
+  >;
   adminContent?: Resolver<
     ResolversTypes["AdminContentMutations"],
     ParentType,
@@ -3219,6 +3527,43 @@ export type PageInfoResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PollResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Poll"] = ResolversParentTypes["Poll"]
+> = {
+  code?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  enabled?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  items?: Resolver<Array<ResolversTypes["PollItem"]>, ParentType, ContextType>;
+  project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PollItemResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["PollItem"] = ResolversParentTypes["PollItem"]
+> = {
+  content?: Resolver<ResolversTypes["JSON"], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  index?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  poll?: Resolver<ResolversTypes["Poll"], ParentType, ContextType>;
+  pollId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ProjectResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Project"] = ResolversParentTypes["Project"]
@@ -3263,6 +3608,18 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
+  activeChallenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryactiveChallengesArgs, "projectId">
+  >;
+  activePolls?: Resolver<
+    Maybe<Array<ResolversTypes["Poll"]>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryactivePollsArgs, "projectId" | "tags">
+  >;
   adminActions?: Resolver<
     ResolversTypes["AdminActionQueries"],
     ParentType,
@@ -3292,6 +3649,18 @@ export type QueryResolvers<
     ResolversTypes["AdminUserQueries"],
     ParentType,
     ContextType
+  >;
+  challenge?: Resolver<
+    Maybe<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    Partial<QuerychallengeArgs>
+  >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
   >;
   content?: Resolver<
     Array<ResolversTypes["Content"]>,
@@ -3348,6 +3717,18 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QuerykcsByContentByTopicsArgs, "projectCode" | "topicsCodes">
+  >;
+  poll?: Resolver<
+    Maybe<ResolversTypes["Poll"]>,
+    ParentType,
+    ContextType,
+    Partial<QuerypollArgs>
+  >;
+  polls?: Resolver<
+    Array<ResolversTypes["Poll"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerypollsArgs, "ids">
   >;
   project?: Resolver<
     Maybe<ResolversTypes["Project"]>,
@@ -3521,6 +3902,7 @@ export type Resolvers<ContextType = EZContext> = {
   ActionsConnection?: ActionsConnectionResolvers<ContextType>;
   ActionsTopicQueries?: ActionsTopicQueriesResolvers<ContextType>;
   ActionsVerbsConnection?: ActionsVerbsConnectionResolvers<ContextType>;
+  AdminActionMutations?: AdminActionMutationsResolvers<ContextType>;
   AdminActionQueries?: AdminActionQueriesResolvers<ContextType>;
   AdminContentMutations?: AdminContentMutationsResolvers<ContextType>;
   AdminContentQueries?: AdminContentQueriesResolvers<ContextType>;
@@ -3534,6 +3916,7 @@ export type Resolvers<ContextType = EZContext> = {
   AllActionsByContent?: AllActionsByContentResolvers<ContextType>;
   AllActionsByUser?: AllActionsByUserResolvers<ContextType>;
   AnonymizedModelState?: AnonymizedModelStateResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;
@@ -3565,6 +3948,8 @@ export type Resolvers<ContextType = EZContext> = {
   Node?: NodeResolvers<ContextType>;
   NonNegativeInt?: GraphQLScalarType;
   PageInfo?: PageInfoResolvers<ContextType>;
+  Poll?: PollResolvers<ContextType>;
+  PollItem?: PollItemResolvers<ContextType>;
   Project?: ProjectResolvers<ContextType>;
   ProjectsConnection?: ProjectsConnectionResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

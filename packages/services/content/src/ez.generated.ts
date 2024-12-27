@@ -80,15 +80,30 @@ export type AdminContentFilter = {
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
 export type AdminContentMutations = {
   __typename?: "AdminContentMutations";
+  /** Create a challenge */
+  createChallenge: Challenge;
   /** Create a new content entity */
   createContent: Content;
+  /** Update a challenge */
+  updateChallenge: Challenge;
   /** Update an existent content entity */
   updateContent: Content;
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
+export type AdminContentMutationscreateChallengeArgs = {
+  data: ChallengeInput;
+};
+
+/** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
 export type AdminContentMutationscreateContentArgs = {
   data: CreateContent;
+};
+
+/** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
+export type AdminContentMutationsupdateChallengeArgs = {
+  data: ChallengeInput;
+  id: Scalars["IntID"];
 };
 
 /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
@@ -111,6 +126,63 @@ export type AdminContentQueries = {
 export type AdminContentQueriesallContentArgs = {
   filters?: InputMaybe<AdminContentFilter>;
   pagination: CursorConnectionArgs;
+};
+
+/** A challenge */
+export type Challenge = {
+  __typename?: "Challenge";
+  /** Unique code for the challenge */
+  code: Scalars["String"];
+  /** Content of the challenge */
+  content: Array<Content>;
+  /** Date of creation */
+  createdAt: Scalars["DateTime"];
+  /** Description of the challenge */
+  description?: Maybe<Scalars["String"]>;
+  /** End date of the challenge */
+  endDate?: Maybe<Scalars["DateTime"]>;
+  /** Groups of the challenge */
+  groups: Array<Group>;
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+  /** Project of the challenge */
+  project: Project;
+  /** Project ID */
+  projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: Maybe<Scalars["DateTime"]>;
+  /** Tags for the challenge */
+  tags: Array<Scalars["String"]>;
+  /** Title of the challenge */
+  title: Scalars["String"];
+  /** Topics of the challenge */
+  topics: Array<Topic>;
+  /** Date of last update */
+  updatedAt: Scalars["DateTime"];
+};
+
+/** Input for creating or updating a challenge */
+export type ChallengeInput = {
+  /** Unique code for the challenge */
+  code: Scalars["String"];
+  /** Content of the challenge */
+  contentIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  /** Description of the challenge */
+  description?: InputMaybe<Scalars["String"]>;
+  /** End date of the challenge */
+  endDate?: InputMaybe<Scalars["DateTime"]>;
+  /** Groups of the challenge */
+  groupsIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  /** Project ID */
+  projectId: Scalars["IntID"];
+  /** Start date of the challenge */
+  startDate?: InputMaybe<Scalars["DateTime"]>;
+  /** Tags for the challenge */
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  /** Title of the challenge */
+  title: Scalars["String"];
+  /** Topics of the challenge */
+  topicsIds?: InputMaybe<Array<Scalars["IntID"]>>;
 };
 
 /** Pagination Interface */
@@ -247,6 +319,12 @@ export type CursorConnectionArgs = {
   last?: InputMaybe<Scalars["NonNegativeInt"]>;
 };
 
+export type Group = {
+  __typename?: "Group";
+  /** ID of the group */
+  id: Scalars["IntID"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   /** Admin related content mutations, only authenticated users with the role "ADMIN" can access */
@@ -342,8 +420,14 @@ export type ProjectContentFilter = {
 
 export type Query = {
   __typename?: "Query";
+  /** Get all active challenges based on the project id and any authenticated user group */
+  activeChallenges: Array<Challenge>;
   /** Admin related content queries, only authenticated users with the role "ADMIN" can access */
   adminContent: AdminContentQueries;
+  /** Get a challenge by either its ID or code */
+  challenge?: Maybe<Challenge>;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /**
    * Get all the content associated with the specified identifiers
    *
@@ -377,6 +461,19 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   topics: Array<Topic>;
+};
+
+export type QueryactiveChallengesArgs = {
+  projectId: Scalars["IntID"];
+};
+
+export type QuerychallengeArgs = {
+  code?: InputMaybe<Scalars["String"]>;
+  id?: InputMaybe<Scalars["IntID"]>;
+};
+
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerycontentArgs = {
@@ -554,6 +651,8 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars["String"]>;
   AdminContentMutations: ResolverTypeWrapper<AdminContentMutations>;
   AdminContentQueries: ResolverTypeWrapper<AdminContentQueries>;
+  Challenge: ResolverTypeWrapper<Challenge>;
+  ChallengeInput: ChallengeInput;
   Connection: ResolversTypes["ContentConnection"];
   Content: ResolverTypeWrapper<Content>;
   Int: ResolverTypeWrapper<Scalars["Int"]>;
@@ -562,6 +661,7 @@ export type ResolversTypes = {
   CursorConnectionArgs: CursorConnectionArgs;
   DateTime: ResolverTypeWrapper<Scalars["DateTime"]>;
   EmailAddress: ResolverTypeWrapper<Scalars["EmailAddress"]>;
+  Group: ResolverTypeWrapper<Group>;
   IntID: ResolverTypeWrapper<Scalars["IntID"]>;
   JSON: ResolverTypeWrapper<Scalars["JSON"]>;
   JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>;
@@ -588,6 +688,8 @@ export type ResolversParentTypes = {
   String: Scalars["String"];
   AdminContentMutations: AdminContentMutations;
   AdminContentQueries: AdminContentQueries;
+  Challenge: Challenge;
+  ChallengeInput: ChallengeInput;
   Connection: ResolversParentTypes["ContentConnection"];
   Content: Content;
   Int: Scalars["Int"];
@@ -596,6 +698,7 @@ export type ResolversParentTypes = {
   CursorConnectionArgs: CursorConnectionArgs;
   DateTime: Scalars["DateTime"];
   EmailAddress: Scalars["EmailAddress"];
+  Group: Group;
   IntID: Scalars["IntID"];
   JSON: Scalars["JSON"];
   JSONObject: Scalars["JSONObject"];
@@ -619,11 +722,23 @@ export type AdminContentMutationsResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["AdminContentMutations"] = ResolversParentTypes["AdminContentMutations"]
 > = {
+  createChallenge?: Resolver<
+    ResolversTypes["Challenge"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminContentMutationscreateChallengeArgs, "data">
+  >;
   createContent?: Resolver<
     ResolversTypes["Content"],
     ParentType,
     ContextType,
     RequireFields<AdminContentMutationscreateContentArgs, "data">
+  >;
+  updateChallenge?: Resolver<
+    ResolversTypes["Challenge"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminContentMutationsupdateChallengeArgs, "data" | "id">
   >;
   updateContent?: Resolver<
     ResolversTypes["Content"],
@@ -644,6 +759,39 @@ export type AdminContentQueriesResolvers<
     ContextType,
     RequireFields<AdminContentQueriesallContentArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  code?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  content?: Resolver<Array<ResolversTypes["Content"]>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
+  description?: Resolver<
+    Maybe<ResolversTypes["String"]>,
+    ParentType,
+    ContextType
+  >;
+  endDate?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
+  groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
+  projectId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  startDate?: Resolver<
+    Maybe<ResolversTypes["DateTime"]>,
+    ParentType,
+    ContextType
+  >;
+  tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
+  title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -701,6 +849,14 @@ export interface EmailAddressScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["EmailAddress"], any> {
   name: "EmailAddress";
 }
+
+export type GroupResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Group"] = ResolversParentTypes["Group"]
+> = {
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
 
 export interface IntIDScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes["IntID"], any> {
@@ -783,10 +939,28 @@ export type QueryResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["Query"] = ResolversParentTypes["Query"]
 > = {
+  activeChallenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryactiveChallengesArgs, "projectId">
+  >;
   adminContent?: Resolver<
     ResolversTypes["AdminContentQueries"],
     ParentType,
     ContextType
+  >;
+  challenge?: Resolver<
+    Maybe<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    Partial<QuerychallengeArgs>
+  >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
   >;
   content?: Resolver<
     Array<ResolversTypes["Content"]>,
@@ -854,11 +1028,13 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminContentMutations?: AdminContentMutationsResolvers<ContextType>;
   AdminContentQueries?: AdminContentQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   ContentConnection?: ContentConnectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   EmailAddress?: GraphQLScalarType;
+  Group?: GroupResolvers<ContextType>;
   IntID?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;

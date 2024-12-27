@@ -24,6 +24,8 @@ type Action {
   id: IntID!
   "Related KCs"
   kcs: [KC!]!
+  "Related poll"
+  poll: Poll
   "Arbitrary numeric result"
   result: Float
   "Arbitrary step identifier"
@@ -42,6 +44,12 @@ type Action {
 input ActionInput {
   "Arbitrary numeric amount"
   amount: Float
+  """
+  Challenge identifier
+
+  If it's numeric, it points to the "id" property of the challenge, otherwise, it points to the "code" property.
+  """
+  challengeID: ID
   """
   Content identifier
 
@@ -66,6 +74,12 @@ input ActionInput {
   Validation of kc presence/authorization is made before confirming action
   """
   kcsIDs: [ID!]
+  """
+  Poll identifier
+
+  If it's numeric, it points to the "id" property of the poll, otherwise, it points to the "code" property.
+  """
+  pollID: ID
   """
   Identifier of project related to action.
 
@@ -174,6 +188,21 @@ type ActionsVerbsConnection implements Connection {
   nodes: [ActionVerb!]!
   "Pagination related information"
   pageInfo: PageInfo!
+}
+
+"""
+Admin actions. If user is not admin, it will throw an error.
+"""
+type AdminActionMutations {
+  """
+  Create a poll
+  """
+  createPoll(data: PollInput!, projectId: IntID!): Poll!
+  hello: String!
+  """
+  Update a poll
+  """
+  updatePoll(data: PollInput!, id: IntID!): Poll!
 }
 
 "Admin Action-Related Queries"
@@ -288,8 +317,16 @@ input AdminContentFilter {
 Admin related content mutations, only authenticated users with the role "ADMIN" can access
 """
 type AdminContentMutations {
+  """
+  Create a challenge
+  """
+  createChallenge(data: ChallengeInput!): Challenge!
   "Create a new content entity"
   createContent(data: CreateContent!): Content!
+  """
+  Update a challenge
+  """
+  updateChallenge(data: ChallengeInput!, id: IntID!): Challenge!
   "Update an existent content entity"
   updateContent(data: UpdateContent!): Content!
 }
@@ -564,6 +601,94 @@ type AnonymizedModelState {
   updatedAt: DateTime!
   "Unique anonimized user hash identifier"
   userUniqueHash: String!
+}
+
+"""
+A challenge
+"""
+type Challenge {
+  """
+  Unique code for the challenge
+  """
+  code: String!
+  """
+  Content of the challenge
+  """
+  content: [Content!]!
+  """
+  Date of creation
+  """
+  createdAt: DateTime!
+  """
+  Description of the challenge
+  """
+  description: String
+  """
+  End date of the challenge
+  """
+  endDate: DateTime
+  """
+  Groups of the challenge
+  """
+  groups: [Group!]!
+  """
+  ID of the challenge
+  """
+  id: IntID!
+  """
+  Project of the challenge
+  """
+  project: Project!
+  """
+  Project ID
+  """
+  projectId: IntID!
+  """
+  Start date of the challenge
+  """
+  startDate: DateTime
+  """
+  Tags for the challenge
+  """
+  tags: [String!]!
+  """
+  Title of the challenge
+  """
+  title: String!
+  """
+  Topics of the challenge
+  """
+  topics: [Topic!]!
+  """
+  Date of last update
+  """
+  updatedAt: DateTime!
+}
+
+"""
+Input for creating or updating a challenge
+"""
+input ChallengeInput {
+  "Unique code for the challenge"
+  code: String!
+  "Content of the challenge"
+  contentIds: [IntID!]
+  "Description of the challenge"
+  description: String
+  "End date of the challenge"
+  endDate: DateTime
+  "Groups of the challenge"
+  groupsIds: [IntID!]
+  "Project ID"
+  projectId: IntID!
+  "Start date of the challenge"
+  startDate: DateTime
+  "Tags for the challenge"
+  tags: [String!]
+  "Title of the challenge"
+  title: String!
+  "Topics of the challenge"
+  topicsIds: [IntID!]
 }
 
 "Pagination Interface"
@@ -1175,6 +1300,10 @@ type Mutation {
   """
   action(data: ActionInput!): Void
   """
+  Admin related actions mutations, only authenticated users with the role "ADMIN" can access
+  """
+  adminActions: AdminActionMutations!
+  """
   Admin related content mutations, only authenticated users with the role "ADMIN" can access
   """
   adminContent: AdminContentMutations!
@@ -1227,6 +1356,86 @@ type PageInfo {
   hasPreviousPage: Boolean!
   "Cursor parameter normally used for backward pagination"
   startCursor: String
+}
+
+"""
+Poll entity
+"""
+type Poll {
+  "Unique code"
+  code: String!
+  "Date of creation"
+  createdAt: DateTime!
+  "Description of the poll"
+  description: String
+  "Enabled status of the poll"
+  enabled: Boolean!
+  "Unique identifier"
+  id: IntID!
+  "Items of the poll"
+  items: [PollItem!]!
+  "Project of the poll"
+  project: Project!
+  "ID of the project of the poll"
+  projectId: IntID!
+  "Tags of the poll"
+  tags: [String!]!
+  "Title of the poll"
+  title: String!
+  "Date of last update"
+  updatedAt: DateTime!
+}
+
+"""
+Input for creating or updating a poll
+"""
+input PollInput {
+  "Unique code for the poll"
+  code: String!
+  "Description of the poll"
+  description: String
+  "Enabled status of the poll"
+  enabled: Boolean! = true
+  "Items of the poll"
+  items: [PollItemInput!]!
+  "Project ID"
+  projectId: IntID!
+  "Tags for the poll"
+  tags: [String!]
+  "Title of the poll"
+  title: String!
+}
+
+"""
+Poll Item
+"""
+type PollItem {
+  "Content of the item"
+  content: JSON!
+  "Date of creation"
+  createdAt: DateTime!
+  "Unique identifier"
+  id: IntID!
+  "Index of the item in the poll"
+  index: Int!
+  "Poll of the item"
+  poll: Poll!
+  "ID of the poll of the item"
+  pollId: IntID!
+  "Tags of the item"
+  tags: [String!]!
+  "Date of last update"
+  updatedAt: DateTime!
+}
+
+"""
+Input for creating or updating a poll item
+"""
+input PollItemInput {
+  "Content of the poll item"
+  content: JSON!
+  "Tags for the poll item"
+  tags: [String!]
 }
 
 "Project entity"
@@ -1370,6 +1579,14 @@ type Query {
   """
   actionsTopic: ActionsTopicQueries!
   """
+  Get all active challenges based on the project id and any authenticated user group
+  """
+  activeChallenges(projectId: IntID!): [Challenge!]!
+  """
+  Get all active polls based on the project id and if any matching tags are found
+  """
+  activePolls(projectId: IntID!, tags: [String!]!): [Poll!]
+  """
   Admin related actions queries, only authenticated users with the role "ADMIN" can access
   """
   adminActions: AdminActionQueries!
@@ -1391,6 +1608,14 @@ type Query {
   Admin related user queries, only authenticated users with the role "ADMIN" can access
   """
   adminUsers: AdminUserQueries!
+  """
+  Get a challenge by either its ID or code
+  """
+  challenge(code: String, id: IntID): Challenge
+  """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
   """
   Get all the content associated with the specified identifiers
 
@@ -1458,6 +1683,14 @@ type Query {
     projectCode: String!
     topicsCodes: [String!]!
   ): [KCsByTopic!]!
+  """
+  Get a poll by either its code or id
+  """
+  poll(code: String, id: IntID): Poll
+  """
+  Get all polls
+  """
+  polls(ids: [IntID!]!): [Poll!]!
   """
   Get specified project by either "id" or "code".
 

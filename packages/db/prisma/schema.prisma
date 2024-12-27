@@ -79,6 +79,8 @@ model Group {
 
   flags GroupFlags?
 
+  challenges Challenge[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
@@ -111,6 +113,9 @@ model Project {
   content Content[]
 
   actions Action[]
+
+  polls      Poll[]
+  challenges Challenge[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -159,6 +164,8 @@ model Topic {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  challenges Challenge[]
 
   @@index([id, projectId])
 }
@@ -236,6 +243,12 @@ model Action {
   user   User? @relation(fields: [userId], references: [id])
   userId Int?
 
+  poll   Poll? @relation(fields: [pollId], references: [id])
+  pollId Int?
+
+  challenge   Challenge? @relation(fields: [challengeId], references: [id])
+  challengeId Int?
+
   content   Content? @relation(fields: [contentId], references: [id])
   contentId Int?
 
@@ -275,6 +288,8 @@ model Content {
   kcs KC[]
 
   actions Action[]
+
+  challenges Challenge[]
 
   description String
 
@@ -326,6 +341,76 @@ model ModelState {
   domainId Int
 
   json Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Poll {
+  id Int @id @default(autoincrement())
+
+  code String @unique
+
+  title String
+
+  enabled Boolean @default(true)
+
+  description String?
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  tags String[]
+
+  items PollItem[]
+
+  actions Action[]
+}
+
+model PollItem {
+  id Int @id @default(autoincrement())
+
+  index Int
+
+  tags String[]
+
+  poll   Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId Int
+
+  content Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([index, pollId])
+}
+
+model Challenge {
+  id Int @id @default(autoincrement())
+
+  code String @unique
+
+  title       String
+  description String?
+
+  tags String[]
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+
+  startDate DateTime?
+  endDate   DateTime?
+
+  topics Topic[]
+
+  content Content[]
+
+  groups Group[]
+
+  actions Action[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
