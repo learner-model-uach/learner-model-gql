@@ -201,35 +201,43 @@ export const stateModule = registerModule(
           { groupId, projectCode, currentUserId, skip, take },
           { authorization, prisma }
         ) {
+          const user = await authorization.expectUser;
           const checkProject =
             await authorization.expectProjectsIdInPrismaFilter;
 
           const states = await prisma.modelState.findMany({
             where: {
               user: {
-                groups: {
-                  some: {
-                    AND: [
-                      { id: groupId },
-                      {
-                        projects: {
-                          some: checkProject
-                            ? {
-                                AND: [
-                                  {
+                OR: [
+                  {
+                    id: user.id,
+                  },
+                  {
+                    groups: {
+                      some: {
+                        AND: [
+                          { id: groupId },
+                          {
+                            projects: {
+                              some: checkProject
+                                ? {
+                                    AND: [
+                                      {
+                                        code: projectCode,
+                                      },
+                                      checkProject,
+                                    ],
+                                  }
+                                : {
                                     code: projectCode,
                                   },
-                                  checkProject,
-                                ],
-                              }
-                            : {
-                                code: projectCode,
-                              },
-                        },
+                            },
+                          },
+                        ],
                       },
-                    ],
+                    },
                   },
-                },
+                ],
               },
               userId:
                 currentUserId != null
