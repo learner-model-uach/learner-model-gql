@@ -54,6 +54,17 @@ export const bkt = (
 
   for (const act of A) {
     //array of action from oldest to most recent (.slice(0).reverse() innecesary)
+
+    const minValue = act.kcs
+      .map((kc) => {
+        return (
+          newModelJSON?.[kc.code]?.level ??
+          params?.[kc?.code]?.known ?? //params.[kc_i] can be undefined
+          parameters.default.known
+        );
+      })
+      .reduce((min, current) => (current < min ? current : min), 1);
+
     act.kcs.map((kc) => {
       //obtain parameters of knowledge(k), guess(g), slip(s), learn or transference(l) and forget(f) of JSON
       const k =
@@ -65,16 +76,30 @@ export const bkt = (
       const l = params[kc?.code]?.learn ?? parameters.default.learn;
       const f = params[kc?.code]?.forget ?? parameters.default.forget;
 
-      let k_posterior = 0;
-      act.result == 1 && (Schemas.actionExtras.parse(act.extra).hints ?? 0) == 0
-        ? (k_posterior = (k * (1 - s)) / (k * (1 - s) + (1 - k) * g))
-        : (k_posterior = (k * s) / (k * s + (1 - k) * (1 - g)));
+      if (k >= (params[kc?.code]?.mth || parameters.default.mth)) {
+        newModelJSON[kc.code]!.level = 1.0;
+      } else {
+        let k_posterior = 0;
+        act.result == 1 &&
+        (Schemas.actionExtras.parse(act.extra).hints ?? 0) == 0
+          ? (k_posterior = (k * (1 - s)) / (k * (1 - s) + (1 - k) * g))
+          : (k_posterior = (k * s) / (k * s + (1 - k) * (1 - g)));
 
-      const bkt = k_posterior * (1 - f) + (1 - k_posterior) * l;
+        const bkt = k_posterior * (1 - f) + (1 - k_posterior) * l;
 
-      if (newModelJSON[kc.code] != undefined) {
-        newModelJSON[kc.code]!.level = bkt;
-      } //add new kcs
+        if (newModelJSON[kc.code] != undefined) {
+          if (
+            act.result == 1 &&
+            (Schemas.actionExtras.parse(act.extra).hints ?? 0) == 0
+          ) {
+            newModelJSON[kc.code]!.level = bkt;
+          } else {
+            if (k == minValue) {
+              newModelJSON[kc.code]!.level = bkt;
+            }
+          }
+        }
+      }
     });
   }
 
