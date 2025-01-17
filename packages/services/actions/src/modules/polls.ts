@@ -229,6 +229,17 @@ export const pollsModule = registerModule(
           });
         },
       },
+      Poll: {
+        items({ id }, _args, { prisma }) {
+          return prisma.poll
+            .findUniqueOrThrow({
+              where: {
+                id,
+              },
+            })
+            .items();
+        },
+      },
     },
   }
 );
