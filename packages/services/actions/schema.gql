@@ -436,8 +436,6 @@ type PollItem {
   id: IntID!
   "Index of the item in the poll"
   index: Int!
-  "Poll of the item"
-  poll: Poll!
   "ID of the poll of the item"
   pollId: IntID!
   "Tags of the item"

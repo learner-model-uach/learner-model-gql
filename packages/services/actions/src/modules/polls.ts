@@ -45,8 +45,6 @@ export const pollsModule = registerModule(
       "Index of the item in the poll"
       index: Int!
 
-      "Poll of the item"
-      poll: Poll!
       "ID of the poll of the item"
       pollId: IntID!
 
