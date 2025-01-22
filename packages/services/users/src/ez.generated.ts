@@ -162,6 +162,14 @@ export type AdminUsersFilter = {
   textSearch?: InputMaybe<Scalars["String"]>;
 };
 
+export type Challenge = {
+  __typename?: "Challenge";
+  /** Groups of the challenge */
+  groups: Array<Group>;
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -581,6 +589,7 @@ export type ResolversTypes = {
   AdminUserMutations: ResolverTypeWrapper<AdminUserMutations>;
   AdminUserQueries: ResolverTypeWrapper<AdminUserQueries>;
   AdminUsersFilter: AdminUsersFilter;
+  Challenge: ResolverTypeWrapper<Challenge>;
   Connection:
     | ResolversTypes["GroupsConnection"]
     | ResolversTypes["UsersConnection"];
@@ -621,6 +630,7 @@ export type ResolversParentTypes = {
   AdminUserMutations: AdminUserMutations;
   AdminUserQueries: AdminUserQueries;
   AdminUsersFilter: AdminUsersFilter;
+  Challenge: Challenge;
   Connection:
     | ResolversParentTypes["GroupsConnection"]
     | ResolversParentTypes["UsersConnection"];
@@ -726,6 +736,15 @@ export type AdminUserQueriesResolvers<
     ContextType,
     RequireFields<AdminUserQueriesallUsersArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -964,6 +983,7 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminUserMutations?: AdminUserMutationsResolvers<ContextType>;
   AdminUserQueries?: AdminUserQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   EmailAddress?: GraphQLScalarType;

@@ -1564,8 +1564,6 @@ export type PollItem = {
   id: Scalars["IntID"];
   /** Index of the item in the poll */
   index: Scalars["Int"];
-  /** Poll of the item */
-  poll: Poll;
   /** ID of the poll of the item */
   pollId: Scalars["IntID"];
   /** Tags of the item */

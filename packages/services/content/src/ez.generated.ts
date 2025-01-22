@@ -143,12 +143,8 @@ export type Challenge = {
   enabled: Scalars["Boolean"];
   /** End date of the challenge */
   endDate?: Maybe<Scalars["DateTime"]>;
-  /** Groups of the challenge */
-  groups: Array<Group>;
   /** ID of the challenge */
   id: Scalars["IntID"];
-  /** Project of the challenge */
-  project: Project;
   /** Project ID */
   projectId: Scalars["IntID"];
   /** Start date of the challenge */
@@ -157,8 +153,6 @@ export type Challenge = {
   tags: Array<Scalars["String"]>;
   /** Title of the challenge */
   title: Scalars["String"];
-  /** Topics of the challenge */
-  topics: Array<Topic>;
   /** Date of last update */
   updatedAt: Scalars["DateTime"];
 };
@@ -784,9 +778,7 @@ export type ChallengeResolvers<
     ParentType,
     ContextType
   >;
-  groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
-  project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
   projectId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   startDate?: Resolver<
     Maybe<ResolversTypes["DateTime"]>,
@@ -795,7 +787,6 @@ export type ChallengeResolvers<
   >;
   tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
-  topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

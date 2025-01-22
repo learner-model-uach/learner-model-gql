@@ -50,11 +50,6 @@ export const challengesModule = registerModule(
       updatedAt: DateTime!
 
       """
-      Project of the challenge
-      """
-      project: Project!
-
-      """
       Project ID
       """
       projectId: IntID!
@@ -68,21 +63,6 @@ export const challengesModule = registerModule(
       End date of the challenge
       """
       endDate: DateTime
-
-      """
-      Topics of the challenge
-      """
-      topics: [Topic!]!
-
-      """
-      Content of the challenge
-      """
-      content: [Content!]!
-
-      """
-      Groups of the challenge
-      """
-      groups: [Group!]!
 
       """
       Enabled status of the challenge

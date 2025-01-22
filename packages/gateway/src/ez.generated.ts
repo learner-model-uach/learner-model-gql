@@ -1579,8 +1579,6 @@ export type PollItem = {
   id: Scalars["IntID"];
   /** Index of the item in the poll */
   index: Scalars["Int"];
-  /** Poll of the item */
-  poll: Poll;
   /** ID of the poll of the item */
   pollId: Scalars["IntID"];
   /** Tags of the item */
@@ -3562,7 +3560,6 @@ export type PollItemResolvers<
   createdAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   index?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
-  poll?: Resolver<ResolversTypes["Poll"], ParentType, ContextType>;
   pollId?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes["String"]>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;

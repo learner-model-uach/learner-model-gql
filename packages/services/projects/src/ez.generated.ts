@@ -84,6 +84,14 @@ export type AdminProjectsQueriesallProjectsArgs = {
   pagination: CursorConnectionArgs;
 };
 
+export type Challenge = {
+  __typename?: "Challenge";
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+  /** Project of the challenge */
+  project: Project;
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -457,6 +465,7 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   AdminProjectsMutations: ResolverTypeWrapper<AdminProjectsMutations>;
   AdminProjectsQueries: ResolverTypeWrapper<AdminProjectsQueries>;
+  Challenge: ResolverTypeWrapper<Challenge>;
   Connection: ResolversTypes["ProjectsConnection"];
   Content: ResolverTypeWrapper<Content>;
   CreateProject: CreateProject;
@@ -491,6 +500,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AdminProjectsMutations: AdminProjectsMutations;
   AdminProjectsQueries: AdminProjectsQueries;
+  Challenge: Challenge;
   Connection: ResolversParentTypes["ProjectsConnection"];
   Content: Content;
   CreateProject: CreateProject;
@@ -549,6 +559,15 @@ export type AdminProjectsQueriesResolvers<
     ContextType,
     RequireFields<AdminProjectsQueriesallProjectsArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  project?: Resolver<ResolversTypes["Project"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -795,6 +814,7 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminProjectsMutations?: AdminProjectsMutationsResolvers<ContextType>;
   AdminProjectsQueries?: AdminProjectsQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;

@@ -90,17 +90,9 @@ type Challenge {
   """
   endDate: DateTime
   """
-  Groups of the challenge
-  """
-  groups: [Group!]!
-  """
   ID of the challenge
   """
   id: IntID!
-  """
-  Project of the challenge
-  """
-  project: Project!
   """
   Project ID
   """
@@ -117,10 +109,6 @@ type Challenge {
   Title of the challenge
   """
   title: String!
-  """
-  Topics of the challenge
-  """
-  topics: [Topic!]!
   """
   Date of last update
   """

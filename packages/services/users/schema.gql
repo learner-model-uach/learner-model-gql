@@ -72,6 +72,15 @@ input AdminUsersFilter {
   textSearch: String
 }
 
+type Challenge {
+  """
+  Groups of the challenge
+  """
+  groups: [Group!]!
+  "ID of the challenge"
+  id: IntID!
+}
+
 "Pagination Interface"
 interface Connection {
   "Pagination information"

@@ -203,6 +203,14 @@ export type AdminTopicsFilter = {
   textSearch?: InputMaybe<Scalars["String"]>;
 };
 
+export type Challenge = {
+  __typename?: "Challenge";
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+  /** Topics of the challenge */
+  topics: Array<Topic>;
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -751,6 +759,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars["String"]>;
   AdminKCsFilter: AdminKCsFilter;
   AdminTopicsFilter: AdminTopicsFilter;
+  Challenge: ResolverTypeWrapper<Challenge>;
   Connection:
     | ResolversTypes["DomainsConnection"]
     | ResolversTypes["KCsConnection"]
@@ -801,6 +810,7 @@ export type ResolversParentTypes = {
   String: Scalars["String"];
   AdminKCsFilter: AdminKCsFilter;
   AdminTopicsFilter: AdminTopicsFilter;
+  Challenge: Challenge;
   Connection:
     | ResolversParentTypes["DomainsConnection"]
     | ResolversParentTypes["KCsConnection"]
@@ -918,6 +928,15 @@ export type AdminDomainQueriesResolvers<
     ContextType,
     RequireFields<AdminDomainQueriesallTopicsArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1212,6 +1231,7 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminDomainMutations?: AdminDomainMutationsResolvers<ContextType>;
   AdminDomainQueries?: AdminDomainQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;

@@ -109,6 +109,15 @@ input AdminTopicsFilter {
   textSearch: String
 }
 
+type Challenge {
+  "ID of the challenge"
+  id: IntID!
+  """
+  Topics of the challenge
+  """
+  topics: [Topic!]!
+}
+
 "Pagination Interface"
 interface Connection {
   "Pagination information"

@@ -20,6 +20,15 @@ type AdminProjectsQueries {
   allProjects(pagination: CursorConnectionArgs!): ProjectsConnection!
 }
 
+type Challenge {
+  "ID of the challenge"
+  id: IntID!
+  """
+  Project of the challenge
+  """
+  project: Project!
+}
+
 "Pagination Interface"
 interface Connection {
   "Pagination information"

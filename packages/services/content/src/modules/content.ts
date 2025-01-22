@@ -7,6 +7,13 @@ import type { Content } from "../ez.generated";
 
 export const contentModule = registerModule(
   gql`
+    extend type Challenge {
+      """
+      Content of the challenge
+      """
+      content: [Content!]!
+    }
+
     "Content entity"
     type Content {
       "Unique numeric identifier"
@@ -248,6 +255,13 @@ export const contentModule = registerModule(
   `,
   {
     resolvers: {
+      Challenge: {
+        content({ id }, _args, { prisma }) {
+          return prisma.challenge
+            .findUniqueOrThrow({ where: { id } })
+            .content();
+        },
+      },
       AdminContentMutations: {
         createContent(
           _root,
