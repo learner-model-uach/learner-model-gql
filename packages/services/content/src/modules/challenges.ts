@@ -65,6 +65,11 @@ export const challengesModule = registerModule(
       endDate: DateTime
 
       """
+      Content of the challenge
+      """
+      content: [Content!]!
+
+      """
       Enabled status of the challenge
       """
       enabled: Boolean!
@@ -129,6 +134,13 @@ export const challengesModule = registerModule(
   `,
   {
     resolvers: {
+      Challenge: {
+        content({ id }, _args, { prisma }) {
+          return prisma.challenge
+            .findUniqueOrThrow({ where: { id } })
+            .content();
+        },
+      },
       Query: {
         async activeChallenges(
           _root,
