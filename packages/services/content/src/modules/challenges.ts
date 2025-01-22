@@ -230,25 +230,102 @@ export const challengesModule = registerModule(
         },
         async updateChallenge(_root, { id, data }, { prisma, authorization }) {
           await authorization.expectAdmin;
-          return prisma.challenge.update({
-            where: { id },
-            data: {
-              projectId: data.projectId,
-              code: data.code,
-              title: data.title,
-              description: data.description,
-              tags: data.tags ?? [],
-              startDate: data.startDate ?? null,
-              endDate: data.endDate ?? null,
-              content: { set: data.contentIds?.map((id) => ({ id })) || [] },
-              groups: {
-                set: data.groupsIds?.map((id) => ({ id })) || [],
+
+          const [existing, content, groups, topics] = await Promise.all([
+            prisma.challenge.findUnique({
+              where: { id },
+              select: {
+                content: {
+                  select: {
+                    id: true,
+                  },
+                },
+                groups: {
+                  select: {
+                    id: true,
+                  },
+                },
+                topics: {
+                  select: {
+                    id: true,
+                  },
+                },
               },
-              topics: {
-                set: data.topicsIds?.map((id) => ({ id })) || [],
+            }),
+            data.contentIds?.length
+              ? prisma.content.findMany({
+                  where: { id: { in: data.contentIds } },
+                })
+              : null,
+            data.groupsIds?.length
+              ? prisma.group.findMany({
+                  where: { id: { in: data.groupsIds } },
+                })
+              : null,
+            data.topicsIds?.length
+              ? prisma.topic.findMany({
+                  where: { id: { in: data.topicsIds } },
+                })
+              : null,
+          ]);
+
+          if (!existing) {
+            throw new Error("Challenge not found");
+          }
+
+          if (data.contentIds && data.contentIds?.length !== content?.length) {
+            throw new Error("Some content ids are invalid");
+          }
+
+          if (data.groupsIds && data.groupsIds?.length !== groups?.length) {
+            throw new Error("Some group ids are invalid");
+          }
+
+          if (data.topicsIds && data.topicsIds?.length !== topics?.length) {
+            throw new Error("Some topic ids are invalid");
+          }
+
+          return prisma.$transaction(async (prisma) => {
+            await prisma.challenge.update({
+              where: {
+                id,
               },
-              enabled: data.enabled,
-            },
+              data: {
+                content: {
+                  disconnect: existing.content.map(({ id }) => ({ id })),
+                },
+                groups: {
+                  disconnect: existing.groups.map(({ id }) => ({ id })),
+                },
+                topics: {
+                  disconnect: existing.topics.map(({ id }) => ({ id })),
+                },
+              },
+              select: null,
+            });
+
+            return prisma.challenge.update({
+              where: { id },
+              data: {
+                projectId: data.projectId,
+                code: data.code,
+                title: data.title,
+                description: data.description,
+                tags: data.tags ?? [],
+                startDate: data.startDate ?? null,
+                endDate: data.endDate ?? null,
+                content: content?.length
+                  ? { connect: content?.map(({ id }) => ({ id })) }
+                  : undefined,
+                groups: groups?.length
+                  ? { connect: groups?.map(({ id }) => ({ id })) }
+                  : undefined,
+                topics: topics?.length
+                  ? { connect: topics?.map(({ id }) => ({ id })) }
+                  : undefined,
+                enabled: data.enabled,
+              },
+            });
           });
         },
       },
