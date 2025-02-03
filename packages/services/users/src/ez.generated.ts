@@ -66,8 +66,12 @@ export type AdminGroupsFilter = {
 /** Admin User-Related Queries */
 export type AdminUserMutations = {
   __typename?: "AdminUserMutations";
+  /** Add the users (by email) to the specified group, If already in the group, ignored */
+  addUserGroups: Group;
   /** Create a new group entity */
   createGroup: Group;
+  /** Remove the users (by email) from the specified group, If not found, ignored */
+  removeUserGroups: Group;
   /** Set email aliases */
   setEmailAliases: Array<User>;
   /** Set the projects of the specified users */
@@ -83,8 +87,20 @@ export type AdminUserMutations = {
 };
 
 /** Admin User-Related Queries */
+export type AdminUserMutationsaddUserGroupsArgs = {
+  groupId: Scalars["IntID"];
+  usersEmails: Array<Scalars["EmailAddress"]>;
+};
+
+/** Admin User-Related Queries */
 export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsremoveUserGroupsArgs = {
+  groupId: Scalars["IntID"];
+  usersEmails: Array<Scalars["EmailAddress"]>;
 };
 
 /** Admin User-Related Queries */
@@ -666,11 +682,29 @@ export type AdminUserMutationsResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["AdminUserMutations"] = ResolversParentTypes["AdminUserMutations"]
 > = {
+  addUserGroups?: Resolver<
+    ResolversTypes["Group"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      AdminUserMutationsaddUserGroupsArgs,
+      "groupId" | "usersEmails"
+    >
+  >;
   createGroup?: Resolver<
     ResolversTypes["Group"],
     ParentType,
     ContextType,
     RequireFields<AdminUserMutationscreateGroupArgs, "data">
+  >;
+  removeUserGroups?: Resolver<
+    ResolversTypes["Group"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      AdminUserMutationsremoveUserGroupsArgs,
+      "groupId" | "usersEmails"
+    >
   >;
   setEmailAliases?: Resolver<
     Array<ResolversTypes["User"]>,

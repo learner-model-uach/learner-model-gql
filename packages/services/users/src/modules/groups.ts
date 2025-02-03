@@ -122,6 +122,12 @@ export const groupsModule = registerModule(
     }
 
     extend type AdminUserMutations {
+      "Add the users (by email) to the specified group, If already in the group, ignored"
+      addUserGroups(usersEmails: [EmailAddress!]!, groupId: IntID!): Group!
+
+      "Remove the users (by email) from the specified group, If not found, ignored"
+      removeUserGroups(usersEmails: [EmailAddress!]!, groupId: IntID!): Group!
+
       "Set the users (by email) associated with the groups"
       setUserGroups(
         usersEmails: [EmailAddress!]!
@@ -253,6 +259,57 @@ export const groupsModule = registerModule(
         },
       },
       AdminUserMutations: {
+        async addUserGroups(_root, { usersEmails, groupId }, { prisma }) {
+          const usersEmailsList = await prisma.user.findMany({
+            where: {
+              email: {
+                in: usersEmails,
+              },
+            },
+            select: {
+              email: true,
+            },
+          });
+
+          if (usersEmailsList.length !== usersEmails.length) {
+            throw Error("Users Not Found: " + usersEmails.join());
+          }
+
+          return prisma.group.update({
+            where: {
+              id: groupId,
+            },
+            data: {
+              users: {
+                connect: usersEmailsList.map(({ email }) => ({ email })),
+              },
+            },
+          });
+        },
+        async removeUserGroups(_root, { usersEmails, groupId }, { prisma }) {
+          const usersEmailsList = await prisma.user.findMany({
+            where: {
+              email: {
+                in: usersEmails,
+              },
+            },
+          });
+
+          if (usersEmailsList.length !== usersEmails.length) {
+            throw Error("Users Not Found: " + usersEmails.join());
+          }
+
+          return prisma.group.update({
+            where: {
+              id: groupId,
+            },
+            data: {
+              users: {
+                disconnect: usersEmailsList.map(({ email }) => ({ email })),
+              },
+            },
+          });
+        },
         async setUserGroups(_root, { usersEmails, groupIds }, { prisma }) {
           const usersEmailsSet = await prisma.user.findMany({
             where: {

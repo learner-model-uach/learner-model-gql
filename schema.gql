@@ -499,8 +499,12 @@ input AdminTopicsFilter {
 
 "Admin User-Related Queries"
 type AdminUserMutations {
+  "Add the users (by email) to the specified group, If already in the group, ignored"
+  addUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Create a new group entity"
   createGroup(data: CreateGroupInput!): Group!
+  "Remove the users (by email) from the specified group, If not found, ignored"
+  removeUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Set email aliases"
   setEmailAliases(list: [EmailAliasInput!]!): [User!]!
   "Set the projects of the specified users"
