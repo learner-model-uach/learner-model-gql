@@ -359,7 +359,7 @@ function AddUsersToGroups() {
       }}
     >
       <FormControl isRequired>
-        <FormLabel>Groups</FormLabel>
+        <FormLabel>Group</FormLabel>
         {selectSingleGroupComponent}
       </FormControl>
       <FormControl>
@@ -439,7 +439,7 @@ function RemoveUsersFromGroups() {
       }}
     >
       <FormControl isRequired>
-        <FormLabel>Groups</FormLabel>
+        <FormLabel>Group</FormLabel>
         {selectSingleGroupComponent}
       </FormControl>
       <FormControl>
