@@ -3028,6 +3028,32 @@ export type SetUserGroupsMutation = {
   };
 };
 
+export type AddUserToGroupsMutationVariables = Exact<{
+  usersEmails: Array<Scalars["EmailAddress"]> | Scalars["EmailAddress"];
+  groupId: Scalars["IntID"];
+}>;
+
+export type AddUserToGroupsMutation = {
+  __typename?: "Mutation";
+  adminUsers: {
+    __typename?: "AdminUserMutations";
+    addUserGroups: { __typename: "Group" };
+  };
+};
+
+export type RemoveUsersFromGroupsMutationVariables = Exact<{
+  usersEmails: Array<Scalars["EmailAddress"]> | Scalars["EmailAddress"];
+  groupId: Scalars["IntID"];
+}>;
+
+export type RemoveUsersFromGroupsMutation = {
+  __typename?: "Mutation";
+  adminUsers: {
+    __typename?: "AdminUserMutations";
+    removeUserGroups: { __typename: "Group" };
+  };
+};
+
 export type UpdateGroupMutationVariables = Exact<{
   data: UpdateGroupInput;
 }>;
@@ -5417,6 +5443,188 @@ export const SetUserGroupsDocument = {
 } as unknown as DocumentNode<
   SetUserGroupsMutation,
   SetUserGroupsMutationVariables
+>;
+export const AddUserToGroupsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "AddUserToGroups" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "usersEmails" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "EmailAddress" },
+                },
+              },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "groupId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "IntID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminUsers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "addUserGroups" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "groupId" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "groupId" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "usersEmails" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "usersEmails" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  AddUserToGroupsMutation,
+  AddUserToGroupsMutationVariables
+>;
+export const RemoveUsersFromGroupsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "RemoveUsersFromGroups" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "usersEmails" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "EmailAddress" },
+                },
+              },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "groupId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "IntID" } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminUsers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "removeUserGroups" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "groupId" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "groupId" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "usersEmails" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "usersEmails" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "__typename" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  RemoveUsersFromGroupsMutation,
+  RemoveUsersFromGroupsMutationVariables
 >;
 export const UpdateGroupDocument = {
   kind: "Document",

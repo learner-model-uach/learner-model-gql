@@ -19,7 +19,7 @@ import {
 import { formatSpanish } from "common";
 import { gql, GroupInfoFragment, useGQLMutation, useGQLQuery } from "graph";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaUsers } from "react-icons/fa";
+import { FaUserMinus, FaUserPlus, FaUsers } from "react-icons/fa";
 import { IoIosEye } from "react-icons/io";
 import {
   MdAdd,
@@ -39,7 +39,7 @@ import { Property } from "../components/Card/Property";
 import { DataTable, getDateRow } from "../components/DataTable";
 import { FormModal } from "../components/FormModal";
 import { useTagsSelect } from "../components/TagsSelect";
-import { useSelectMultiGroups } from "../hooks/groups";
+import { useSelectMultiGroups, useSelectSingleGroup } from "../hooks/groups";
 import { useCursorPagination } from "../hooks/pagination";
 import { projectOptionLabel, useSelectMultiProjects } from "../hooks/projects";
 import { queryClient } from "../rqClient";
@@ -296,6 +296,166 @@ function AssignGroupsUsers() {
   );
 }
 
+function AddUsersToGroups() {
+  const [text, setText] = useState("");
+
+  const { selectSingleGroupComponent, selectedGroup, setSelectedGroup } =
+    useSelectSingleGroup();
+  const { mutateAsync } = useGQLMutation(
+    gql(/* GraphQL */ `
+      mutation AddUserToGroups(
+        $usersEmails: [EmailAddress!]!
+        $groupId: IntID!
+      ) {
+        adminUsers {
+          addUserGroups(groupId: $groupId, usersEmails: $usersEmails) {
+            __typename
+          }
+        }
+      }
+    `),
+    {
+      async onSuccess() {
+        await queryClient.invalidateQueries();
+      },
+    }
+  );
+
+  const emails = useMemo(() => {
+    return Array.from(
+      text
+        .trim()
+        .split(/\r\n|\n/g)
+        .reduce<Array<string>>((acum, value) => {
+          const email = value.trim();
+
+          if (email) acum.push(email);
+
+          return acum;
+        }, [])
+    );
+  }, [text]);
+
+  return (
+    <FormModal
+      title="Add Users to Group"
+      onSubmit={async () => {
+        if (!selectedGroup) return;
+
+        await mutateAsync({
+          groupId: selectedGroup.value,
+          usersEmails: emails,
+        });
+
+        setSelectedGroup(null);
+        setText("");
+      }}
+      triggerButton={{
+        colorScheme: "facebook",
+        leftIcon: <FaUserPlus />,
+      }}
+      saveButton={{
+        isDisabled: !selectedGroup,
+      }}
+    >
+      <FormControl isRequired>
+        <FormLabel>Groups</FormLabel>
+        {selectSingleGroupComponent}
+      </FormControl>
+      <FormControl>
+        <FormLabel>Users List</FormLabel>
+        <Textarea
+          value={text}
+          onChange={(ev) => {
+            setText(ev.target.value);
+          }}
+        />
+        <FormHelperText>List of emails separated by a new line</FormHelperText>
+      </FormControl>
+    </FormModal>
+  );
+}
+
+function RemoveUsersFromGroups() {
+  const [text, setText] = useState("");
+
+  const { selectSingleGroupComponent, selectedGroup, setSelectedGroup } =
+    useSelectSingleGroup();
+  const { mutateAsync } = useGQLMutation(
+    gql(/* GraphQL */ `
+      mutation RemoveUsersFromGroups(
+        $usersEmails: [EmailAddress!]!
+        $groupId: IntID!
+      ) {
+        adminUsers {
+          removeUserGroups(groupId: $groupId, usersEmails: $usersEmails) {
+            __typename
+          }
+        }
+      }
+    `),
+    {
+      async onSuccess() {
+        await queryClient.invalidateQueries();
+      },
+    }
+  );
+
+  const emails = useMemo(() => {
+    return Array.from(
+      text
+        .trim()
+        .split(/\r\n|\n/g)
+        .reduce<Array<string>>((acum, value) => {
+          const email = value.trim();
+
+          if (email) acum.push(email);
+
+          return acum;
+        }, [])
+    );
+  }, [text]);
+
+  return (
+    <FormModal
+      title="Remove Users from Group"
+      onSubmit={async () => {
+        if (!selectedGroup) return;
+
+        await mutateAsync({
+          groupId: selectedGroup.value,
+          usersEmails: emails,
+        });
+
+        setSelectedGroup(null);
+        setText("");
+      }}
+      triggerButton={{
+        colorScheme: "facebook",
+        leftIcon: <FaUserMinus />,
+      }}
+      saveButton={{
+        isDisabled: !selectedGroup,
+      }}
+    >
+      <FormControl isRequired>
+        <FormLabel>Groups</FormLabel>
+        {selectSingleGroupComponent}
+      </FormControl>
+      <FormControl>
+        <FormLabel>Users List</FormLabel>
+        <Textarea
+          value={text}
+          onChange={(ev) => {
+            setText(ev.target.value);
+          }}
+        />
+        <FormHelperText>List of emails separated by a new line</FormHelperText>
+      </FormControl>
+    </FormModal>
+  );
+}
+
 const GroupsState = proxy<
   Record<
     string,
@@ -365,6 +525,8 @@ export default withAdminAuth(function GroupsPage() {
     <VStack>
       <CreateGroup />
       <AssignGroupsUsers />
+      <AddUsersToGroups />
+      <RemoveUsersFromGroups />
       <DataTable<GroupInfoFragment>
         data={data?.adminUsers.allGroups.nodes || []}
         prevPage={prevPage}

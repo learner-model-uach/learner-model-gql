@@ -51,6 +51,10 @@ const documents = {
     graphql.CreateGroupDocument,
   "\n      mutation SetUserGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupIds: [IntID!]!\n      ) {\n        adminUsers {\n          setUserGroups(usersEmails: $usersEmails, groupIds: $groupIds) {\n            __typename\n          }\n        }\n      }\n    ":
     graphql.SetUserGroupsDocument,
+  "\n      mutation AddUserToGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          addUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    ":
+    graphql.AddUserToGroupsDocument,
+  "\n      mutation RemoveUsersFromGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          removeUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    ":
+    graphql.RemoveUsersFromGroupsDocument,
   "\n      mutation UpdateGroup($data: UpdateGroupInput!) {\n        adminUsers {\n          updateGroup(data: $data) {\n            __typename\n          }\n        }\n      }\n    ":
     graphql.UpdateGroupDocument,
   "\n  fragment KCInfo on KC {\n    id\n    code\n    label\n    domain {\n      id\n      code\n      label\n    }\n    updatedAt\n    createdAt\n  }\n":
@@ -157,6 +161,12 @@ export function gql(
 export function gql(
   source: "\n      mutation SetUserGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupIds: [IntID!]!\n      ) {\n        adminUsers {\n          setUserGroups(usersEmails: $usersEmails, groupIds: $groupIds) {\n            __typename\n          }\n        }\n      }\n    "
 ): (typeof documents)["\n      mutation SetUserGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupIds: [IntID!]!\n      ) {\n        adminUsers {\n          setUserGroups(usersEmails: $usersEmails, groupIds: $groupIds) {\n            __typename\n          }\n        }\n      }\n    "];
+export function gql(
+  source: "\n      mutation AddUserToGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          addUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    "
+): (typeof documents)["\n      mutation AddUserToGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          addUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    "];
+export function gql(
+  source: "\n      mutation RemoveUsersFromGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          removeUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    "
+): (typeof documents)["\n      mutation RemoveUsersFromGroups(\n        $usersEmails: [EmailAddress!]!\n        $groupId: IntID!\n      ) {\n        adminUsers {\n          removeUserGroups(groupId: $groupId, usersEmails: $usersEmails) {\n            __typename\n          }\n        }\n      }\n    "];
 export function gql(
   source: "\n      mutation UpdateGroup($data: UpdateGroupInput!) {\n        adminUsers {\n          updateGroup(data: $data) {\n            __typename\n          }\n        }\n      }\n    "
 ): (typeof documents)["\n      mutation UpdateGroup($data: UpdateGroupInput!) {\n        adminUsers {\n          updateGroup(data: $data) {\n            __typename\n          }\n        }\n      }\n    "];
