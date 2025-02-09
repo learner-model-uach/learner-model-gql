@@ -190,7 +190,7 @@ importers:
         specifier: workspace:^0.0.1
         version: link:../db
       fastify-auth0-verify:
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0(patch_hash=76e1ac0c5a51a9406cfb763796762736bad725fb1d5aa6054df44c8bb5011650)
       fastify-plugin:
         specifier: ^4.5.0
