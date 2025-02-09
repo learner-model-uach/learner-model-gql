@@ -39,7 +39,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-v2-${{ env.cache-name }}-
 
-      - run: npm install -g pnpm@latest
+      - run: npm install -g pnpm@^9
       - name: Node version
         run: node --version
       - name: pnpm version
