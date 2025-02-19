@@ -406,6 +406,10 @@ type Query {
   """
   adminDomain: AdminDomainQueries!
   """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
+  """
   Get all the content associated with the specified identifiers
 
   The content data is guaranteed to follow the specified identifiers order

@@ -357,6 +357,8 @@ export type Query = {
   __typename?: "Query";
   /** Admin related user queries, only authenticated users with the role "ADMIN" can access */
   adminUsers: AdminUserQueries;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /** Authenticated user information */
   currentUser?: Maybe<User>;
   /**
@@ -377,6 +379,10 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   users: Array<User>;
+};
+
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerygroupsArgs = {
@@ -924,6 +930,12 @@ export type QueryResolvers<
     ResolversTypes["AdminUserQueries"],
     ParentType,
     ContextType
+  >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
   >;
   currentUser?: Resolver<
     Maybe<ResolversTypes["User"]>,

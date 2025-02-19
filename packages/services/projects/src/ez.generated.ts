@@ -239,6 +239,8 @@ export type Query = {
   __typename?: "Query";
   /** Project related administration queries */
   adminProjects: AdminProjectsQueries;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /**
    * Get all the content associated with the specified identifiers
    *
@@ -296,6 +298,10 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   users: Array<User>;
+};
+
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerycontentArgs = {
@@ -716,6 +722,12 @@ export type QueryResolvers<
     ResolversTypes["AdminProjectsQueries"],
     ParentType,
     ContextType
+  >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
   >;
   content?: Resolver<
     Array<ResolversTypes["Content"]>,

@@ -293,6 +293,10 @@ type Query {
   Admin related user queries, only authenticated users with the role "ADMIN" can access
   """
   adminUsers: AdminUserQueries!
+  """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
   "Authenticated user information"
   currentUser: User
   """

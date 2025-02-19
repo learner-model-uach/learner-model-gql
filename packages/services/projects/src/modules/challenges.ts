@@ -11,6 +11,13 @@ export const challengesModule = registerModule(
       """
       project: Project!
     }
+
+    extend type Query {
+      """
+      Get challenges by their IDs
+      """
+      challenges(ids: [IntID!]!): [Challenge!]!
+    }
   `,
   {
     resolvers: {
@@ -19,6 +26,16 @@ export const challengesModule = registerModule(
           return prisma.challenge
             .findUniqueOrThrow({ where: { id } })
             .project();
+        },
+      },
+      Query: {
+        async challenges(_root, { ids }, { prisma, authorization }) {
+          return prisma.challenge.findMany({
+            where: {
+              id: { in: ids },
+              projectId: await authorization.expectProjectsInPrismaFilter,
+            },
+          });
         },
       },
     },
