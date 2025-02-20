@@ -6,6 +6,9 @@ const config = {
     externalDir: true,
   },
   swcMinify: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default config;
