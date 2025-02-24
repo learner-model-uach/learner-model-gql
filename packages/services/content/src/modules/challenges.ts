@@ -161,20 +161,12 @@ export const challengesModule = registerModule(
               },
               enabled: true,
 
-              AND: [
+              OR: [
                 {
-                  AND: [
-                    {
-                      startDate: {
-                        not: null,
-                      },
-                    },
-                    {
-                      startDate: {
-                        lte: new Date(),
-                      },
-                    },
-                  ],
+                  startDate: null,
+                },
+                {
+                  startDate: { lte: new Date() },
                 },
               ],
             },
