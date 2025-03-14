@@ -245,8 +245,12 @@ export const actionsTopicModule = registerModule(
             });
           });
         },
-        allActionsByUser(_root, { pagination, input }, { prisma }) {
-          return ResolveCursorConnection(pagination, (connection) => {
+        allActionsByUser(
+          _root,
+          { pagination, input },
+          { prisma, authorization }
+        ) {
+          return ResolveCursorConnection(pagination, async (connection) => {
             return prisma.user.findMany({
               ...connection,
               where: {
@@ -262,6 +266,11 @@ export const actionsTopicModule = registerModule(
                           in: input.groupIds,
                         },
                       },
+                    }
+                  : undefined,
+                id: !input.groupIds
+                  ? {
+                      in: [(await authorization.expectUser).id],
                     }
                   : undefined,
               },
