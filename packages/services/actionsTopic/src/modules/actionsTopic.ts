@@ -38,7 +38,7 @@ export const actionsTopicModule = registerModule(
       "ID of the project."
       projectId: Int!
       "Array of topic IDs where the search will be performed."
-      topicsIds: [Int!]!
+      topicsIds: [Int!]
       "Array of verbs to be used for action search."
       verbNames: [String!]!
       "Start interval for conducting the search."
@@ -188,13 +188,15 @@ export const actionsTopicModule = registerModule(
                 id: "asc",
               },
               where: {
-                topics: {
-                  some: {
-                    id: {
-                      in: input.topicsIds,
-                    },
-                  },
-                },
+                topics: input.topicsIds
+                  ? {
+                      some: {
+                        id: {
+                          in: input.topicsIds,
+                        },
+                      },
+                    }
+                  : undefined,
               },
               include: {
                 actions: {
@@ -266,11 +268,13 @@ export const actionsTopicModule = registerModule(
               include: {
                 actions: {
                   where: {
-                    topic: {
-                      id: {
-                        in: input.topicsIds,
-                      },
-                    },
+                    topic: input.topicsIds
+                      ? {
+                          id: {
+                            in: input.topicsIds,
+                          },
+                        }
+                      : undefined,
                     verbName: {
                       in: input.verbNames,
                     },
@@ -281,6 +285,7 @@ export const actionsTopicModule = registerModule(
                   },
                   include: {
                     verb: true,
+                    content: true,
                   },
                 },
                 modelStates: {

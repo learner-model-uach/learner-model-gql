@@ -121,7 +121,7 @@ export type ActionsTopicInput = {
   /** Start interval for conducting the search. */
   startDate: Scalars["DateTime"];
   /** Array of topic IDs where the search will be performed. */
-  topicsIds: Array<Scalars["Int"]>;
+  topicsIds?: InputMaybe<Array<Scalars["Int"]>>;
   /** Array of verbs to be used for action search. */
   verbNames: Array<Scalars["String"]>;
 };
