@@ -279,15 +279,8 @@ export const actionsTopicModule = registerModule(
                       lte: input.endDate,
                     },
                   },
-                  select: {
-                    id: true,
-                    stepID: true,
-                    createdAt: true,
-                    verb: {
-                      select: {
-                        name: true,
-                      },
-                    },
+                  include: {
+                    verb: true,
                   },
                 },
                 modelStates: {
