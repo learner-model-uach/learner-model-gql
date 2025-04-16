@@ -66,8 +66,12 @@ export type AdminGroupsFilter = {
 /** Admin User-Related Queries */
 export type AdminUserMutations = {
   __typename?: "AdminUserMutations";
+  /** Add the users (by email) to the specified group, If already in the group, ignored */
+  addUserGroups: Group;
   /** Create a new group entity */
   createGroup: Group;
+  /** Remove the users (by email) from the specified group, If not found, ignored */
+  removeUserGroups: Group;
   /** Set email aliases */
   setEmailAliases: Array<User>;
   /** Set the projects of the specified users */
@@ -83,8 +87,20 @@ export type AdminUserMutations = {
 };
 
 /** Admin User-Related Queries */
+export type AdminUserMutationsaddUserGroupsArgs = {
+  groupId: Scalars["IntID"];
+  usersEmails: Array<Scalars["EmailAddress"]>;
+};
+
+/** Admin User-Related Queries */
 export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsremoveUserGroupsArgs = {
+  groupId: Scalars["IntID"];
+  usersEmails: Array<Scalars["EmailAddress"]>;
 };
 
 /** Admin User-Related Queries */
@@ -160,6 +176,14 @@ export type AdminUsersFilter = {
   tags?: InputMaybe<Array<Scalars["String"]>>;
   /** Filter by text search inside "email", "name", "tags" or "projects" */
   textSearch?: InputMaybe<Scalars["String"]>;
+};
+
+export type Challenge = {
+  __typename?: "Challenge";
+  /** Groups of the challenge */
+  groups: Array<Group>;
+  /** ID of the challenge */
+  id: Scalars["IntID"];
 };
 
 /** Pagination Interface */
@@ -333,6 +357,8 @@ export type Query = {
   __typename?: "Query";
   /** Admin related user queries, only authenticated users with the role "ADMIN" can access */
   adminUsers: AdminUserQueries;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /** Authenticated user information */
   currentUser?: Maybe<User>;
   /**
@@ -353,6 +379,10 @@ export type Query = {
    * If any of the specified identifiers is not found or forbidden, query fails
    */
   users: Array<User>;
+};
+
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
 };
 
 export type QuerygroupsArgs = {
@@ -581,6 +611,7 @@ export type ResolversTypes = {
   AdminUserMutations: ResolverTypeWrapper<AdminUserMutations>;
   AdminUserQueries: ResolverTypeWrapper<AdminUserQueries>;
   AdminUsersFilter: AdminUsersFilter;
+  Challenge: ResolverTypeWrapper<Challenge>;
   Connection:
     | ResolversTypes["GroupsConnection"]
     | ResolversTypes["UsersConnection"];
@@ -621,6 +652,7 @@ export type ResolversParentTypes = {
   AdminUserMutations: AdminUserMutations;
   AdminUserQueries: AdminUserQueries;
   AdminUsersFilter: AdminUsersFilter;
+  Challenge: Challenge;
   Connection:
     | ResolversParentTypes["GroupsConnection"]
     | ResolversParentTypes["UsersConnection"];
@@ -656,11 +688,29 @@ export type AdminUserMutationsResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["AdminUserMutations"] = ResolversParentTypes["AdminUserMutations"]
 > = {
+  addUserGroups?: Resolver<
+    ResolversTypes["Group"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      AdminUserMutationsaddUserGroupsArgs,
+      "groupId" | "usersEmails"
+    >
+  >;
   createGroup?: Resolver<
     ResolversTypes["Group"],
     ParentType,
     ContextType,
     RequireFields<AdminUserMutationscreateGroupArgs, "data">
+  >;
+  removeUserGroups?: Resolver<
+    ResolversTypes["Group"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      AdminUserMutationsremoveUserGroupsArgs,
+      "groupId" | "usersEmails"
+    >
   >;
   setEmailAliases?: Resolver<
     Array<ResolversTypes["User"]>,
@@ -726,6 +776,15 @@ export type AdminUserQueriesResolvers<
     ContextType,
     RequireFields<AdminUserQueriesallUsersArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  groups?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -872,6 +931,12 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
+  >;
   currentUser?: Resolver<
     Maybe<ResolversTypes["User"]>,
     ParentType,
@@ -964,6 +1029,7 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminUserMutations?: AdminUserMutationsResolvers<ContextType>;
   AdminUserQueries?: AdminUserQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   EmailAddress?: GraphQLScalarType;

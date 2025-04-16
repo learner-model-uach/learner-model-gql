@@ -56,6 +56,20 @@ export const KCMerge: MergeConfig = {
   argsFromKeys: (ids) => ({ ids }),
 };
 
+export const PollMerge: MergeConfig = {
+  fieldName: "polls",
+  selectionSet: "{ id }",
+  key: ({ id }: Node) => id,
+  argsFromKeys: (ids) => ({ ids }),
+};
+
+export const ChallengeMerge: MergeConfig = {
+  fieldName: "challenges",
+  selectionSet: "{ id }",
+  key: ({ id }: Node) => id,
+  argsFromKeys: (ids) => ({ ids }),
+};
+
 const defaultMergeConfig = {
   Project: ProjectMerge,
   Domain: DomainMerge,
@@ -64,6 +78,8 @@ const defaultMergeConfig = {
   User: UsersMerge,
   Group: GroupsMerge,
   KC: KCMerge,
+  Poll: PollMerge,
+  Challenge: ChallengeMerge,
 };
 
 export const servicesSubschemaConfig = servicesNames.reduce(

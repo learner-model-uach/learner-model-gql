@@ -16,8 +16,12 @@ input AdminGroupsFilter {
 
 "Admin User-Related Queries"
 type AdminUserMutations {
+  "Add the users (by email) to the specified group, If already in the group, ignored"
+  addUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Create a new group entity"
   createGroup(data: CreateGroupInput!): Group!
+  "Remove the users (by email) from the specified group, If not found, ignored"
+  removeUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Set email aliases"
   setEmailAliases(list: [EmailAliasInput!]!): [User!]!
   "Set the projects of the specified users"
@@ -70,6 +74,15 @@ input AdminUsersFilter {
   Filter by text search inside "email", "name", "tags" or "projects"
   """
   textSearch: String
+}
+
+type Challenge {
+  """
+  Groups of the challenge
+  """
+  groups: [Group!]!
+  "ID of the challenge"
+  id: IntID!
 }
 
 "Pagination Interface"
@@ -280,6 +293,10 @@ type Query {
   Admin related user queries, only authenticated users with the role "ADMIN" can access
   """
   adminUsers: AdminUserQueries!
+  """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
   "Authenticated user information"
   currentUser: User
   """

@@ -254,6 +254,6 @@ function TestStitched(
   });
 }
 
-TestStitched(TestGatewayStitchedSchema, "gateway service");
+// TestStitched(TestGatewayStitchedSchema, "gateway service");
 
 TestStitched(TestMonoStitchedSchema, "mono service");

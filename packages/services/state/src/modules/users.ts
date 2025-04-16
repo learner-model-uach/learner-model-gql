@@ -47,27 +47,40 @@ export const userModule = registerModule(
       },
       User: {
         async modelStates({ id }, { input }, { authorization }) {
+          const authUser = await authorization.expectUser;
+
           const allowedProjectsIds =
             await authorization.expectAllowedProjectsIdsModelStates;
 
           return ModelStateConnection(input, {
-            where: {
-              user: {
-                id,
-              },
-              // If user is not admin, filter out not-authorized projects
-              domain: allowedProjectsIds
-                ? {
-                    projects: {
-                      some: {
-                        id: {
-                          in: allowedProjectsIds,
+            where: allowedProjectsIds
+              ? {
+                  user: {
+                    id,
+                  },
+                  OR: [
+                    {
+                      // If user is not admin, filter out not-authorized projects
+                      domain: {
+                        projects: {
+                          some: {
+                            id: {
+                              in: allowedProjectsIds,
+                            },
+                          },
                         },
                       },
                     },
-                  }
-                : undefined,
-            },
+                    {
+                      userId: authUser.id,
+                    },
+                  ],
+                }
+              : {
+                  user: {
+                    id,
+                  },
+                },
           });
         },
       },

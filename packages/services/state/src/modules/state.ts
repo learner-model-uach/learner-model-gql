@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { gql, ModelStateConnection, registerModule } from "../ez";
 
 export const stateModule = registerModule(
@@ -7,6 +8,21 @@ export const stateModule = registerModule(
       Admin related state queries, only authenticated users with the role "ADMIN" can access
       """
       adminState: AdminStateQueries!
+
+      "Anonymized model state of a group"
+      groupModelStates(
+        "Code of the project where the model state is classified under"
+        projectCode: String!
+        "Unique numeric identifier of the group that holds the users"
+        groupId: IntID!
+        "Optional user identifier to filter out the model state of the specified user"
+        currentUserId: IntID
+
+        "Take the first n elements. Default is 25"
+        take: NonNegativeInt! = 25
+        "Skip the first n elements"
+        skip: NonNegativeInt! = 0
+      ): [AnonymizedModelState!]!
     }
 
     "Order Model States"
@@ -150,6 +166,27 @@ export const stateModule = registerModule(
       "Date of last update"
       updatedAt: DateTime!
     }
+
+    "Anonymized Model State Entity"
+    type AnonymizedModelState {
+      "Unique anonimized user hash identifier"
+      userUniqueHash: String!
+
+      "Date of creation"
+      createdAt: DateTime!
+      "Creator of model state"
+      creator: String!
+      "Domain associated with Model State"
+      domain: Domain!
+      "Unique numeric identifier"
+      id: IntID!
+      "Arbitrary JSON Data"
+      json: JSON!
+      "Type / Category of model state"
+      type: String
+      "Date of last update"
+      updatedAt: DateTime!
+    }
   `,
   {
     resolvers: {
@@ -158,6 +195,88 @@ export const stateModule = registerModule(
           await authorization.expectAdmin;
 
           return {};
+        },
+        async groupModelStates(
+          _root,
+          { groupId, projectCode, currentUserId, skip, take },
+          { authorization, prisma }
+        ) {
+          const user = await authorization.expectUser;
+          const checkProject =
+            await authorization.expectProjectsIdInPrismaFilter;
+
+          const states = await prisma.modelState.findMany({
+            where: {
+              user: {
+                OR: [
+                  {
+                    id: user.id,
+                  },
+                  {
+                    groups: {
+                      some: {
+                        AND: [
+                          { id: groupId },
+                          {
+                            projects: {
+                              some: checkProject
+                                ? {
+                                    AND: [
+                                      {
+                                        code: projectCode,
+                                      },
+                                      checkProject,
+                                    ],
+                                  }
+                                : {
+                                    code: projectCode,
+                                  },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                ],
+              },
+              userId:
+                currentUserId != null
+                  ? {
+                      not: currentUserId,
+                    }
+                  : undefined,
+            },
+            include: {
+              user: {
+                select: {
+                  email: true,
+                },
+              },
+            },
+            skip,
+            take,
+            distinct: ["userId"],
+            orderBy: [
+              {
+                createdAt: "desc",
+              },
+              {
+                user: {
+                  id: "asc",
+                },
+              },
+            ],
+          });
+
+          return states.map((state) => {
+            return {
+              ...state,
+              userUniqueHash: crypto
+                .createHash("sha1")
+                .update(state.user.email)
+                .digest("hex"),
+            };
+          });
         },
       },
       AdminStateQueries: {

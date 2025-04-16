@@ -203,6 +203,14 @@ export type AdminTopicsFilter = {
   textSearch?: InputMaybe<Scalars["String"]>;
 };
 
+export type Challenge = {
+  __typename?: "Challenge";
+  /** ID of the challenge */
+  id: Scalars["IntID"];
+  /** Topics of the challenge */
+  topics: Array<Topic>;
+};
+
 /** Pagination Interface */
 export type Connection = {
   /** Pagination information */
@@ -396,6 +404,13 @@ export const KCRelationType = {
 
 export type KCRelationType =
   (typeof KCRelationType)[keyof typeof KCRelationType];
+/** All the KCs associated with the specified topics */
+export type KCsByTopic = {
+  __typename?: "KCsByTopic";
+  kcs: Array<KC>;
+  topic: Topic;
+};
+
 /** Paginated KCs */
 export type KCsConnection = Connection & {
   __typename?: "KCsConnection";
@@ -453,6 +468,8 @@ export type Query = {
   __typename?: "Query";
   /** Admin related domain queries, only authenticated users with the role "ADMIN" can access */
   adminDomain: AdminDomainQueries;
+  /** Get challenges by their IDs */
+  challenges: Array<Challenge>;
   /**
    * Get all the content associated with the specified identifiers
    *
@@ -480,6 +497,12 @@ export type Query = {
    */
   kcs: Array<KC>;
   /**
+   * Get all the KCs associated with the specified topics and the content of the specified topics, within that project
+   *
+   * If topic is not found or does not have any content, it is not included in the response
+   */
+  kcsByContentByTopics: Array<KCsByTopic>;
+  /**
    * Get all the projects associated with the specified identifiers
    *
    * The projects data is guaranteed to follow the specified identifiers order
@@ -504,6 +527,10 @@ export type Query = {
   topics: Array<Topic>;
 };
 
+export type QuerychallengesArgs = {
+  ids: Array<Scalars["IntID"]>;
+};
+
 export type QuerycontentArgs = {
   ids: Array<Scalars["IntID"]>;
 };
@@ -514,6 +541,11 @@ export type QuerydomainsArgs = {
 
 export type QuerykcsArgs = {
   ids: Array<Scalars["IntID"]>;
+};
+
+export type QuerykcsByContentByTopicsArgs = {
+  projectCode: Scalars["String"];
+  topicsCodes: Array<Scalars["String"]>;
 };
 
 export type QueryprojectsArgs = {
@@ -733,6 +765,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars["String"]>;
   AdminKCsFilter: AdminKCsFilter;
   AdminTopicsFilter: AdminTopicsFilter;
+  Challenge: ResolverTypeWrapper<Challenge>;
   Connection:
     | ResolversTypes["DomainsConnection"]
     | ResolversTypes["KCsConnection"]
@@ -754,6 +787,7 @@ export type ResolversTypes = {
   KCRelation: ResolverTypeWrapper<KCRelation>;
   KCRelationInput: KCRelationInput;
   KCRelationType: KCRelationType;
+  KCsByTopic: ResolverTypeWrapper<KCsByTopic>;
   KCsConnection: ResolverTypeWrapper<KCsConnection>;
   Mutation: ResolverTypeWrapper<{}>;
   Node: never;
@@ -782,6 +816,7 @@ export type ResolversParentTypes = {
   String: Scalars["String"];
   AdminKCsFilter: AdminKCsFilter;
   AdminTopicsFilter: AdminTopicsFilter;
+  Challenge: Challenge;
   Connection:
     | ResolversParentTypes["DomainsConnection"]
     | ResolversParentTypes["KCsConnection"]
@@ -802,6 +837,7 @@ export type ResolversParentTypes = {
   KC: KC;
   KCRelation: KCRelation;
   KCRelationInput: KCRelationInput;
+  KCsByTopic: KCsByTopic;
   KCsConnection: KCsConnection;
   Mutation: {};
   Node: never;
@@ -898,6 +934,15 @@ export type AdminDomainQueriesResolvers<
     ContextType,
     RequireFields<AdminDomainQueriesallTopicsArgs, "pagination">
   >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChallengeResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Challenge"] = ResolversParentTypes["Challenge"]
+> = {
+  id?: Resolver<ResolversTypes["IntID"], ParentType, ContextType>;
+  topics?: Resolver<Array<ResolversTypes["Topic"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1006,6 +1051,15 @@ export type KCRelationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type KCsByTopicResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["KCsByTopic"] = ResolversParentTypes["KCsByTopic"]
+> = {
+  kcs?: Resolver<Array<ResolversTypes["KC"]>, ParentType, ContextType>;
+  topic?: Resolver<ResolversTypes["Topic"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type KCsConnectionResolvers<
   ContextType = EZContext,
   ParentType extends ResolversParentTypes["KCsConnection"] = ResolversParentTypes["KCsConnection"]
@@ -1082,6 +1136,12 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >;
+  challenges?: Resolver<
+    Array<ResolversTypes["Challenge"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerychallengesArgs, "ids">
+  >;
   content?: Resolver<
     Array<ResolversTypes["Content"]>,
     ParentType,
@@ -1100,6 +1160,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QuerykcsArgs, "ids">
+  >;
+  kcsByContentByTopics?: Resolver<
+    Array<ResolversTypes["KCsByTopic"]>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerykcsByContentByTopicsArgs, "projectCode" | "topicsCodes">
   >;
   projects?: Resolver<
     Array<ResolversTypes["Project"]>,
@@ -1177,6 +1243,7 @@ export interface VoidScalarConfig
 export type Resolvers<ContextType = EZContext> = {
   AdminDomainMutations?: AdminDomainMutationsResolvers<ContextType>;
   AdminDomainQueries?: AdminDomainQueriesResolvers<ContextType>;
+  Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
@@ -1188,6 +1255,7 @@ export type Resolvers<ContextType = EZContext> = {
   JSONObject?: GraphQLScalarType;
   KC?: KCResolvers<ContextType>;
   KCRelation?: KCRelationResolvers<ContextType>;
+  KCsByTopic?: KCsByTopicResolvers<ContextType>;
   KCsConnection?: KCsConnectionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Node?: NodeResolvers<ContextType>;

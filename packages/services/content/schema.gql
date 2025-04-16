@@ -34,8 +34,16 @@ input AdminContentFilter {
 Admin related content mutations, only authenticated users with the role "ADMIN" can access
 """
 type AdminContentMutations {
+  """
+  Create a challenge
+  """
+  createChallenge(data: ChallengeInput!): Challenge!
   "Create a new content entity"
   createContent(data: CreateContent!): Content!
+  """
+  Update a challenge
+  """
+  updateChallenge(data: ChallengeInput!, id: IntID!): Challenge!
   "Update an existent content entity"
   updateContent(data: UpdateContent!): Content!
 }
@@ -51,6 +59,88 @@ type AdminContentQueries {
     filters: AdminContentFilter
     pagination: CursorConnectionArgs!
   ): ContentConnection!
+}
+
+"""
+A challenge
+"""
+type Challenge {
+  """
+  Unique code for the challenge
+  """
+  code: String!
+  """
+  Content of the challenge
+  """
+  content: [Content!]!
+  """
+  Date of creation
+  """
+  createdAt: DateTime!
+  """
+  Description of the challenge
+  """
+  description: String
+  """
+  Enabled status of the challenge
+  """
+  enabled: Boolean!
+  """
+  End date of the challenge
+  """
+  endDate: DateTime
+  """
+  ID of the challenge
+  """
+  id: IntID!
+  """
+  Project ID
+  """
+  projectId: IntID!
+  """
+  Start date of the challenge
+  """
+  startDate: DateTime
+  """
+  Tags for the challenge
+  """
+  tags: [String!]!
+  """
+  Title of the challenge
+  """
+  title: String!
+  """
+  Date of last update
+  """
+  updatedAt: DateTime!
+}
+
+"""
+Input for creating or updating a challenge
+"""
+input ChallengeInput {
+  "Unique code for the challenge"
+  code: String!
+  "Content of the challenge"
+  contentIds: [IntID!]
+  "Description of the challenge"
+  description: String
+  "Enabled status of the challenge"
+  enabled: Boolean! = true
+  "End date of the challenge"
+  endDate: DateTime
+  "Groups of the challenge"
+  groupsIds: [IntID!]
+  "Project ID"
+  projectId: IntID!
+  "Start date of the challenge"
+  startDate: DateTime
+  "Tags for the challenge"
+  tags: [String!]
+  "Title of the challenge"
+  title: String!
+  "Topics of the challenge"
+  topicsIds: [IntID!]
 }
 
 "Pagination Interface"
@@ -195,6 +285,13 @@ A field whose value conforms to the standard internet email address format as sp
 """
 scalar EmailAddress @specifiedBy(url: "https://www.w3.org/Protocols/rfc822/")
 
+type Group {
+  """
+  ID of the group
+  """
+  id: IntID!
+}
+
 """
 ID that parses as non-negative integer, serializes to string, and can be passed as string or number
 """
@@ -316,9 +413,21 @@ input ProjectContentFilter {
 
 type Query {
   """
+  Get all active challenges based on the project id and any authenticated user group
+  """
+  activeChallenges(projectId: IntID!): [Challenge!]!
+  """
   Admin related content queries, only authenticated users with the role "ADMIN" can access
   """
   adminContent: AdminContentQueries!
+  """
+  Get a challenge by either its ID or code
+  """
+  challenge(code: String, id: IntID): Challenge
+  """
+  Get challenges by their IDs
+  """
+  challenges(ids: [IntID!]!): [Challenge!]!
   """
   Get all the content associated with the specified identifiers
 

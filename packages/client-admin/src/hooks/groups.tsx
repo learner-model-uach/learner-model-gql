@@ -102,7 +102,7 @@ export const groupOptionLabel = ({
 export const useSelectSingleGroup = () => {
   const { isFetching, isLoading, filteredOptions, asOptions } = useGroupsBase();
 
-  const [selectedGroup, setSelectedGroups] = useState<OptionValue | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<OptionValue | null>(null);
 
   const selectSingleGroupComponent = useMemo(() => {
     return (
@@ -111,7 +111,7 @@ export const useSelectSingleGroup = () => {
         isLoading={isFetching}
         loadOptions={filteredOptions}
         onChange={(selected) => {
-          setSelectedGroups(selected || null);
+          setSelectedGroup(selected || null);
         }}
         value={selectedGroup}
         placeholder="Search a group"
@@ -122,6 +122,7 @@ export const useSelectSingleGroup = () => {
   return {
     selectedGroup,
     selectSingleGroupComponent,
+    setSelectedGroup,
   };
 };
 
