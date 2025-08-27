@@ -83,7 +83,11 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "fsevents"
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "fsevents",
+      "prisma"
     ],
     "overrides": {
       "ws@>=5.0.0 <5.2.3 || >=6.0.0 <6.2.2 || >=7.0.0 <7.4.6": ">=5.2.3 <6.0.0 || >=6.2.2 <7.0.0 || >=7.4.6",
@@ -107,6 +111,10 @@
     },
     "patchedDependencies": {
       "fastify-auth0-verify@1.0.0": "patches/fastify-auth0-verify@1.0.0.patch"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "browser-tabs-lock",
+      "core-js"
+    ]
   }
 }
