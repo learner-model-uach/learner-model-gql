@@ -15,7 +15,9 @@ jobs:
         os: [ubuntu-latest]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Install Docker - 1
         run: curl -fsSL https://get.docker.com -o get-docker.sh
       - name: Install Docker - 2
@@ -24,12 +26,17 @@ jobs:
         run: sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - name: Install Docker - 4
         run: sudo chmod +x /usr/local/bin/docker-compose
-      - name: Setup node
-        uses: actions/setup-node@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ^18.0.0
+          node-version: "22"
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Cache pnpm modules
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         if: ${{ !env.ACT }}
         env:
           cache-name: cache-pnpm-modules
@@ -39,7 +46,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-build-v2-${{ env.cache-name }}-
 
-      - run: npm install -g pnpm@^9
       - name: Node version
         run: node --version
       - name: pnpm version
