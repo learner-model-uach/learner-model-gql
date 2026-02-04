@@ -503,6 +503,13 @@ type AdminUserMutations {
   addUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Create a new group entity"
   createGroup(data: CreateGroupInput!): Group!
+  "Import users to Auth0 and local database"
+  importAuth0Users(
+    auth0Token: String!
+    projectIds: [IntID!]
+    tags: [String!]
+    users: [CreateAuth0UserInput!]!
+  ): ImportAuth0UsersResult!
   "Remove the users (by email) from the specified group, If not found, ignored"
   removeUserGroups(groupId: IntID!, usersEmails: [EmailAddress!]!): Group!
   "Set email aliases"
@@ -511,6 +518,8 @@ type AdminUserMutations {
   setProjectsToUsers(projectIds: [IntID!]!, userIds: [IntID!]!): [User!]!
   "Set the users (by email) associated with the groups"
   setUserGroups(groupIds: [IntID!]!, usersEmails: [EmailAddress!]!): [Group!]!
+  "Test if Auth0 Management API credentials are valid"
+  testAuth0Credentials(auth0Token: String!): Boolean!
   "Update an existent group entity"
   updateGroup(data: UpdateGroupInput!): Group!
   "Update an existent user entity"
@@ -605,6 +614,18 @@ type AnonymizedModelState {
   updatedAt: DateTime!
   "Unique anonimized user hash identifier"
   userUniqueHash: String!
+}
+
+"Result of creating a single Auth0 user"
+type Auth0UserCreationResult {
+  "Email of the user"
+  email: String!
+  "Error message if creation failed"
+  error: String
+  "Whether the user was created successfully"
+  success: Boolean!
+  "The created user if successful"
+  user: User
 }
 
 """
@@ -823,6 +844,14 @@ type ContentsSelectedReturn {
   P: Content!
   "Preferred is true when Content is the best option for learner, else false"
   Preferred: Boolean!
+}
+
+"Input for creating a user in Auth0"
+input CreateAuth0UserInput {
+  "User email address"
+  email: EmailAddress!
+  "User password"
+  password: String!
 }
 
 "Content creation input data"
@@ -1081,6 +1110,16 @@ type GroupsConnection implements Connection {
   nodes: [Group!]!
   "Pagination related information"
   pageInfo: PageInfo!
+}
+
+"Result of importing multiple Auth0 users"
+type ImportAuth0UsersResult {
+  "Number of failed user creations"
+  failureCount: Int!
+  "Results for each user"
+  results: [Auth0UserCreationResult!]!
+  "Number of successfully created users"
+  successCount: Int!
 }
 
 """

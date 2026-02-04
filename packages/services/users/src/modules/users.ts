@@ -1,5 +1,6 @@
 import { getNodeIdList } from "api-base";
 import pMap from "p-map";
+import { request } from "undici";
 import { gql, registerModule, ResolveCursorConnection } from "../ez";
 
 export const usersModule = registerModule(
@@ -138,6 +139,36 @@ export const usersModule = registerModule(
       aliases: [EmailAddress!]!
     }
 
+    "Input for creating a user in Auth0"
+    input CreateAuth0UserInput {
+      "User email address"
+      email: EmailAddress!
+      "User password"
+      password: String!
+    }
+
+    "Result of creating a single Auth0 user"
+    type Auth0UserCreationResult {
+      "Email of the user"
+      email: String!
+      "Whether the user was created successfully"
+      success: Boolean!
+      "Error message if creation failed"
+      error: String
+      "The created user if successful"
+      user: User
+    }
+
+    "Result of importing multiple Auth0 users"
+    type ImportAuth0UsersResult {
+      "Results for each user"
+      results: [Auth0UserCreationResult!]!
+      "Number of successfully created users"
+      successCount: Int!
+      "Number of failed user creations"
+      failureCount: Int!
+    }
+
     "Admin User-Related Queries"
     type AdminUserMutations {
       "Upsert specified users with specified projects"
@@ -152,6 +183,17 @@ export const usersModule = registerModule(
 
       "Set email aliases"
       setEmailAliases(list: [EmailAliasInput!]!): [User!]!
+
+      "Test if Auth0 Management API credentials are valid"
+      testAuth0Credentials(auth0Token: String!): Boolean!
+
+      "Import users to Auth0 and local database"
+      importAuth0Users(
+        auth0Token: String!
+        users: [CreateAuth0UserInput!]!
+        projectIds: [IntID!]
+        tags: [String!]
+      ): ImportAuth0UsersResult!
     }
 
     extend type Query {
@@ -329,6 +371,170 @@ export const usersModule = registerModule(
               concurrency: 4,
             }
           );
+        },
+        async testAuth0Credentials(_root, { auth0Token }) {
+          const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
+          if (!AUTH0_DOMAIN) {
+            throw new Error("AUTH0_DOMAIN environment variable is not set");
+          }
+
+          const response = await request(
+            `https://${AUTH0_DOMAIN}/api/v2/users?per_page=1`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${auth0Token}`,
+              },
+            }
+          );
+
+          if (response.statusCode === 200) {
+            return true;
+          }
+
+          if (response.statusCode === 401) {
+            throw new Error("Invalid or expired Auth0 token");
+          }
+
+          if (response.statusCode === 403) {
+            throw new Error(
+              "Insufficient permissions. Required scopes: read:users"
+            );
+          }
+
+          const body = (await response.body.json()) as { message?: string };
+          throw new Error(
+            body.message || `Auth0 API error: ${response.statusCode}`
+          );
+        },
+        async importAuth0Users(
+          _root,
+          { auth0Token, users, projectIds, tags },
+          { prisma }
+        ) {
+          const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
+          if (!AUTH0_DOMAIN) {
+            throw new Error("AUTH0_DOMAIN environment variable is not set");
+          }
+
+          const results = await pMap(
+            users,
+            async ({ email, password }) => {
+              try {
+                // Create user in Auth0
+                const response = await request(
+                  `https://${AUTH0_DOMAIN}/api/v2/users`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${auth0Token}`,
+                    },
+                    body: JSON.stringify({
+                      connection: "Username-Password-Authentication",
+                      email,
+                      password,
+                    }),
+                  }
+                );
+
+                if (response.statusCode !== 201) {
+                  const body = (await response.body.json()) as {
+                    message?: string;
+                    error?: string;
+                  };
+                  let errorMessage =
+                    body.message ||
+                    body.error ||
+                    `Auth0 error: ${response.statusCode}`;
+
+                  if (response.statusCode === 409) {
+                    errorMessage = "User already exists in Auth0";
+                  } else if (response.statusCode === 400) {
+                    errorMessage =
+                      body.message ||
+                      "Invalid input (weak password or invalid email)";
+                  } else if (response.statusCode === 401) {
+                    errorMessage = "Invalid or expired Auth0 token";
+                  } else if (response.statusCode === 403) {
+                    errorMessage =
+                      "Insufficient permissions. Required scopes: create:users";
+                  } else if (response.statusCode === 429) {
+                    errorMessage =
+                      "Rate limit exceeded. Please wait and try again.";
+                  }
+
+                  return {
+                    email,
+                    success: false,
+                    error: errorMessage,
+                    user: null,
+                  };
+                }
+
+                // Upsert user in local database
+                const user = await prisma.user.upsert({
+                  create: {
+                    email,
+                    projects: projectIds?.length
+                      ? {
+                          connect: projectIds.map((id) => ({ id })),
+                        }
+                      : undefined,
+                    tags: tags?.length
+                      ? {
+                          set: tags,
+                        }
+                      : undefined,
+                  },
+                  where: {
+                    email,
+                  },
+                  update: {
+                    projects: projectIds?.length
+                      ? {
+                          connect: projectIds.map((id) => ({ id })),
+                        }
+                      : undefined,
+                    tags: tags?.length
+                      ? {
+                          push: tags,
+                        }
+                      : undefined,
+                  },
+                });
+
+                return {
+                  email,
+                  success: true,
+                  error: null,
+                  user,
+                };
+              } catch (error) {
+                return {
+                  email,
+                  success: false,
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : "Unknown error occurred",
+                  user: null,
+                };
+              }
+            },
+            {
+              concurrency: 2,
+            }
+          );
+
+          const successCount = results.filter((r) => r.success).length;
+          const failureCount = results.filter((r) => !r.success).length;
+
+          return {
+            results,
+            successCount,
+            failureCount,
+          };
         },
       },
       AdminUserQueries: {

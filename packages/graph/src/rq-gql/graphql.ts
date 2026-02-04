@@ -643,6 +643,8 @@ export type AdminUserMutations = {
   addUserGroups: Group;
   /** Create a new group entity */
   createGroup: Group;
+  /** Import users to Auth0 and local database */
+  importAuth0Users: ImportAuth0UsersResult;
   /** Remove the users (by email) from the specified group, If not found, ignored */
   removeUserGroups: Group;
   /** Set email aliases */
@@ -651,6 +653,8 @@ export type AdminUserMutations = {
   setProjectsToUsers: Array<User>;
   /** Set the users (by email) associated with the groups */
   setUserGroups: Array<Group>;
+  /** Test if Auth0 Management API credentials are valid */
+  testAuth0Credentials: Scalars["Boolean"];
   /** Update an existent group entity */
   updateGroup: Group;
   /** Update an existent user entity */
@@ -668,6 +672,14 @@ export type AdminUserMutationsAddUserGroupsArgs = {
 /** Admin User-Related Queries */
 export type AdminUserMutationsCreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsImportAuth0UsersArgs = {
+  auth0Token: Scalars["String"];
+  projectIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  users: Array<CreateAuth0UserInput>;
 };
 
 /** Admin User-Related Queries */
@@ -691,6 +703,11 @@ export type AdminUserMutationsSetProjectsToUsersArgs = {
 export type AdminUserMutationsSetUserGroupsArgs = {
   groupIds: Array<Scalars["IntID"]>;
   usersEmails: Array<Scalars["EmailAddress"]>;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsTestAuth0CredentialsArgs = {
+  auth0Token: Scalars["String"];
 };
 
 /** Admin User-Related Queries */
@@ -800,6 +817,19 @@ export type AnonymizedModelState = {
   updatedAt: Scalars["DateTime"];
   /** Unique anonimized user hash identifier */
   userUniqueHash: Scalars["String"];
+};
+
+/** Result of creating a single Auth0 user */
+export type Auth0UserCreationResult = {
+  __typename?: "Auth0UserCreationResult";
+  /** Email of the user */
+  email: Scalars["String"];
+  /** Error message if creation failed */
+  error?: Maybe<Scalars["String"]>;
+  /** Whether the user was created successfully */
+  success: Scalars["Boolean"];
+  /** The created user if successful */
+  user?: Maybe<User>;
 };
 
 /** A challenge */
@@ -995,6 +1025,14 @@ export type ContentsSelectedReturn = {
   P: Content;
   /** Preferred is true when Content is the best option for learner, else false */
   Preferred: Scalars["Boolean"];
+};
+
+/** Input for creating a user in Auth0 */
+export type CreateAuth0UserInput = {
+  /** User email address */
+  email: Scalars["EmailAddress"];
+  /** User password */
+  password: Scalars["String"];
 };
 
 /** Content creation input data */
@@ -1253,6 +1291,17 @@ export type GroupsConnection = Connection & {
   nodes: Array<Group>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+/** Result of importing multiple Auth0 users */
+export type ImportAuth0UsersResult = {
+  __typename?: "ImportAuth0UsersResult";
+  /** Number of failed user creations */
+  failureCount: Scalars["Int"];
+  /** Results for each user */
+  results: Array<Auth0UserCreationResult>;
+  /** Number of successfully created users */
+  successCount: Scalars["Int"];
 };
 
 /** KC / Knowledge Component Entity */
@@ -3354,6 +3403,63 @@ export type SetEmailAliasesMutation = {
   adminUsers: {
     __typename?: "AdminUserMutations";
     setEmailAliases: Array<{ __typename?: "User"; email: string }>;
+  };
+};
+
+export type TestAuth0CredentialsMutationVariables = Exact<{
+  auth0Token: Scalars["String"];
+}>;
+
+export type TestAuth0CredentialsMutation = {
+  __typename?: "Mutation";
+  adminUsers: {
+    __typename?: "AdminUserMutations";
+    testAuth0Credentials: boolean;
+  };
+};
+
+export type ImportAuth0UsersMutationVariables = Exact<{
+  auth0Token: Scalars["String"];
+  users: Array<CreateAuth0UserInput> | CreateAuth0UserInput;
+  projectIds?: InputMaybe<Array<Scalars["IntID"]> | Scalars["IntID"]>;
+  tags?: InputMaybe<Array<Scalars["String"]> | Scalars["String"]>;
+}>;
+
+export type ImportAuth0UsersMutation = {
+  __typename?: "Mutation";
+  adminUsers: {
+    __typename?: "AdminUserMutations";
+    importAuth0Users: {
+      __typename?: "ImportAuth0UsersResult";
+      successCount: number;
+      failureCount: number;
+      results: Array<{
+        __typename?: "Auth0UserCreationResult";
+        email: string;
+        success: boolean;
+        error?: string | null;
+        user?: {
+          __typename: "User";
+          id: string;
+          email: string;
+          name?: string | null;
+          active: boolean;
+          lastOnline?: string | null;
+          createdAt: string;
+          role: UserRole;
+          updatedAt: string;
+          locked: boolean;
+          tags: Array<string>;
+          emailAliases?: Array<string> | null;
+          projects: Array<{
+            __typename?: "Project";
+            id: string;
+            code: string;
+            label: string;
+          }>;
+        } | null;
+      }>;
+    };
   };
 };
 
@@ -6514,6 +6620,243 @@ export const SetEmailAliasesDocument = {
 } as unknown as DocumentNode<
   SetEmailAliasesMutation,
   SetEmailAliasesMutationVariables
+>;
+export const TestAuth0CredentialsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "TestAuth0Credentials" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "auth0Token" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminUsers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "testAuth0Credentials" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "auth0Token" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "auth0Token" },
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  TestAuth0CredentialsMutation,
+  TestAuth0CredentialsMutationVariables
+>;
+export const ImportAuth0UsersDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "ImportAuth0Users" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "auth0Token" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "users" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "ListType",
+              type: {
+                kind: "NonNullType",
+                type: {
+                  kind: "NamedType",
+                  name: { kind: "Name", value: "CreateAuth0UserInput" },
+                },
+              },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "projectIds" },
+          },
+          type: {
+            kind: "ListType",
+            type: {
+              kind: "NonNullType",
+              type: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "IntID" },
+              },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "tags" } },
+          type: {
+            kind: "ListType",
+            type: {
+              kind: "NonNullType",
+              type: {
+                kind: "NamedType",
+                name: { kind: "Name", value: "String" },
+              },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "adminUsers" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "importAuth0Users" },
+                  arguments: [
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "auth0Token" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "auth0Token" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "users" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "users" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "projectIds" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "projectIds" },
+                      },
+                    },
+                    {
+                      kind: "Argument",
+                      name: { kind: "Name", value: "tags" },
+                      value: {
+                        kind: "Variable",
+                        name: { kind: "Name", value: "tags" },
+                      },
+                    },
+                  ],
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "results" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "email" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "success" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "error" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "user" },
+                              selectionSet: {
+                                kind: "SelectionSet",
+                                selections: [
+                                  {
+                                    kind: "FragmentSpread",
+                                    name: { kind: "Name", value: "UserInfo" },
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "successCount" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "failureCount" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    ...UserInfoFragmentDoc.definitions,
+  ],
+} as unknown as DocumentNode<
+  ImportAuth0UsersMutation,
+  ImportAuth0UsersMutationVariables
 >;
 export const UpdateUserDocument = {
   kind: "Document",
