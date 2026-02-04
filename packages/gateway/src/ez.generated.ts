@@ -658,6 +658,8 @@ export type AdminUserMutations = {
   addUserGroups: Group;
   /** Create a new group entity */
   createGroup: Group;
+  /** Import users to Auth0 and local database */
+  importAuth0Users: ImportAuth0UsersResult;
   /** Remove the users (by email) from the specified group, If not found, ignored */
   removeUserGroups: Group;
   /** Set email aliases */
@@ -666,6 +668,8 @@ export type AdminUserMutations = {
   setProjectsToUsers: Array<User>;
   /** Set the users (by email) associated with the groups */
   setUserGroups: Array<Group>;
+  /** Test if Auth0 Management API credentials are valid */
+  testAuth0Credentials: Scalars["Boolean"];
   /** Update an existent group entity */
   updateGroup: Group;
   /** Update an existent user entity */
@@ -683,6 +687,14 @@ export type AdminUserMutationsaddUserGroupsArgs = {
 /** Admin User-Related Queries */
 export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsimportAuth0UsersArgs = {
+  auth0Token: Scalars["String"];
+  projectIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  users: Array<CreateAuth0UserInput>;
 };
 
 /** Admin User-Related Queries */
@@ -706,6 +718,11 @@ export type AdminUserMutationssetProjectsToUsersArgs = {
 export type AdminUserMutationssetUserGroupsArgs = {
   groupIds: Array<Scalars["IntID"]>;
   usersEmails: Array<Scalars["EmailAddress"]>;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationstestAuth0CredentialsArgs = {
+  auth0Token: Scalars["String"];
 };
 
 /** Admin User-Related Queries */
@@ -815,6 +832,19 @@ export type AnonymizedModelState = {
   updatedAt: Scalars["DateTime"];
   /** Unique anonimized user hash identifier */
   userUniqueHash: Scalars["String"];
+};
+
+/** Result of creating a single Auth0 user */
+export type Auth0UserCreationResult = {
+  __typename?: "Auth0UserCreationResult";
+  /** Email of the user */
+  email: Scalars["String"];
+  /** Error message if creation failed */
+  error?: Maybe<Scalars["String"]>;
+  /** Whether the user was created successfully */
+  success: Scalars["Boolean"];
+  /** The created user if successful */
+  user?: Maybe<User>;
 };
 
 /** A challenge */
@@ -1010,6 +1040,14 @@ export type ContentsSelectedReturn = {
   P: Content;
   /** Preferred is true when Content is the best option for learner, else false */
   Preferred: Scalars["Boolean"];
+};
+
+/** Input for creating a user in Auth0 */
+export type CreateAuth0UserInput = {
+  /** User email address */
+  email: Scalars["EmailAddress"];
+  /** User password */
+  password: Scalars["String"];
 };
 
 /** Content creation input data */
@@ -1268,6 +1306,17 @@ export type GroupsConnection = Connection & {
   nodes: Array<Group>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+/** Result of importing multiple Auth0 users */
+export type ImportAuth0UsersResult = {
+  __typename?: "ImportAuth0UsersResult";
+  /** Number of failed user creations */
+  failureCount: Scalars["Int"];
+  /** Results for each user */
+  results: Array<Auth0UserCreationResult>;
+  /** Number of successfully created users */
+  successCount: Scalars["Int"];
 };
 
 /** KC / Knowledge Component Entity */
@@ -2379,13 +2428,14 @@ export type ResolversTypes = {
   AdminStateQueries: ResolverTypeWrapper<AdminStateQueries>;
   AdminTopicsFilter: AdminTopicsFilter;
   AdminUserMutations: ResolverTypeWrapper<AdminUserMutations>;
+  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   AdminUserQueries: ResolverTypeWrapper<AdminUserQueries>;
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: ResolverTypeWrapper<AllActionsByContent>;
   AllActionsByUser: ResolverTypeWrapper<AllActionsByUser>;
   AnonymizedModelState: ResolverTypeWrapper<AnonymizedModelState>;
+  Auth0UserCreationResult: ResolverTypeWrapper<Auth0UserCreationResult>;
   Challenge: ResolverTypeWrapper<Challenge>;
-  Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
   ChallengeInput: ChallengeInput;
   Connection:
     | ResolversTypes["ActionsByContentConnection"]
@@ -2408,6 +2458,7 @@ export type ResolversTypes = {
   ContentSelectionInput: ContentSelectionInput;
   ContentSelectionQueries: ResolverTypeWrapper<ContentSelectionQueries>;
   ContentsSelectedReturn: ResolverTypeWrapper<ContentsSelectedReturn>;
+  CreateAuth0UserInput: CreateAuth0UserInput;
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -2424,6 +2475,7 @@ export type ResolversTypes = {
   GroupFlags: ResolverTypeWrapper<GroupFlags>;
   GroupFlagsInput: GroupFlagsInput;
   GroupsConnection: ResolverTypeWrapper<GroupsConnection>;
+  ImportAuth0UsersResult: ResolverTypeWrapper<ImportAuth0UsersResult>;
   IntID: ResolverTypeWrapper<Scalars["IntID"]>;
   JSON: ResolverTypeWrapper<Scalars["JSON"]>;
   JSONObject: ResolverTypeWrapper<Scalars["JSONObject"]>;
@@ -2510,13 +2562,14 @@ export type ResolversParentTypes = {
   AdminStateQueries: AdminStateQueries;
   AdminTopicsFilter: AdminTopicsFilter;
   AdminUserMutations: AdminUserMutations;
+  Boolean: Scalars["Boolean"];
   AdminUserQueries: AdminUserQueries;
   AdminUsersFilter: AdminUsersFilter;
   AllActionsByContent: AllActionsByContent;
   AllActionsByUser: AllActionsByUser;
   AnonymizedModelState: AnonymizedModelState;
+  Auth0UserCreationResult: Auth0UserCreationResult;
   Challenge: Challenge;
-  Boolean: Scalars["Boolean"];
   ChallengeInput: ChallengeInput;
   Connection:
     | ResolversParentTypes["ActionsByContentConnection"]
@@ -2539,6 +2592,7 @@ export type ResolversParentTypes = {
   ContentSelectionInput: ContentSelectionInput;
   ContentSelectionQueries: ContentSelectionQueries;
   ContentsSelectedReturn: ContentsSelectedReturn;
+  CreateAuth0UserInput: CreateAuth0UserInput;
   CreateContent: CreateContent;
   CreateDomain: CreateDomain;
   CreateGroupInput: CreateGroupInput;
@@ -2555,6 +2609,7 @@ export type ResolversParentTypes = {
   GroupFlags: GroupFlags;
   GroupFlagsInput: GroupFlagsInput;
   GroupsConnection: GroupsConnection;
+  ImportAuth0UsersResult: ImportAuth0UsersResult;
   IntID: Scalars["IntID"];
   JSON: Scalars["JSON"];
   JSONObject: Scalars["JSONObject"];
@@ -2952,6 +3007,15 @@ export type AdminUserMutationsResolvers<
     ContextType,
     RequireFields<AdminUserMutationscreateGroupArgs, "data">
   >;
+  importAuth0Users?: Resolver<
+    ResolversTypes["ImportAuth0UsersResult"],
+    ParentType,
+    ContextType,
+    RequireFields<
+      AdminUserMutationsimportAuth0UsersArgs,
+      "auth0Token" | "users"
+    >
+  >;
   removeUserGroups?: Resolver<
     ResolversTypes["Group"],
     ParentType,
@@ -2984,6 +3048,12 @@ export type AdminUserMutationsResolvers<
       AdminUserMutationssetUserGroupsArgs,
       "groupIds" | "usersEmails"
     >
+  >;
+  testAuth0Credentials?: Resolver<
+    ResolversTypes["Boolean"],
+    ParentType,
+    ContextType,
+    RequireFields<AdminUserMutationstestAuth0CredentialsArgs, "auth0Token">
   >;
   updateGroup?: Resolver<
     ResolversTypes["Group"],
@@ -3065,6 +3135,17 @@ export type AnonymizedModelStateResolvers<
   type?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes["DateTime"], ParentType, ContextType>;
   userUniqueHash?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Auth0UserCreationResultResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["Auth0UserCreationResult"] = ResolversParentTypes["Auth0UserCreationResult"]
+> = {
+  email?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes["String"]>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes["Boolean"], ParentType, ContextType>;
+  user?: Resolver<Maybe<ResolversTypes["User"]>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3327,6 +3408,20 @@ export type GroupsConnectionResolvers<
 > = {
   nodes?: Resolver<Array<ResolversTypes["Group"]>, ParentType, ContextType>;
   pageInfo?: Resolver<ResolversTypes["PageInfo"], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportAuth0UsersResultResolvers<
+  ContextType = EZContext,
+  ParentType extends ResolversParentTypes["ImportAuth0UsersResult"] = ResolversParentTypes["ImportAuth0UsersResult"]
+> = {
+  failureCount?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
+  results?: Resolver<
+    Array<ResolversTypes["Auth0UserCreationResult"]>,
+    ParentType,
+    ContextType
+  >;
+  successCount?: Resolver<ResolversTypes["Int"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -3952,6 +4047,7 @@ export type Resolvers<ContextType = EZContext> = {
   AllActionsByContent?: AllActionsByContentResolvers<ContextType>;
   AllActionsByUser?: AllActionsByUserResolvers<ContextType>;
   AnonymizedModelState?: AnonymizedModelStateResolvers<ContextType>;
+  Auth0UserCreationResult?: Auth0UserCreationResultResolvers<ContextType>;
   Challenge?: ChallengeResolvers<ContextType>;
   Connection?: ConnectionResolvers<ContextType>;
   Content?: ContentResolvers<ContextType>;
@@ -3966,6 +4062,7 @@ export type Resolvers<ContextType = EZContext> = {
   Group?: GroupResolvers<ContextType>;
   GroupFlags?: GroupFlagsResolvers<ContextType>;
   GroupsConnection?: GroupsConnectionResolvers<ContextType>;
+  ImportAuth0UsersResult?: ImportAuth0UsersResultResolvers<ContextType>;
   IntID?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;

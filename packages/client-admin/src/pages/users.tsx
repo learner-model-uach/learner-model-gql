@@ -1,12 +1,29 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Box,
+  Button,
+  Collapse,
   FormControl,
   FormHelperText,
   FormLabel,
+  Grid,
+  GridItem,
+  HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
+  Link,
+  List,
+  ListIcon,
+  ListItem,
   Select,
   Switch,
+  Text,
   Textarea,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import {
@@ -19,11 +36,15 @@ import {
   UserRole,
 } from "graph";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaUsers } from "react-icons/fa";
+import { FaCloudUploadAlt, FaUsers } from "react-icons/fa";
 import {
   MdCheck,
   MdClose,
   MdEdit,
+  MdError,
+  MdExpandLess,
+  MdExpandMore,
+  MdInfo,
   MdLock,
   MdLockOpen,
   MdSave,
@@ -296,6 +317,328 @@ function EmailAliases() {
   );
 }
 
+const TestAuth0Credentials = gql(/* GraphQL */ `
+  mutation TestAuth0Credentials($auth0Token: String!) {
+    adminUsers {
+      testAuth0Credentials(auth0Token: $auth0Token)
+    }
+  }
+`);
+
+const ImportAuth0UsersMutation = gql(/* GraphQL */ `
+  mutation ImportAuth0Users(
+    $auth0Token: String!
+    $users: [CreateAuth0UserInput!]!
+    $projectIds: [IntID!]
+    $tags: [String!]
+  ) {
+    adminUsers {
+      importAuth0Users(
+        auth0Token: $auth0Token
+        users: $users
+        projectIds: $projectIds
+        tags: $tags
+      ) {
+        results {
+          email
+          success
+          error
+          user {
+            ...UserInfo
+          }
+        }
+        successCount
+        failureCount
+      }
+    }
+  }
+`);
+
+function ImportAuth0Users() {
+  const [auth0Token, setAuth0Token] = useState("");
+  const [usersText, setUsersText] = useState("");
+  const [credentialsValid, setCredentialsValid] = useState<boolean | null>(
+    null
+  );
+  const [showFailures, setShowFailures] = useState(false);
+  const { isOpen: showInstructions, onToggle: toggleInstructions } =
+    useDisclosure({ defaultIsOpen: true });
+
+  const { selectMultiProjectComponent, selectedProjects } =
+    useSelectMultiProjects();
+
+  const tagsRef = useRef<SelectRefType>(null);
+
+  const { tagsSelect } = useTagsSelect({
+    tagsRef,
+    defaultTags: emptyList,
+  });
+
+  const testCredentials = useGQLMutation(TestAuth0Credentials, {
+    onSuccess(data) {
+      setCredentialsValid(data.adminUsers.testAuth0Credentials);
+    },
+    onError() {
+      setCredentialsValid(false);
+    },
+  });
+
+  const importUsers = useGQLMutation(ImportAuth0UsersMutation, {
+    async onSuccess() {
+      await queryClient.invalidateQueries();
+    },
+  });
+
+  const parsedUsers = useMemo(() => {
+    return usersText
+      .trim()
+      .split(/\r\n|\n/g)
+      .reduce<Array<{ email: string; password: string }>>((acum, line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return acum;
+
+        const [email, password] = trimmed.split(",").map((v) => v.trim());
+        if (email && password) {
+          acum.push({ email, password });
+        }
+        return acum;
+      }, []);
+  }, [usersText]);
+
+  const failedResults =
+    importUsers.data?.adminUsers.importAuth0Users.results.filter(
+      (r) => !r.success
+    ) || [];
+
+  return (
+    <FormModal
+      title="Import Auth0 Users"
+      onSubmit={async () => {
+        if (!parsedUsers.length || !auth0Token) return;
+
+        await importUsers.mutateAsync({
+          auth0Token,
+          users: parsedUsers,
+          projectIds: selectedProjects.length
+            ? selectedProjects.map((v) => v.value)
+            : null,
+          tags: tagsRef.current?.getValue().map((v) => v.value) || null,
+        });
+      }}
+      triggerButton={{
+        colorScheme: "teal",
+        leftIcon: <FaCloudUploadAlt />,
+      }}
+      saveButton={{
+        isDisabled:
+          importUsers.isLoading ||
+          !parsedUsers.length ||
+          !auth0Token ||
+          credentialsValid !== true,
+        children: "Import Users",
+      }}
+      modalProps={{
+        size: "4xl",
+      }}
+    >
+      <VStack spacing={4} align="stretch">
+        {/* Instructions - Collapsible */}
+        <Box>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleInstructions}
+            leftIcon={<MdInfo />}
+            rightIcon={showInstructions ? <MdExpandLess /> : <MdExpandMore />}
+            color="blue.600"
+          >
+            {showInstructions ? "Hide" : "Show"} Auth0 Setup Instructions
+          </Button>
+          <Collapse in={showInstructions}>
+            <Alert status="info" mt={2}>
+              <AlertDescription fontSize="sm">
+                <List spacing={1}>
+                  <ListItem>
+                    1. Go to Auth0 Dashboard → APIs → Auth0 Management API → API
+                    Explorer
+                  </ListItem>
+                  <ListItem>
+                    2. Click "Create & Authorize a Test Application" (or use
+                    existing M2M app)
+                  </ListItem>
+                  <ListItem>
+                    3. Copy the token (valid for 24 hours). Required scopes:{" "}
+                    <b>create:users</b>, <b>read:users</b>
+                  </ListItem>
+                </List>
+                <Button
+                  as={Link}
+                  href="https://manage.auth0.com/dashboard/us/learner-model-gql/apis/management/explorer"
+                  isExternal
+                  size="xs"
+                  colorScheme="blue"
+                  mt={2}
+                >
+                  Open Auth0 Dashboard
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </Collapse>
+        </Box>
+
+        {/* Auth0 Token - Compact inline validation */}
+        <FormControl>
+          <FormLabel mb={1}>Auth0 Management API Token</FormLabel>
+          <InputGroup>
+            <Input
+              type="password"
+              value={auth0Token}
+              onChange={(ev) => {
+                setAuth0Token(ev.target.value);
+                setCredentialsValid(null);
+              }}
+              placeholder="Paste your Auth0 token here"
+              pr="4.5rem"
+              borderColor={
+                credentialsValid === true
+                  ? "green.500"
+                  : credentialsValid === false
+                  ? "red.500"
+                  : undefined
+              }
+            />
+            <InputRightElement width="4.5rem">
+              <Button
+                h="1.75rem"
+                size="sm"
+                colorScheme={
+                  credentialsValid === true
+                    ? "green"
+                    : credentialsValid === false
+                    ? "red"
+                    : "blue"
+                }
+                isLoading={testCredentials.isLoading}
+                isDisabled={!auth0Token || testCredentials.isLoading}
+                onClick={() => {
+                  testCredentials.mutate({ auth0Token });
+                }}
+              >
+                {credentialsValid === true ? (
+                  <MdCheck />
+                ) : credentialsValid === false ? (
+                  <MdClose />
+                ) : (
+                  "Test"
+                )}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+          {credentialsValid === false && (
+            <Text color="red.500" fontSize="sm" mt={1}>
+              {testCredentials.error?.message || "Invalid credentials"}
+            </Text>
+          )}
+        </FormControl>
+
+        {/* Two-column layout for Users and Options */}
+        <Grid templateColumns="1fr 1fr" gap={4}>
+          {/* Users List - Left Column */}
+          <GridItem>
+            <FormControl h="100%">
+              <FormLabel mb={1}>
+                Users List{" "}
+                {parsedUsers.length > 0 && (
+                  <Text as="span" color="gray.500" fontWeight="normal">
+                    ({parsedUsers.length} parsed)
+                  </Text>
+                )}
+              </FormLabel>
+              <Textarea
+                value={usersText}
+                onChange={(ev) => setUsersText(ev.target.value)}
+                placeholder="email@example.com,password123&#10;another@example.com,securepass456"
+                rows={5}
+                fontFamily="mono"
+                fontSize="sm"
+              />
+              <FormHelperText>
+                Format: <code>email,password</code> (one per line)
+              </FormHelperText>
+            </FormControl>
+          </GridItem>
+
+          {/* Options - Right Column */}
+          <GridItem>
+            <VStack spacing={3} align="stretch">
+              <FormControl>
+                <FormLabel mb={1}>Projects (optional)</FormLabel>
+                {selectMultiProjectComponent}
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={1}>Tags (optional)</FormLabel>
+                {tagsSelect}
+              </FormControl>
+            </VStack>
+          </GridItem>
+        </Grid>
+
+        {/* Results */}
+        {importUsers.data && (
+          <Alert
+            status={
+              importUsers.data.adminUsers.importAuth0Users.failureCount === 0
+                ? "success"
+                : importUsers.data.adminUsers.importAuth0Users.successCount ===
+                  0
+                ? "error"
+                : "warning"
+            }
+          >
+            <AlertIcon />
+            <Box flex="1">
+              <HStack justify="space-between">
+                <Text>
+                  <b>
+                    {importUsers.data.adminUsers.importAuth0Users.successCount}
+                  </b>{" "}
+                  succeeded,{" "}
+                  <b>
+                    {importUsers.data.adminUsers.importAuth0Users.failureCount}
+                  </b>{" "}
+                  failed
+                </Text>
+                {failedResults.length > 0 && (
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    onClick={() => setShowFailures(!showFailures)}
+                    rightIcon={
+                      showFailures ? <MdExpandLess /> : <MdExpandMore />
+                    }
+                  >
+                    {showFailures ? "Hide" : "Show"} failures
+                  </Button>
+                )}
+              </HStack>
+              <Collapse in={showFailures}>
+                <List spacing={1} mt={2}>
+                  {failedResults.map((result) => (
+                    <ListItem key={result.email} fontSize="sm">
+                      <ListIcon as={MdError} color="red.500" />
+                      <b>{result.email}</b>: {result.error}
+                    </ListItem>
+                  ))}
+                </List>
+              </Collapse>
+            </Box>
+          </Alert>
+        )}
+      </VStack>
+    </FormModal>
+  );
+}
+
 export default withAdminAuth(function UsersPage() {
   const { pagination, prevPage, nextPage, pageInfo, resetPagination } =
     useCursorPagination();
@@ -354,8 +697,11 @@ export default withAdminAuth(function UsersPage() {
 
   return (
     <VStack>
-      <UpsertUsers />
-      <EmailAliases />
+      <HStack>
+        <UpsertUsers />
+        <EmailAliases />
+        <ImportAuth0Users />
+      </HStack>
       <DataTable<AdminUsersQuery["adminUsers"]["allUsers"]["nodes"][number]>
         data={data?.adminUsers.allUsers.nodes || []}
         prevPage={prevPage}

@@ -643,6 +643,8 @@ export type AdminUserMutations = {
   addUserGroups: Group;
   /** Create a new group entity */
   createGroup: Group;
+  /** Import users to Auth0 and local database */
+  importAuth0Users: ImportAuth0UsersResult;
   /** Remove the users (by email) from the specified group, If not found, ignored */
   removeUserGroups: Group;
   /** Set email aliases */
@@ -651,6 +653,8 @@ export type AdminUserMutations = {
   setProjectsToUsers: Array<User>;
   /** Set the users (by email) associated with the groups */
   setUserGroups: Array<Group>;
+  /** Test if Auth0 Management API credentials are valid */
+  testAuth0Credentials: Scalars["Boolean"];
   /** Update an existent group entity */
   updateGroup: Group;
   /** Update an existent user entity */
@@ -668,6 +672,14 @@ export type AdminUserMutationsaddUserGroupsArgs = {
 /** Admin User-Related Queries */
 export type AdminUserMutationscreateGroupArgs = {
   data: CreateGroupInput;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationsimportAuth0UsersArgs = {
+  auth0Token: Scalars["String"];
+  projectIds?: InputMaybe<Array<Scalars["IntID"]>>;
+  tags?: InputMaybe<Array<Scalars["String"]>>;
+  users: Array<CreateAuth0UserInput>;
 };
 
 /** Admin User-Related Queries */
@@ -691,6 +703,11 @@ export type AdminUserMutationssetProjectsToUsersArgs = {
 export type AdminUserMutationssetUserGroupsArgs = {
   groupIds: Array<Scalars["IntID"]>;
   usersEmails: Array<Scalars["EmailAddress"]>;
+};
+
+/** Admin User-Related Queries */
+export type AdminUserMutationstestAuth0CredentialsArgs = {
+  auth0Token: Scalars["String"];
 };
 
 /** Admin User-Related Queries */
@@ -800,6 +817,19 @@ export type AnonymizedModelState = {
   updatedAt: Scalars["DateTime"];
   /** Unique anonimized user hash identifier */
   userUniqueHash: Scalars["String"];
+};
+
+/** Result of creating a single Auth0 user */
+export type Auth0UserCreationResult = {
+  __typename?: "Auth0UserCreationResult";
+  /** Email of the user */
+  email: Scalars["String"];
+  /** Error message if creation failed */
+  error?: Maybe<Scalars["String"]>;
+  /** Whether the user was created successfully */
+  success: Scalars["Boolean"];
+  /** The created user if successful */
+  user?: Maybe<User>;
 };
 
 /** A challenge */
@@ -995,6 +1025,14 @@ export type ContentsSelectedReturn = {
   P: Content;
   /** Preferred is true when Content is the best option for learner, else false */
   Preferred: Scalars["Boolean"];
+};
+
+/** Input for creating a user in Auth0 */
+export type CreateAuth0UserInput = {
+  /** User email address */
+  email: Scalars["EmailAddress"];
+  /** User password */
+  password: Scalars["String"];
 };
 
 /** Content creation input data */
@@ -1253,6 +1291,17 @@ export type GroupsConnection = Connection & {
   nodes: Array<Group>;
   /** Pagination related information */
   pageInfo: PageInfo;
+};
+
+/** Result of importing multiple Auth0 users */
+export type ImportAuth0UsersResult = {
+  __typename?: "ImportAuth0UsersResult";
+  /** Number of failed user creations */
+  failureCount: Scalars["Int"];
+  /** Results for each user */
+  results: Array<Auth0UserCreationResult>;
+  /** Number of successfully created users */
+  successCount: Scalars["Int"];
 };
 
 /** KC / Knowledge Component Entity */

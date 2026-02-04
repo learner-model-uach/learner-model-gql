@@ -59,9 +59,15 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      require-env-variable:
+        specifier: ^4.0.1
+        version: 4.0.1
       undici:
         specifier: ^5.15.0
         version: 5.15.0
+      zod:
+        specifier: ^3.20.2
+        version: 3.20.2
     devDependencies:
       '@graphql-tools/code-file-loader':
         specifier: ^7.3.16
@@ -72,6 +78,9 @@ importers:
       '@graphql-typed-document-node/core':
         specifier: ^3.1.1
         version: 3.1.1(graphql@16.6.0)
+      '@types/csvtojson':
+        specifier: ^2.0.0
+        version: 2.0.3
       '@types/lodash':
         specifier: ^4.14.191
         version: 4.14.191
@@ -108,6 +117,9 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      csvtojson:
+        specifier: ^2.0.10
+        version: 2.0.10
       execa:
         specifier: ^6.1.0
         version: 6.1.0
@@ -120,6 +132,9 @@ importers:
       mocha:
         specifier: ^10.2.0
         version: 10.2.0
+      p-map:
+        specifier: ^5.5.0
+        version: 5.5.0
       prettier:
         specifier: ^2.8.3
         version: 2.8.3
@@ -2489,6 +2504,10 @@ packages:
   '@types/cross-spawn@6.0.2':
     resolution: {integrity: sha512-KuwNhp3eza+Rhu8IFI5HUXRP0LIhqH5cAjubUvGXXthh4YYBuP2ntwEX+Cz8GJoZUHlKo247wPWOfA9LYEq4cw==}
 
+  '@types/csvtojson@2.0.3':
+    resolution: {integrity: sha512-qutD4v9ydwjTp2XLK4w7FO9SK5QFpbGkCmGRu7+oJPrguUqT82X7ufxmsmx1TpkMdxhftGKdHmPr4DFkx1b0yA==}
+    deprecated: This is a stub types definition. csvtojson provides its own type definitions, so you do not need this installed.
+
   '@types/debug@4.1.7':
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
 
@@ -2808,6 +2827,9 @@ packages:
 
   bl@5.1.0:
     resolution: {integrity: sha512-tv1ZJHLfTDnXE6tMHv73YgSJaWR2AFuPwMntBe7XL/GBFHnT0CLnsHMogfk5+GzCDC5ZWarSCYaIGATZt9dNsQ==}
+
+  bluebird@3.7.2:
+    resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
   bn.js@4.12.0:
     resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
@@ -3151,6 +3173,11 @@ packages:
 
   csstype@3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
+
+  csvtojson@2.0.10:
+    resolution: {integrity: sha512-lUWFxGKyhraKCW8Qghz6Z0f2l/PqB1W3AO0HKJzGIQ5JRSlR651ekJDiGJbBT4sRNNv5ddnSGVEnsxP9XRCVpQ==}
+    engines: {node: '>=4.0.0'}
+    hasBin: true
 
   dataloader@2.1.0:
     resolution: {integrity: sha512-qTcEYLen3r7ojZNgVUaRggOI+KM7jrKxXeSHhogh/TWxYMeONEMqY+hmkobiYQozsGIyg9OYVzO4ZIfoB4I0pQ==}
@@ -3858,6 +3885,9 @@ packages:
 
   is-upper-case@2.0.2:
     resolution: {integrity: sha512-44pxmxAvnnAOwBg4tHPnkfvgjPwbc5QIsSstNU+YcJ1ovxVzCWpSGosPJOZh/a1tdl81fbgnLc9LLv+x2ywbPQ==}
+
+  is-utf8@0.2.1:
+    resolution: {integrity: sha512-rMYPYvCzsXywIsldgLaSoPlw5PfoB/ssr7hY4pLfcodrA5M/eArza1a9VmTiNIBNMjOGr1Ow9mTyU2o69U6U9Q==}
 
   is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
@@ -5075,6 +5105,10 @@ packages:
     resolution: {integrity: sha512-cXNxvT8dFNRVfhVME3JAe98mkXDYN2O1l7jmcwMnOslDeESg1rF/OZMtK0nRAhiari1unG5cD4jG3rapUAkLbw==}
     engines: {node: '>=12'}
 
+  strip-bom@2.0.0:
+    resolution: {integrity: sha512-kwrX1y7czp1E69n2ajbG65mIo9dqvJ+8aBQXOGVxqwvNbsXdFM6Lq37dLAY3mknUwru8CfcCbfOLL/gMo+fi3g==}
+    engines: {node: '>=0.10.0'}
+
   strip-final-newline@2.0.0:
     resolution: {integrity: sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA==}
     engines: {node: '>=6'}
@@ -5577,9 +5611,6 @@ packages:
 
   zod@3.20.2:
     resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
-
-onlyBuiltDependencies:
-  - fsevents
 
 snapshots:
 
@@ -7753,6 +7784,10 @@ snapshots:
     dependencies:
       '@types/node': 18.11.18
 
+  '@types/csvtojson@2.0.3':
+    dependencies:
+      csvtojson: 2.0.10
+
   '@types/debug@4.1.7':
     dependencies:
       '@types/ms': 0.7.31
@@ -8142,6 +8177,8 @@ snapshots:
       buffer: 6.0.3
       inherits: 2.0.4
       readable-stream: 3.6.0
+
+  bluebird@3.7.2: {}
 
   bn.js@4.12.0: {}
 
@@ -8555,6 +8592,12 @@ snapshots:
   csstype@3.0.9: {}
 
   csstype@3.1.1: {}
+
+  csvtojson@2.0.10:
+    dependencies:
+      bluebird: 3.7.2
+      lodash: 4.17.21
+      strip-bom: 2.0.0
 
   dataloader@2.1.0: {}
 
@@ -9332,6 +9375,8 @@ snapshots:
   is-upper-case@2.0.2:
     dependencies:
       tslib: 2.4.1
+
+  is-utf8@0.2.1: {}
 
   is-windows@1.0.2: {}
 
@@ -10581,6 +10626,10 @@ snapshots:
   strip-ansi@7.0.1:
     dependencies:
       ansi-regex: 6.0.1
+
+  strip-bom@2.0.0:
+    dependencies:
+      is-utf8: 0.2.1
 
   strip-final-newline@2.0.0: {}
 

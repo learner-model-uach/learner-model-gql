@@ -85,6 +85,10 @@ const documents = {
     graphql.UpsertUsersWithProjectsDocument,
   "\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    ":
     graphql.SetEmailAliasesDocument,
+  "\n  mutation TestAuth0Credentials($auth0Token: String!) {\n    adminUsers {\n      testAuth0Credentials(auth0Token: $auth0Token)\n    }\n  }\n":
+    graphql.TestAuth0CredentialsDocument,
+  "\n  mutation ImportAuth0Users(\n    $auth0Token: String!\n    $users: [CreateAuth0UserInput!]!\n    $projectIds: [IntID!]\n    $tags: [String!]\n  ) {\n    adminUsers {\n      importAuth0Users(\n        auth0Token: $auth0Token\n        users: $users\n        projectIds: $projectIds\n        tags: $tags\n      ) {\n        results {\n          email\n          success\n          error\n          user {\n            ...UserInfo\n          }\n        }\n        successCount\n        failureCount\n      }\n    }\n  }\n":
+    graphql.ImportAuth0UsersDocument,
   "\n      mutation UpdateUser($data: UpdateUserInput!) {\n        adminUsers {\n          updateUser(data: $data) {\n            __typename\n          }\n        }\n      }\n    ":
     graphql.UpdateUserDocument,
 };
@@ -212,6 +216,12 @@ export function gql(
 export function gql(
   source: "\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    "
 ): (typeof documents)["\n      mutation SetEmailAliases($list: [EmailAliasInput!]!) {\n        adminUsers {\n          setEmailAliases(list: $list) {\n            email\n          }\n        }\n      }\n    "];
+export function gql(
+  source: "\n  mutation TestAuth0Credentials($auth0Token: String!) {\n    adminUsers {\n      testAuth0Credentials(auth0Token: $auth0Token)\n    }\n  }\n"
+): (typeof documents)["\n  mutation TestAuth0Credentials($auth0Token: String!) {\n    adminUsers {\n      testAuth0Credentials(auth0Token: $auth0Token)\n    }\n  }\n"];
+export function gql(
+  source: "\n  mutation ImportAuth0Users(\n    $auth0Token: String!\n    $users: [CreateAuth0UserInput!]!\n    $projectIds: [IntID!]\n    $tags: [String!]\n  ) {\n    adminUsers {\n      importAuth0Users(\n        auth0Token: $auth0Token\n        users: $users\n        projectIds: $projectIds\n        tags: $tags\n      ) {\n        results {\n          email\n          success\n          error\n          user {\n            ...UserInfo\n          }\n        }\n        successCount\n        failureCount\n      }\n    }\n  }\n"
+): (typeof documents)["\n  mutation ImportAuth0Users(\n    $auth0Token: String!\n    $users: [CreateAuth0UserInput!]!\n    $projectIds: [IntID!]\n    $tags: [String!]\n  ) {\n    adminUsers {\n      importAuth0Users(\n        auth0Token: $auth0Token\n        users: $users\n        projectIds: $projectIds\n        tags: $tags\n      ) {\n        results {\n          email\n          success\n          error\n          user {\n            ...UserInfo\n          }\n        }\n        successCount\n        failureCount\n      }\n    }\n  }\n"];
 export function gql(
   source: "\n      mutation UpdateUser($data: UpdateUserInput!) {\n        adminUsers {\n          updateUser(data: $data) {\n            __typename\n          }\n        }\n      }\n    "
 ): (typeof documents)["\n      mutation UpdateUser($data: UpdateUserInput!) {\n        adminUsers {\n          updateUser(data: $data) {\n            __typename\n          }\n        }\n      }\n    "];
