@@ -2,16 +2,19 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
-  AlertTitle,
   Box,
   Button,
   Collapse,
   FormControl,
   FormHelperText,
   FormLabel,
+  Grid,
+  GridItem,
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Link,
   List,
   ListIcon,
@@ -20,6 +23,7 @@ import {
   Switch,
   Text,
   Textarea,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import {
@@ -40,6 +44,7 @@ import {
   MdError,
   MdExpandLess,
   MdExpandMore,
+  MdInfo,
   MdLock,
   MdLockOpen,
   MdSave,
@@ -356,6 +361,8 @@ function ImportAuth0Users() {
     null
   );
   const [showFailures, setShowFailures] = useState(false);
+  const { isOpen: showInstructions, onToggle: toggleInstructions } =
+    useDisclosure({ defaultIsOpen: true });
 
   const { selectMultiProjectComponent, selectedProjects } =
     useSelectMultiProjects();
@@ -431,51 +438,58 @@ function ImportAuth0Users() {
         children: "Import Users",
       }}
       modalProps={{
-        size: "xl",
+        size: "4xl",
       }}
     >
       <VStack spacing={4} align="stretch">
-        {/* Instructions */}
-        <Alert status="info" flexDirection="column" alignItems="flex-start">
-          <HStack mb={2}>
-            <AlertIcon />
-            <AlertTitle>Auth0 Setup Instructions</AlertTitle>
-          </HStack>
-          <AlertDescription>
-            <Text fontSize="sm" mb={2}>
-              To import users, you need an Auth0 Management API token:
-            </Text>
-            <List spacing={1} fontSize="sm">
-              <ListItem>
-                1. Go to Auth0 Dashboard → APIs → Auth0 Management API → API
-                Explorer
-              </ListItem>
-              <ListItem>
-                2. Click "Create & Authorize a Test Application" (or use
-                existing M2M app)
-              </ListItem>
-              <ListItem>3. Copy the token (valid for 24 hours)</ListItem>
-              <ListItem>
-                4. Required scopes: <b>create:users</b>, <b>read:users</b>
-              </ListItem>
-            </List>
-            <Button
-              as={Link}
-              href="https://manage.auth0.com/dashboard/us/learner-model-gql/apis/management/explorer"
-              isExternal
-              size="sm"
-              colorScheme="blue"
-              mt={2}
-            >
-              Open Auth0 Dashboard
-            </Button>
-          </AlertDescription>
-        </Alert>
+        {/* Instructions - Collapsible */}
+        <Box>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleInstructions}
+            leftIcon={<MdInfo />}
+            rightIcon={showInstructions ? <MdExpandLess /> : <MdExpandMore />}
+            color="blue.600"
+          >
+            {showInstructions ? "Hide" : "Show"} Auth0 Setup Instructions
+          </Button>
+          <Collapse in={showInstructions}>
+            <Alert status="info" mt={2}>
+              <AlertDescription fontSize="sm">
+                <List spacing={1}>
+                  <ListItem>
+                    1. Go to Auth0 Dashboard → APIs → Auth0 Management API → API
+                    Explorer
+                  </ListItem>
+                  <ListItem>
+                    2. Click "Create & Authorize a Test Application" (or use
+                    existing M2M app)
+                  </ListItem>
+                  <ListItem>
+                    3. Copy the token (valid for 24 hours). Required scopes:{" "}
+                    <b>create:users</b>, <b>read:users</b>
+                  </ListItem>
+                </List>
+                <Button
+                  as={Link}
+                  href="https://manage.auth0.com/dashboard/us/learner-model-gql/apis/management/explorer"
+                  isExternal
+                  size="xs"
+                  colorScheme="blue"
+                  mt={2}
+                >
+                  Open Auth0 Dashboard
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </Collapse>
+        </Box>
 
-        {/* Auth0 Token */}
+        {/* Auth0 Token - Compact inline validation */}
         <FormControl>
-          <FormLabel>Auth0 Management API Token</FormLabel>
-          <HStack>
+          <FormLabel mb={1}>Auth0 Management API Token</FormLabel>
+          <InputGroup>
             <Input
               type="password"
               value={auth0Token}
@@ -484,64 +498,90 @@ function ImportAuth0Users() {
                 setCredentialsValid(null);
               }}
               placeholder="Paste your Auth0 token here"
+              pr="4.5rem"
+              borderColor={
+                credentialsValid === true
+                  ? "green.500"
+                  : credentialsValid === false
+                  ? "red.500"
+                  : undefined
+              }
             />
-            <Button
-              colorScheme="blue"
-              isLoading={testCredentials.isLoading}
-              isDisabled={!auth0Token || testCredentials.isLoading}
-              onClick={() => {
-                testCredentials.mutate({ auth0Token });
-              }}
-            >
-              Test
-            </Button>
-          </HStack>
-          {credentialsValid === true && (
-            <Alert status="success" mt={2} size="sm">
-              <AlertIcon />
-              Credentials are valid!
-            </Alert>
-          )}
+            <InputRightElement width="4.5rem">
+              <Button
+                h="1.75rem"
+                size="sm"
+                colorScheme={
+                  credentialsValid === true
+                    ? "green"
+                    : credentialsValid === false
+                    ? "red"
+                    : "blue"
+                }
+                isLoading={testCredentials.isLoading}
+                isDisabled={!auth0Token || testCredentials.isLoading}
+                onClick={() => {
+                  testCredentials.mutate({ auth0Token });
+                }}
+              >
+                {credentialsValid === true ? (
+                  <MdCheck />
+                ) : credentialsValid === false ? (
+                  <MdClose />
+                ) : (
+                  "Test"
+                )}
+              </Button>
+            </InputRightElement>
+          </InputGroup>
           {credentialsValid === false && (
-            <Alert status="error" mt={2} size="sm">
-              <AlertIcon />
+            <Text color="red.500" fontSize="sm" mt={1}>
               {testCredentials.error?.message || "Invalid credentials"}
-            </Alert>
+            </Text>
           )}
         </FormControl>
 
-        {/* Users List */}
-        <FormControl>
-          <FormLabel>
-            Users List{" "}
-            {parsedUsers.length > 0 && (
-              <Text as="span" color="gray.500">
-                ({parsedUsers.length} users parsed)
-              </Text>
-            )}
-          </FormLabel>
-          <Textarea
-            value={usersText}
-            onChange={(ev) => setUsersText(ev.target.value)}
-            placeholder="email@example.com,password123&#10;another@example.com,securepass456"
-            rows={6}
-          />
-          <FormHelperText>
-            Format: <code>email,password</code> (one per line)
-          </FormHelperText>
-        </FormControl>
+        {/* Two-column layout for Users and Options */}
+        <Grid templateColumns="1fr 1fr" gap={4}>
+          {/* Users List - Left Column */}
+          <GridItem>
+            <FormControl h="100%">
+              <FormLabel mb={1}>
+                Users List{" "}
+                {parsedUsers.length > 0 && (
+                  <Text as="span" color="gray.500" fontWeight="normal">
+                    ({parsedUsers.length} parsed)
+                  </Text>
+                )}
+              </FormLabel>
+              <Textarea
+                value={usersText}
+                onChange={(ev) => setUsersText(ev.target.value)}
+                placeholder="email@example.com,password123&#10;another@example.com,securepass456"
+                rows={5}
+                fontFamily="mono"
+                fontSize="sm"
+              />
+              <FormHelperText>
+                Format: <code>email,password</code> (one per line)
+              </FormHelperText>
+            </FormControl>
+          </GridItem>
 
-        {/* Projects */}
-        <FormControl>
-          <FormLabel>Projects (optional)</FormLabel>
-          {selectMultiProjectComponent}
-        </FormControl>
-
-        {/* Tags */}
-        <FormControl>
-          <FormLabel>Tags (optional)</FormLabel>
-          {tagsSelect}
-        </FormControl>
+          {/* Options - Right Column */}
+          <GridItem>
+            <VStack spacing={3} align="stretch">
+              <FormControl>
+                <FormLabel mb={1}>Projects (optional)</FormLabel>
+                {selectMultiProjectComponent}
+              </FormControl>
+              <FormControl>
+                <FormLabel mb={1}>Tags (optional)</FormLabel>
+                {tagsSelect}
+              </FormControl>
+            </VStack>
+          </GridItem>
+        </Grid>
 
         {/* Results */}
         {importUsers.data && (
@@ -554,28 +594,23 @@ function ImportAuth0Users() {
                 ? "error"
                 : "warning"
             }
-            flexDirection="column"
-            alignItems="flex-start"
           >
-            <HStack mb={2}>
-              <AlertIcon />
-              <AlertTitle>Import Results</AlertTitle>
-            </HStack>
-            <AlertDescription width="100%">
-              <Text>
-                <b>
-                  {importUsers.data.adminUsers.importAuth0Users.successCount}
-                </b>{" "}
-                succeeded,{" "}
-                <b>
-                  {importUsers.data.adminUsers.importAuth0Users.failureCount}
-                </b>{" "}
-                failed
-              </Text>
-              {failedResults.length > 0 && (
-                <Box mt={2}>
+            <AlertIcon />
+            <Box flex="1">
+              <HStack justify="space-between">
+                <Text>
+                  <b>
+                    {importUsers.data.adminUsers.importAuth0Users.successCount}
+                  </b>{" "}
+                  succeeded,{" "}
+                  <b>
+                    {importUsers.data.adminUsers.importAuth0Users.failureCount}
+                  </b>{" "}
+                  failed
+                </Text>
+                {failedResults.length > 0 && (
                   <Button
-                    size="sm"
+                    size="xs"
                     variant="ghost"
                     onClick={() => setShowFailures(!showFailures)}
                     rightIcon={
@@ -584,19 +619,19 @@ function ImportAuth0Users() {
                   >
                     {showFailures ? "Hide" : "Show"} failures
                   </Button>
-                  <Collapse in={showFailures}>
-                    <List spacing={1} mt={2}>
-                      {failedResults.map((result) => (
-                        <ListItem key={result.email} fontSize="sm">
-                          <ListIcon as={MdError} color="red.500" />
-                          <b>{result.email}</b>: {result.error}
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                </Box>
-              )}
-            </AlertDescription>
+                )}
+              </HStack>
+              <Collapse in={showFailures}>
+                <List spacing={1} mt={2}>
+                  {failedResults.map((result) => (
+                    <ListItem key={result.email} fontSize="sm">
+                      <ListIcon as={MdError} color="red.500" />
+                      <b>{result.email}</b>: {result.error}
+                    </ListItem>
+                  ))}
+                </List>
+              </Collapse>
+            </Box>
           </Alert>
         )}
       </VStack>
