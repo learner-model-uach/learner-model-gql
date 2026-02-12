@@ -1,5 +1,5 @@
 import { getNodeIdList } from "api-base";
-import { hashSync } from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import pMap from "p-map";
 import { FormData, request } from "undici";
 import { z } from "zod";
@@ -498,7 +498,7 @@ export const usersModule = registerModule(
           const usersPayload = users.map(({ email, password }) => ({
             email,
             email_verified: false,
-            password_hash: hashSync(password, 10),
+            password_hash: bcryptjs.hashSync(password, 10),
           }));
 
           // 3. Submit bulk import job
