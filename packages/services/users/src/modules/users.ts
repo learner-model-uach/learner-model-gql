@@ -1,7 +1,43 @@
 import { getNodeIdList } from "api-base";
+import bcryptjs from "bcryptjs";
 import pMap from "p-map";
-import { request } from "undici";
+import { FormData, request } from "undici";
+import { z } from "zod";
 import { gql, registerModule, ResolveCursorConnection } from "../ez";
+
+const Auth0ErrorBody = z.object({
+  message: z.string().optional(),
+  error: z.string().optional(),
+});
+
+const Auth0Connections = z.array(
+  z.object({ id: z.string(), name: z.string() })
+);
+
+const Auth0Job = z.object({
+  id: z.string(),
+  status: z.string(),
+});
+
+const Auth0JobStatus = z.object({
+  id: z.string(),
+  status: z.string(),
+  summary: z
+    .object({
+      total: z.number(),
+      inserted: z.number(),
+      updated: z.number(),
+      failed: z.number(),
+    })
+    .optional(),
+});
+
+const Auth0JobErrors = z.array(
+  z.object({
+    user: z.object({ email: z.string() }),
+    errors: z.array(z.object({ code: z.string(), message: z.string() })),
+  })
+);
 
 export const usersModule = registerModule(
   gql`
@@ -378,7 +414,8 @@ export const usersModule = registerModule(
             throw new Error("AUTH0_DOMAIN environment variable is not set");
           }
 
-          const response = await request(
+          // Test read:users scope
+          const usersResponse = await request(
             `https://${AUTH0_DOMAIN}/api/v2/users?per_page=1`,
             {
               method: "GET",
@@ -388,24 +425,41 @@ export const usersModule = registerModule(
             }
           );
 
-          if (response.statusCode === 200) {
-            return true;
-          }
-
-          if (response.statusCode === 401) {
+          if (usersResponse.statusCode === 401) {
             throw new Error("Invalid or expired Auth0 token");
           }
 
-          if (response.statusCode === 403) {
+          if (usersResponse.statusCode === 403) {
             throw new Error(
-              "Insufficient permissions. Required scopes: read:users"
+              "Insufficient permissions. Required scopes: read:users, create:users, read:connections"
             );
           }
 
-          const body = (await response.body.json()) as { message?: string };
-          throw new Error(
-            body.message || `Auth0 API error: ${response.statusCode}`
+          if (usersResponse.statusCode !== 200) {
+            const body = Auth0ErrorBody.parse(await usersResponse.body.json());
+            throw new Error(
+              body.message || `Auth0 API error: ${usersResponse.statusCode}`
+            );
+          }
+
+          // Test read:connections scope (needed for bulk import)
+          const connResponse = await request(
+            `https://${AUTH0_DOMAIN}/api/v2/connections?per_page=1`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${auth0Token}`,
+              },
+            }
           );
+
+          if (connResponse.statusCode === 403) {
+            throw new Error(
+              "Insufficient permissions. Missing scope: read:connections"
+            );
+          }
+
+          return true;
         },
         async importAuth0Users(
           _root,
@@ -417,124 +471,179 @@ export const usersModule = registerModule(
             throw new Error("AUTH0_DOMAIN environment variable is not set");
           }
 
-          const results = await pMap(
-            users,
-            async ({ email, password }) => {
-              try {
-                // Create user in Auth0
-                const response = await request(
-                  `https://${AUTH0_DOMAIN}/api/v2/users`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${auth0Token}`,
-                    },
-                    body: JSON.stringify({
-                      connection: "Username-Password-Authentication",
-                      email,
-                      password,
-                    }),
-                  }
-                );
-
-                if (response.statusCode !== 201) {
-                  const body = (await response.body.json()) as {
-                    message?: string;
-                    error?: string;
-                  };
-                  let errorMessage =
-                    body.message ||
-                    body.error ||
-                    `Auth0 error: ${response.statusCode}`;
-
-                  if (response.statusCode === 409) {
-                    errorMessage = "User already exists in Auth0";
-                  } else if (response.statusCode === 400) {
-                    errorMessage =
-                      body.message ||
-                      "Invalid input (weak password or invalid email)";
-                  } else if (response.statusCode === 401) {
-                    errorMessage = "Invalid or expired Auth0 token";
-                  } else if (response.statusCode === 403) {
-                    errorMessage =
-                      "Insufficient permissions. Required scopes: create:users";
-                  } else if (response.statusCode === 429) {
-                    errorMessage =
-                      "Rate limit exceeded. Please wait and try again.";
-                  }
-
-                  return {
-                    email,
-                    success: false,
-                    error: errorMessage,
-                    user: null,
-                  };
-                }
-
-                // Upsert user in local database
-                const user = await prisma.user.upsert({
-                  create: {
-                    email,
-                    projects: projectIds?.length
-                      ? {
-                          connect: projectIds.map((id) => ({ id })),
-                        }
-                      : undefined,
-                    tags: tags?.length
-                      ? {
-                          set: tags,
-                        }
-                      : undefined,
-                  },
-                  where: {
-                    email,
-                  },
-                  update: {
-                    projects: projectIds?.length
-                      ? {
-                          connect: projectIds.map((id) => ({ id })),
-                        }
-                      : undefined,
-                    tags: tags?.length
-                      ? {
-                          push: tags,
-                        }
-                      : undefined,
-                  },
-                });
-
-                return {
-                  email,
-                  success: true,
-                  error: null,
-                  user,
-                };
-              } catch (error) {
-                return {
-                  email,
-                  success: false,
-                  error:
-                    error instanceof Error
-                      ? error.message
-                      : "Unknown error occurred",
-                  user: null,
-                };
-              }
-            },
+          // 1. Fetch connection_id for Username-Password-Authentication
+          const connectionsResponse = await request(
+            `https://${AUTH0_DOMAIN}/api/v2/connections?name=Username-Password-Authentication`,
             {
-              concurrency: 2,
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${auth0Token}`,
+              },
             }
           );
+
+          const connections = Auth0Connections.parse(
+            await connectionsResponse.body.json()
+          );
+
+          if (!connections.length) {
+            throw new Error(
+              'Could not find connection "Username-Password-Authentication"'
+            );
+          }
+
+          const connectionId = connections[0]!.id;
+
+          // 2. Hash passwords with bcrypt and build JSON payload
+          const usersPayload = users.map(({ email, password }) => ({
+            email,
+            email_verified: false,
+            password_hash: bcryptjs.hashSync(password, 10),
+          }));
+
+          // 3. Submit bulk import job
+          const formData = new FormData();
+          const usersBlob = new Blob([JSON.stringify(usersPayload)], {
+            type: "application/json",
+          });
+          formData.append("users", usersBlob, "users.json");
+          formData.append("connection_id", connectionId);
+          formData.append("upsert", "true");
+          formData.append("send_completion_email", "false");
+
+          const jobResponse = await request(
+            `https://${AUTH0_DOMAIN}/api/v2/jobs/users-imports`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${auth0Token}`,
+              },
+              body: formData,
+            }
+          );
+
+          if (jobResponse.statusCode !== 202) {
+            const errorBody = Auth0ErrorBody.parse(
+              await jobResponse.body.json()
+            );
+            throw new Error(
+              errorBody.message ||
+                `Auth0 bulk import failed: ${jobResponse.statusCode}`
+            );
+          }
+
+          const job = Auth0Job.parse(await jobResponse.body.json());
+
+          // 4. Poll for job completion
+          const MAX_POLL_TIME_MS = 120_000;
+          const POLL_INTERVAL_MS = 2_000;
+          const startTime = Date.now();
+
+          let jobStatus: z.infer<typeof Auth0JobStatus>;
+
+          while (true) {
+            if (Date.now() - startTime > MAX_POLL_TIME_MS) {
+              throw new Error(
+                `Auth0 import job ${job.id} timed out after ${
+                  MAX_POLL_TIME_MS / 1000
+                }s. Check Auth0 Dashboard for job status.`
+              );
+            }
+
+            await new Promise((resolve) =>
+              setTimeout(resolve, POLL_INTERVAL_MS)
+            );
+
+            const statusResponse = await request(
+              `https://${AUTH0_DOMAIN}/api/v2/jobs/${job.id}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${auth0Token}`,
+                },
+              }
+            );
+
+            jobStatus = Auth0JobStatus.parse(await statusResponse.body.json());
+
+            if (
+              jobStatus.status === "completed" ||
+              jobStatus.status === "failed"
+            ) {
+              break;
+            }
+          }
+
+          // 5. Fetch per-user errors
+          const errorsResponse = await request(
+            `https://${AUTH0_DOMAIN}/api/v2/jobs/${job.id}/errors`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${auth0Token}`,
+              },
+            }
+          );
+
+          const jobErrors = Auth0JobErrors.parse(
+            await errorsResponse.body.json()
+          );
+
+          const failedEmailsMap = new Map<string, string>();
+          for (const error of jobErrors) {
+            const email = error.user.email;
+            const message = error.errors.map((e) => e.message).join("; ");
+            failedEmailsMap.set(email, message);
+          }
+
+          // 6. Upsert successful users in local DB
+          const successfulEmails = users
+            .map((u) => u.email)
+            .filter((email) => !failedEmailsMap.has(email));
+
+          const upsertedUsers = await pMap(
+            successfulEmails,
+            async (email) => {
+              return prisma.user.upsert({
+                create: {
+                  email,
+                  projects: projectIds?.length
+                    ? { connect: projectIds.map((id) => ({ id })) }
+                    : undefined,
+                  tags: tags?.length ? { set: tags } : undefined,
+                },
+                where: { email },
+                update: {
+                  projects: projectIds?.length
+                    ? { connect: projectIds.map((id) => ({ id })) }
+                    : undefined,
+                  tags: tags?.length ? { push: tags } : undefined,
+                },
+              });
+            },
+            { concurrency: 4 }
+          );
+
+          const usersByEmail = new Map(upsertedUsers.map((u) => [u.email, u]));
+
+          // 7. Assemble results
+          const results = users.map(({ email }) => {
+            const errorMessage = failedEmailsMap.get(email);
+            if (errorMessage) {
+              return { email, success: false, error: errorMessage, user: null };
+            }
+            return {
+              email,
+              success: true,
+              error: null,
+              user: usersByEmail.get(email) || null,
+            };
+          });
 
           const successCount = results.filter((r) => r.success).length;
           const failureCount = results.filter((r) => !r.success).length;
 
-          return {
-            results,
-            successCount,
-            failureCount,
-          };
+          return { results, successCount, failureCount };
         },
       },
       AdminUserQueries: {

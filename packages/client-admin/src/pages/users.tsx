@@ -468,7 +468,8 @@ function ImportAuth0Users() {
                   </ListItem>
                   <ListItem>
                     3. Copy the token (valid for 24 hours). Required scopes:{" "}
-                    <b>create:users</b>, <b>read:users</b>
+                    <b>create:users</b>, <b>read:users</b>,{" "}
+                    <b>read:connections</b>
                   </ListItem>
                 </List>
                 <Button
